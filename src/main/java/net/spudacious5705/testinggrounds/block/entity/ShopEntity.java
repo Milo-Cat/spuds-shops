@@ -2,27 +2,23 @@ package net.spudacious5705.testinggrounds.block.entity;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spudacious5705.testinggrounds.screen.ShopScreenHandler;
+import net.spudacious5705.testinggrounds.screen.ShopScreenHandlerCustomer;
+import net.spudacious5705.testinggrounds.screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -47,14 +43,14 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     protected final PropertyDelegate propertyDelegate;
 
-    private int ownerID = 0;
+    private UUID ownerID;
 
     public ShopEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SHOP_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
-                return ShopEntity.this.ownerID;
+                return ShopEntity.this.getStack(index).getCount();
             }
 
             @Override
@@ -63,14 +59,14 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
             @Override
             public int size() {
-                return 1;
+                return 0;
             }
         };
     }
 
     public void setOwnerID(UUID id) {
-        if (ownerID == 0) {
-            this.ownerID = id.hashCode();
+        if (ownerID == null) {
+            this.ownerID = id;
         }
     }
 
@@ -87,7 +83,12 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new ShopScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
+
+        int result = player.getUuid().compareTo(ownerID);
+
+        if(result==0) return new ShopScreenHandlerOwner(syncId, playerInventory, this, this.propertyDelegate);
+
+        return new ShopScreenHandlerCustomer(syncId, playerInventory, this, this.propertyDelegate);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
     public boolean isShopFunctional(){
-        if(0 == ownerID){return false;}
+        if(null == ownerID){return false;}
         if(currency == null){return false;}
         if(vendItem == null){return false;}
         if(vendQuantity == 0){return false;}
@@ -109,22 +110,21 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
-        if(world.isClient()) return;
-        if(this.isShopFunctional()){}
-        markDirty(world, pos, state);
+        /*if(world.isClient()) return;
+        if(this.isShopFunctional()){}*/
     }
 
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         Inventories.readNbt(nbt, itemStacks);
-        ownerID = nbt.getInt("owner_id");
+        ownerID = nbt.getUuid("owner_id");
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, itemStacks);
-        nbt.putInt("owner_id", ownerID);
+        nbt.putUuid("owner_id", ownerID);
     }
 }

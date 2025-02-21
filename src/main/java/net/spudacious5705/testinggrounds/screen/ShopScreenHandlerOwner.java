@@ -9,27 +9,19 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.spudacious5705.testinggrounds.block.custom.ShopBlock;
-import net.spudacious5705.testinggrounds.block.entity.ImplementedInventory;
 import net.spudacious5705.testinggrounds.block.entity.ShopEntity;
-import org.jetbrains.annotations.Nullable;
 
-public class ShopScreenHandler extends ScreenHandler {
+public class ShopScreenHandlerOwner extends ScreenHandler {
     private final Inventory shopInventory;
     private final PropertyDelegate propertyDelegate;
     public final ShopEntity shop;
-    private int userUUIDhash;
-    private final PlayerInventory playerInv;
 
-    public ShopScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         this(syncId, playerInventory, playerInventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
                 new ArrayPropertyDelegate(1));
     }
 
-    private final boolean screenTypeSeller;
 
 
 
@@ -42,64 +34,56 @@ public class ShopScreenHandler extends ScreenHandler {
     private static final int stock_itemStacks_start = 0;
     private static final int stock_itemStacks_range = 53;
 
-    public ShopScreenHandler(int syncId, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER, syncId);
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, syncId);
         checkSize(((Inventory) blockEntity), 80 );
         this.shopInventory = ((Inventory) blockEntity);
         playerInventory.onOpen(playerInventory.player);
         this.propertyDelegate = arrayPropertyDelegate;
         this.shop = (ShopEntity) blockEntity;
-        this.userUUIDhash = playerInventory.player.getUuid().hashCode();
-        this.playerInv = playerInventory;
 
-        this.addSlot(new Slot(shopInventory, 78, 20, 11));
-        this.addSlot(new Slot(shopInventory, 79, 20, 59));
+        addShopInventory();
+        addPlayerInventory(playerInventory);
 
 
-        this.screenTypeSeller = false;
         this.addProperties(arrayPropertyDelegate);
 
 
 
     }
 
-    public void addCustomerInventory() {
-
-    }
-
     public void addShopInventory(){
-        int offsetx = 34;
-        int offsety = -33;
+        int offsetx = 60;
+        int offsety = 10;
+
+
         for (int i = 0; i<6; ++i){
             for (int j = 0; j<9; ++j){
                 this.addSlot(new Slot(shopInventory,j+i*9,offsetx + j*18,offsety + i*18));
             }
         }
-        offsetx = -10;
-        offsety = 79;
+        offsetx += -44;
+        offsety += 112;
 
         for (int i = 0; i<11; ++i){
             this.addSlot(new Slot(shopInventory,profit_itemStacks_start+i,offsetx+i*18,offsety));
         }
-        offsety = 97;
+        offsety += 18;
 
         for (int i = 0; i<11; ++i){
             this.addSlot(new Slot(shopInventory,profit_itemStacks_start+11+i,offsetx+i*18,offsety));
         }
 
 
+
     }
 
 
-    public void addPlayerInventory(boolean sts) {
-        if (sts) {
-            addPlayerInventory(playerInv,7,129);
-        } else {
-            addPlayerInventory(playerInv,8,84);
-        }
-    }
+    private void addPlayerInventory(PlayerInventory playerInventory) {
 
-    private void addPlayerInventory(PlayerInventory playerInventory, int offsetx, int offsety) {
+        int offsetx = 33;
+        int offsety = 172;
+
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
                 this.addSlot(new Slot(playerInventory, l + i * 9 + 9, offsetx + l * 18, offsety + i * 18));
@@ -141,9 +125,6 @@ public class ShopScreenHandler extends ScreenHandler {
         return this.shopInventory.canPlayerUse(player);
     }
 
-    public boolean isScreenTypeSeller() {
-        return propertyDelegate.get(0) == userUUIDhash;
-    }
 
     class shop_payment_slot extends Slot {
 
