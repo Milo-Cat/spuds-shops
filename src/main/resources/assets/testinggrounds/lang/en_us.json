@@ -1,0 +1,19 @@
+{
+  "item.testinggrounds.suspicious_substance": "suspicious substance",
+
+  "block.testinggrounds.suspicious_block": "suspicious block",
+  "item.testinggrounds.suspicious_block": "suspicious block",
+  "block.testinggrounds.dense_wood_block": "dense wood block",
+  "item.testinggrounds.dense_wood_block": "dense wood block",
+  "block.testinggrounds.painfull_block": "painfull block",
+  "item.testinggrounds.painfull_block": "painfull block",
+  "block.testinggrounds.station": "station",
+  "item.testinggrounds.station": "station",
+  "block.testinggrounds.storage_block": "storage block",
+  "item.testinggrounds.storage_block": "storage block",
+  "block.testinggrounds.magic_block": "magic block",
+  "item.testinggrounds.magic_block": "magic block",
+  "block.testinggrounds.inscriber_block": "inscriber",
+  "item.testinggrounds.inscriber_block": "inscriber",
+  "item.testinggrounds.runic_gold": "Runic gold"
+}
