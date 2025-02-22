@@ -39,6 +39,18 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         //addDrop(ModBlocks.TROPHY);
         addDrop(ModBlocks.SUSPICIOUS_BLOCK, oreDrops(ModBlocks.SUSPICIOUS_BLOCK, ModItems.SUSPICIOUS_SUBSTANCE));
 
+        addDrop(ModBlocks.SHOP_BLOCK_ACACIA);
+        addDrop(ModBlocks.SHOP_BLOCK_BAMBOO);
+        addDrop(ModBlocks.SHOP_BLOCK_BIRCH);
+        addDrop(ModBlocks.SHOP_BLOCK_CHERRY);
+        addDrop(ModBlocks.SHOP_BLOCK_CRIMSON);
+        addDrop(ModBlocks.SHOP_BLOCK_DARK_OAK);
+        addDrop(ModBlocks.SHOP_BLOCK_MANGROVE);
+        addDrop(ModBlocks.SHOP_BLOCK_OAK);
+        addDrop(ModBlocks.SHOP_BLOCK_SPRUCE);
+        addDrop(ModBlocks.SHOP_BLOCK_WARPED);
+
+
     }
 
 }

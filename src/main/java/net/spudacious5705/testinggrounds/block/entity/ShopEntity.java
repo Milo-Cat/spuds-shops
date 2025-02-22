@@ -130,6 +130,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     protected void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         Inventories.writeNbt(nbt, itemStacks);
-        nbt.putUuid("owner_id", ownerID);
+        if(ownerID != null){nbt.putUuid("owner_id", ownerID);}
     }
 }

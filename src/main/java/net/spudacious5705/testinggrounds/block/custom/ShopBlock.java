@@ -1,6 +1,7 @@
 package net.spudacious5705.testinggrounds.block.custom;
 
 import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -36,6 +37,11 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider {
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new ShopEntity(pos, state);
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 
     @Override

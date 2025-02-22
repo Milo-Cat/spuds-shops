@@ -22,17 +22,6 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.SUSPICIOUS_BLOCK);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.PAINFULL_BLOCK);
 
-        Identifier model = new Identifier(TestingGrounds.MOD_ID,"models/block/shop");
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_ACACIA);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_BAMBOO);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_DARK_OAK);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_BIRCH);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_CHERRY);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_CRIMSON);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_OAK);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_MANGROVE);
-        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_SPRUCE);
-        blockStateModelGenerator.regist(model, ModBlocks.SHOP_BLOCK_WARPED);
     }
 
     @Override

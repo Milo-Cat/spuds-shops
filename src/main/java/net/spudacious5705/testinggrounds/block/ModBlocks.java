@@ -37,29 +37,26 @@ public class ModBlocks {
     public static final Block MULTI_BLOCK = registerBlock("multi_block",
             new MultiBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
 
-    public static final Block SHOP_BLOCK = registerBlock("shop_block",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK)));
-
     public static final Block SHOP_BLOCK_ACACIA = registerBlock("shop_acacia",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_BAMBOO = registerBlock("shop_bamboo",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_BIRCH = registerBlock("shop_birch",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_CHERRY = registerBlock("shop_cherry",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_CRIMSON = registerBlock("shop_crimson",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_DARK_OAK = registerBlock("shop_dark_oak",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_MANGROVE = registerBlock("shop_mangrove",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_OAK = registerBlock("shop_oak",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_SPRUCE = registerBlock("shop_spruce",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
     public static final Block SHOP_BLOCK_WARPED = registerBlock("shop_warped",
-            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)));
+            new ShopBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque()));
 
 
     public static final Block DENSE_WOOD_BLOCK = registerBlock("dense_wood_block",

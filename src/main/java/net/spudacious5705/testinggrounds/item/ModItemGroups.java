@@ -26,7 +26,17 @@ public class ModItemGroups {
 
                         entries.add(ModBlocks.MAGIC_BLOCK);
 
-                        entries.add(ModBlocks.SHOP_BLOCK);
+                        entries.add(ModBlocks.SHOP_BLOCK_ACACIA);
+                        entries.add(ModBlocks.SHOP_BLOCK_BAMBOO);
+                        entries.add(ModBlocks.SHOP_BLOCK_BIRCH);
+                        entries.add(ModBlocks.SHOP_BLOCK_CHERRY);
+                        entries.add(ModBlocks.SHOP_BLOCK_CRIMSON);
+                        entries.add(ModBlocks.SHOP_BLOCK_OAK);
+                        entries.add(ModBlocks.SHOP_BLOCK_MANGROVE);
+                        entries.add(ModBlocks.SHOP_BLOCK_DARK_OAK);
+                        entries.add(ModBlocks.SHOP_BLOCK_SPRUCE);
+                        entries.add(ModBlocks.SHOP_BLOCK_WARPED);
+
                         //entries.add(ModBlocks.TROPHY);
 
                         entries.add(ModBlocks.INSCRIBER_BLOCK);
