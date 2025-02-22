@@ -56,6 +56,10 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
         int offsetx = 60;
         int offsety = 10;
 
+        this.addSlot(new shop_set_slot(shopInventory,SET_PAYMENT_SLOT,23,11));
+        this.addSlot(new shop_set_slot(shopInventory,SET_VENDING_SLOT,23,49));
+
+
 
         for (int i = 0; i<6; ++i){
             for (int j = 0; j<9; ++j){
@@ -121,6 +125,11 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     }
 
     @Override
+    protected boolean insertItem(ItemStack stack, int startIndex, int endIndex, boolean fromLast) {
+        return super.insertItem(stack, startIndex, 77, fromLast);
+    }
+
+    @Override
     public boolean canUse(PlayerEntity player) {
         return this.shopInventory.canPlayerUse(player);
     }
@@ -183,7 +192,7 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
         @Override
         public boolean canInsert(ItemStack stack) {
-            setStack(stack);
+            setStack(new ItemStack(stack.getItem(),stack.getCount()));
             return false;
         }
 

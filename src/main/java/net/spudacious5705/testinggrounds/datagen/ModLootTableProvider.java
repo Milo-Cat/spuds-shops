@@ -36,6 +36,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.STORAGE_BLOCK);
         addDrop(ModBlocks.DENSE_WOOD_BLOCK);
         addDrop(ModBlocks.STATION);
+        //addDrop(ModBlocks.TROPHY);
         addDrop(ModBlocks.SUSPICIOUS_BLOCK, oreDrops(ModBlocks.SUSPICIOUS_BLOCK, ModItems.SUSPICIOUS_SUBSTANCE));
 
     }

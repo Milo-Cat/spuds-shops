@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.data.client.Models;
+import net.minecraft.util.Identifier;
+import net.spudacious5705.testinggrounds.TestingGrounds;
 import net.spudacious5705.testinggrounds.block.ModBlocks;
 import net.spudacious5705.testinggrounds.item.ModItems;
 
@@ -19,6 +21,18 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.DENSE_WOOD_BLOCK);//generates: block states .json, block model .json, item model .json files
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.SUSPICIOUS_BLOCK);
         blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.PAINFULL_BLOCK);
+
+        Identifier model = new Identifier(TestingGrounds.MOD_ID,"models/block/shop");
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_ACACIA);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_BAMBOO);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_DARK_OAK);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_BIRCH);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_CHERRY);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_CRIMSON);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_OAK);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_MANGROVE);
+        blockStateModelGenerator.registerItemModel(ModBlocks.SHOP_BLOCK_SPRUCE);
+        blockStateModelGenerator.regist(model, ModBlocks.SHOP_BLOCK_WARPED);
     }
 
     @Override

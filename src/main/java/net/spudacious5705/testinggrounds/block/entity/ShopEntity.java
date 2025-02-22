@@ -92,6 +92,11 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
     @Override
+    public BlockState getCachedState() {
+        return super.getCachedState();
+    }
+
+    @Override
     public DefaultedList<ItemStack> getItems() {
         return itemStacks;
     }

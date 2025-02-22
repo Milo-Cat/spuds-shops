@@ -15,5 +15,7 @@
   "item.testinggrounds.magic_block": "magic block",
   "block.testinggrounds.inscriber_block": "inscriber",
   "item.testinggrounds.inscriber_block": "inscriber",
-  "item.testinggrounds.runic_gold": "Runic gold"
+  "item.testinggrounds.runic_gold": "Runic gold",
+  "block.testinggrounds.trophy": "trophy",
+  "item.testinggrounds.trophy": "trophy"
 }

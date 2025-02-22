@@ -26,6 +26,9 @@ public class ModItemGroups {
 
                         entries.add(ModBlocks.MAGIC_BLOCK);
 
+                        entries.add(ModBlocks.SHOP_BLOCK);
+                        //entries.add(ModBlocks.TROPHY);
+
                         entries.add(ModBlocks.INSCRIBER_BLOCK);
                     }).build());
 
