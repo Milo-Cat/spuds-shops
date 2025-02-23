@@ -2,11 +2,15 @@ package net.spudacious5705.testinggrounds.screen;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.spudacious5705.testinggrounds.TestingGrounds;
+import net.spudacious5705.testinggrounds.block.entity.ModBlockEntities;
+import net.spudacious5705.testinggrounds.block.entity.renderer.ShopBlockEntityRenderer;
 
 public class ModScreenHandlers {
 
@@ -45,5 +49,6 @@ public class ModScreenHandlers {
         HandledScreens.register(SHOP_SCREEN_HANDLER_OWNER, ShopScreenOwner::new);
         HandledScreens.register(SHOP_SCREEN_HANDLER_CUSTOMER, ShopScreenCustomer::new);
 
+        BlockEntityRendererFactories.register(ModBlockEntities.SHOP_ENTITY, ShopBlockEntityRenderer::new);
     }
 }

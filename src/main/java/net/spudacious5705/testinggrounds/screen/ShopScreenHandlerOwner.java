@@ -27,8 +27,6 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
-    private  static final int SET_PAYMENT_SLOT = 78;
-    private  static final int SET_VENDING_SLOT = 79;
     private static final int profit_itemStacks_start = 54;
     private static final int profit_itemStacks_range = 21;
     private static final int stock_itemStacks_start = 0;
@@ -36,14 +34,19 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
     public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, syncId);
-        checkSize(((Inventory) blockEntity), 80 );
+        checkSize(((Inventory) blockEntity), 78 );
         this.shopInventory = ((Inventory) blockEntity);
         playerInventory.onOpen(playerInventory.player);
         this.propertyDelegate = arrayPropertyDelegate;
         this.shop = (ShopEntity) blockEntity;
 
-        addShopInventory();
+
         addPlayerInventory(playerInventory);
+
+        addShopInventory();
+
+        this.addSlot(new shop_set_slot(shopInventory, PAYMENT_SLOT,23,11));
+        this.addSlot(new shop_set_slot(shopInventory, VENDING_SLOT,23,49));
 
 
         this.addProperties(arrayPropertyDelegate);
@@ -55,11 +58,6 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     public void addShopInventory(){
         int offsetx = 60;
         int offsety = 10;
-
-        this.addSlot(new shop_set_slot(shopInventory,SET_PAYMENT_SLOT,23,11));
-        this.addSlot(new shop_set_slot(shopInventory,SET_VENDING_SLOT,23,49));
-
-
 
         for (int i = 0; i<6; ++i){
             for (int j = 0; j<9; ++j){
@@ -90,12 +88,12 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, offsetx + l * 18, offsety + i * 18));
+                this.addSlot(new player_slot(playerInventory, l + i * 9 + 9, offsetx + l * 18, offsety + i * 18));
             }
         }
         offsety += 58;
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, offsetx + i * 18, offsety));
+            this.addSlot(new player_slot(playerInventory, i, offsetx + i * 18, offsety));
         }
     }
 
@@ -103,30 +101,36 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
-            ItemStack originalStack = slot.getStack();
-            newStack = originalStack.copy();
-            if (invSlot < this.shopInventory.size()) {
-                if (!this.insertItem(originalStack, this.shopInventory.size(), this.slots.size(), true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!this.insertItem(originalStack, 0, this.shopInventory.size(), false)) {
+        if (slot == null || !slot.hasStack()) {return newStack;}
+        ItemStack originalStack = slot.getStack();
+        newStack = originalStack.copy();
+
+        if(this.slots.get(invSlot) instanceof shop_set_slot){return ItemStack.EMPTY;}
+
+        if(this.slots.get(invSlot) instanceof player_slot){
+            if (!this.insertItem(originalStack, 36, 90, false)) {
                 return ItemStack.EMPTY;
             }
-
-            if (originalStack.isEmpty()) {
-                slot.setStack(ItemStack.EMPTY);
-            } else {
-                slot.markDirty();
+        } else {
+            if (!this.insertItem(originalStack, 0, 35, false)) {
+                return ItemStack.EMPTY;
             }
         }
 
+
+        if (originalStack.isEmpty()) {
+            slot.setStack(ItemStack.EMPTY);
+        } else {
+            slot.markDirty();
+        }
+
         return newStack;
+
     }
 
     @Override
     protected boolean insertItem(ItemStack stack, int startIndex, int endIndex, boolean fromLast) {
-        return super.insertItem(stack, startIndex, 77, fromLast);
+        return super.insertItem(stack, startIndex, endIndex, fromLast);
     }
 
     @Override
@@ -134,47 +138,13 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
         return this.shopInventory.canPlayerUse(player);
     }
 
+    class player_slot extends Slot {
 
-    class shop_payment_slot extends Slot {
-
-        private final ShopEntity shop;
-
-        public shop_payment_slot(Inventory inventory, int index, int x, int y, ShopEntity shop1) {
+        public player_slot(Inventory inventory, int index, int x, int y) {
             super(inventory, index, x, y);
-            this.shop = shop1;
         }
 
-        @Override
-        public boolean canInsert(ItemStack stack) {
-            return stack.isOf(shop.getPaymentType());
-        }
-    }
-
-    class shop_vendor_slot extends Slot {
-        private final ShopEntity shop;
-        public shop_vendor_slot(Inventory inventory, int index, int x, int y, ShopEntity shop1) {
-            super(inventory, index, x, y);
-            this.shop = shop1;
-
-        }
-
-        @Override
-        protected void onTake(int amount) {
-            super.onTake(amount);
-        }
-
-        @Override
-        public ItemStack takeStack(int amount) {
-
-            return super.takeStack(amount);
-        }
-
-
-
-        @Override
-        public boolean canInsert(ItemStack stack) {
-            return false;
-        }
+        public boolean isPlayerSlot() {return true;}
     }
 
     class shop_set_slot extends Slot {
@@ -192,8 +162,34 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
         @Override
         public boolean canInsert(ItemStack stack) {
-            setStack(new ItemStack(stack.getItem(),stack.getCount()));
-            return false;
+            return this.getStack().getItem() == stack.getItem() || this.getStack().isEmpty();
+        }
+
+
+
+        @Override
+        public ItemStack insertStack(ItemStack newStack, int count) {
+
+            if (newStack.isEmpty()) {return newStack;}
+
+            ItemStack thisStack = this.getStack();
+
+            if (thisStack.isEmpty() || thisStack.getItem() != newStack.getItem()) {
+                this.setStack(newStack.copy());
+                return newStack;
+            }
+
+            int addition = thisStack.getCount() + count;
+
+            if(addition>+64){
+                thisStack.setCount(64);
+            } else {
+                thisStack.setCount(addition);
+            }
+
+            this.setStack(thisStack);
+
+            return newStack;
         }
 
         @Override

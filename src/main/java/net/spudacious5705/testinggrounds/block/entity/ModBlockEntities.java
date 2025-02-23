@@ -33,11 +33,20 @@ public class ModBlockEntities {
     public static final BlockEntityType<ShopEntity> SHOP_ENTITY =
             Registry.register(Registries.BLOCK_ENTITY_TYPE, new Identifier(TestingGrounds.MOD_ID, "shop_b_e"),
                     FabricBlockEntityTypeBuilder.create(ShopEntity::new,
-                            ModBlocks.SHOP_BLOCK_OAK).build());
+                            ModBlocks.SHOP_BLOCK_OAK,
+                            ModBlocks.SHOP_BLOCK_BAMBOO,
+                            ModBlocks.SHOP_BLOCK_BIRCH,
+                            ModBlocks.SHOP_BLOCK_ACACIA,
+                            ModBlocks.SHOP_BLOCK_CRIMSON,
+                            ModBlocks.SHOP_BLOCK_CHERRY,
+                            ModBlocks.SHOP_BLOCK_DARK_OAK,
+                            ModBlocks.SHOP_BLOCK_MANGROVE,
+                            ModBlocks.SHOP_BLOCK_SPRUCE,
+                            ModBlocks.SHOP_BLOCK_WARPED
+                            ).build());
 
 
     public static void registerBlockEntities() {
         TestingGrounds.LOGGER.info("Registering block entities for" + TestingGrounds.MOD_ID);
-
     }
 }

@@ -26,16 +26,10 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
-    private  static final int SET_PAYMENT_SLOT = 78;
-    private  static final int SET_VENDING_SLOT = 79;
-    private static final int profit_itemStacks_start = 54;
-    private static final int profit_itemStacks_range = 21;
-    private static final int stock_itemStacks_start = 0;
-    private static final int stock_itemStacks_range = 53;
 
     public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
-        checkSize(((Inventory) blockEntity), 80 );
+        checkSize(((Inventory) blockEntity), 78 );
         this.shopInventory = ((Inventory) blockEntity);
         playerInventory.onOpen(playerInventory.player);
         this.propertyDelegate = arrayPropertyDelegate;
@@ -51,8 +45,8 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
     }
 
     public void addCustomerInventory() {
-        this.addSlot(new shop_set_slot(shopInventory,SET_PAYMENT_SLOT,40,20));
-        this.addSlot(new shop_set_slot(shopInventory,SET_PAYMENT_SLOT,40,40));
+        this.addSlot(new shop_payment_slot(shopInventory ,PAYMENT_SLOT,80,11));
+        this.addSlot(new shop_vendor_slot(shopInventory ,VENDING_SLOT,80,59,this));
     }
 
     public void addPlayerInventory(PlayerInventory playerInv) {
@@ -103,24 +97,45 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
     class shop_payment_slot extends Slot {
 
-        private final ShopEntity shop;
-
-        public shop_payment_slot(Inventory inventory, int index, int x, int y, ShopEntity shop1) {
+        public shop_payment_slot(Inventory inventory, int index, int x, int y) {
             super(inventory, index, x, y);
-            this.shop = shop1;
         }
 
         @Override
         public boolean canInsert(ItemStack stack) {
-            return stack.isOf(shop.getPaymentType());
+            return false;
+        }
+
+        @Override
+        public boolean canTakePartial(PlayerEntity player) {
+            return false;
+        }
+
+        @Override
+        public boolean canTakeItems(PlayerEntity playerEntity) {
+            return false;
+        }
+
+        @Override
+        public ItemStack insertStack(ItemStack stack, int count) {
+            return stack;
+        }
+
+        @Override
+        public ItemStack insertStack(ItemStack stack) {
+            return stack;
+        }
+
+        @Override
+        public void setStack(ItemStack stack) {
         }
     }
 
     class shop_vendor_slot extends Slot {
-        private final ShopEntity shop;
-        public shop_vendor_slot(Inventory inventory, int index, int x, int y, ShopEntity shop1) {
+        private final ShopScreenHandlerCustomer handler;
+        public shop_vendor_slot(Inventory inventory, int index, int x, int y, ShopScreenHandlerCustomer handler1) {
             super(inventory, index, x, y);
-            this.shop = shop1;
+            this.handler = handler1;
 
         }
 
@@ -131,7 +146,6 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
         @Override
         public ItemStack takeStack(int amount) {
-
             return super.takeStack(amount);
         }
 
@@ -141,30 +155,10 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
         public boolean canInsert(ItemStack stack) {
             return false;
         }
-    }
-
-    class shop_set_slot extends Slot {
-
-        public shop_set_slot(Inventory inventory, int index, int x, int y) {
-            super(inventory, index, x, y);
-        }
 
         @Override
-        public ItemStack takeStack(int amount) {
-            super.takeStack(amount);
-            return ItemStack.EMPTY;
-
-        }
-
-        @Override
-        public boolean canInsert(ItemStack stack) {
-            setStack(stack);
-            return false;
-        }
-
-        @Override
-        public boolean canTakePartial(PlayerEntity player) {
-            return false;
+        public ItemStack insertStack(ItemStack stack, int amount) {
+            return stack;
         }
     }
 }

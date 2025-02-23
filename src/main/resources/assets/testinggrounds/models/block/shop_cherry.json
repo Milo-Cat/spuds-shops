@@ -1,6 +1,7 @@
 {
   "parent": "testinggrounds:block/shop",
   "textures": {
-    "4": "testinggrounds:block/shop_cherry"
+    "4": "testinggrounds:block/shop_cherry",
+    "particle": "minecraft:block/cherry_planks"
   }
 }

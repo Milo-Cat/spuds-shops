@@ -1,5 +1,8 @@
 {
   "variants": {
-    "": { "model" : "testinggrounds:block/shop_oak"}
+    "facing=north": { "model" : "testinggrounds:block/shop_oak"},
+    "facing=east": { "model" : "testinggrounds:block/shop_oak", "y":  90},
+    "facing=south": { "model" : "testinggrounds:block/shop_oak", "y":  180},
+    "facing=west": { "model" : "testinggrounds:block/shop_oak", "y":  270}
   }
 }
