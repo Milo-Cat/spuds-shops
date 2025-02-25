@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench, by Spudacious5705 and Janko1902",
 	"texture_size": [32, 32],
 	"textures": {
-		"9": "testinggrounds:block/shop_2",
-		"cussion": "testinggrounds:block/shop_2",
+		"cussion": "testinggrounds:block/cussion_red",
+		"glass": "testinggrounds:block/shop_glass",
 		"particle": "minecraft:s/acacia_planks"
 	},
 	"elements": [
@@ -27,12 +27,12 @@
 			"to": [14, 15, 15],
 			"rotation": {"angle": -22.5, "axis": "x", "origin": [0, 6, 16]},
 			"faces": {
-				"north": {"uv": [6, 7, 12, 8.5], "texture": "#9"},
-				"east": {"uv": [0, 10, 5, 11.5], "texture": "#9"},
-				"south": {"uv": [6, 8.5, 12, 10], "texture": "#9"},
-				"west": {"uv": [5, 10, 10, 11.5], "texture": "#9"},
-				"up": {"uv": [6, 5, 0, 0], "texture": "#9"},
-				"down": {"uv": [6, 5, 0, 10], "texture": "#9"}
+				"north": {"uv": [6, 7, 12, 8.5], "texture": "glass"},
+				"east": {"uv": [0, 10, 5, 11.5], "texture": "glass"},
+				"south": {"uv": [6, 8.5, 12, 10], "texture": "glass"},
+				"west": {"uv": [5, 10, 10, 11.5], "texture": "glass"},
+				"up": {"uv": [6, 5, 0, 0], "texture": "glass"},
+				"down": {"uv": [6, 5, 0, 10], "texture": "glass"}
 			}
 		},
 		{
@@ -41,12 +41,12 @@
 			"to": [13, 12, 13],
 			"rotation": {"angle": -22.5, "axis": "x", "origin": [0, 7, 16]},
 			"faces": {
-				"north": {"uv": [10, 10, 15, 10.5], "texture": "#9"},
-				"east": {"uv": [11, 0, 14.5, 0.5], "texture": "#9"},
-				"south": {"uv": [10, 10.5, 15, 11], "texture": "#9"},
-				"west": {"uv": [11, 0.5, 14.5, 1], "texture": "#9"},
-				"up": {"uv": [11, 3.5, 6, 0], "texture": "#9"},
-				"down": {"uv": [11, 3.5, 6, 7], "texture": "#9"}
+				"north": {"uv": [5, 0, 10, 0.5], "texture": "cussion"},
+				"east": {"uv": [5, 1, 8.5, 1.5], "texture": "cussion"},
+				"south": {"uv": [5, 0.5, 10, 1], "texture": "cussion"},
+				"west": {"uv": [5, 1.5, 8.5, 2], "texture": "cussion"},
+				"up": {"uv": [5, 3.5, 0, 0], "texture": "cussion"},
+				"down": {"uv": [5, 3.5, 0, 7], "texture": "cussion"}
 			}
 		},
 		{

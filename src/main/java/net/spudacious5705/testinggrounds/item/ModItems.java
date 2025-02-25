@@ -15,6 +15,10 @@ public class ModItems {
 
     public static final Item RUNIC_GOLD = register(new Item(new FabricItemSettings()), "runic_gold");
 
+    public static final Item STOCK_WARNING = register(new Item(new FabricItemSettings()), "stock_warning");
+
+    public static final Item PAYMENT_WARNING = register(new Item(new FabricItemSettings()), "payment_warning");
+
     private static Item register(Item item, String id) {
         return Registry.register(Registries.ITEM, new Identifier(TestingGrounds.MOD_ID, id), item);
     }

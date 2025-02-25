@@ -70,6 +70,10 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider {
         );
     }
 
+    public Direction getFacing(BlockState state) {
+        return state.get(FACING);
+    }
+
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
@@ -192,11 +196,14 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider {
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
-}
-    /*@Nullable
+
+    @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return checkType(type, ModBlockEntities.SHOP_ENTITY,
                 (world1, pos, state1, blockEntity) -> blockEntity.tick(world1,pos,state1));
-    }*/
+    }
+
+}
+
 

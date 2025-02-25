@@ -28,5 +28,6 @@ public class ModModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(ModItems.SUSPICIOUS_SUBSTANCE, Models.GENERATED);
         itemModelGenerator.register(ModItems.RUNIC_GOLD, Models.GENERATED);
+
     }
 }
