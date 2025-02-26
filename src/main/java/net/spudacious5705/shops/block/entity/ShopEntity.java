@@ -224,6 +224,11 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return false;
     }
 
+    @Override
+    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
+        return slot <= STOCK_END;
+    }
+
     public boolean canBreak(PlayerEntity player) {
         if(player.isCreative()){return true;}
         return this.isOwner(player.getUuid());

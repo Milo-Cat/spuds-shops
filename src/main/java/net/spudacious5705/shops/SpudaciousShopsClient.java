@@ -23,6 +23,7 @@ public class SpudaciousShopsClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_DARK_OAK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_CRIMSON, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_ACACIA, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_JUNGLE, RenderLayer.getCutout());
 
         HandledScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, ShopScreenOwner::new);
         HandledScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, ShopScreenCustomer::new);

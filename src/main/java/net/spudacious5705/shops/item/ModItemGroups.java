@@ -26,6 +26,7 @@ public final class ModItemGroups {
                         entries.add(ModBlocks.SHOP_BLOCK_DARK_OAK);
                         entries.add(ModBlocks.SHOP_BLOCK_SPRUCE);
                         entries.add(ModBlocks.SHOP_BLOCK_WARPED);
+                        entries.add(ModBlocks.SHOP_BLOCK_JUNGLE);
 
                     })
             .displayName(Text.translatable("itemGroup.spudaciousshops.shop_item_group"))

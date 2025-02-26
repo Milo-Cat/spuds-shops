@@ -1,4 +1,4 @@
-// 1.20.1	2025-02-26T17:57:52.0732035	testingGrounds/Recipes
+// 1.20.1	2025-02-26T20:15:35.8446246	testingGrounds/Recipes
 2456311dc72fdfeda6219e729c970d430f6040a8 data\testinggrounds\recipes\shop_cherry.json
 e9a8ef4ce483dddfd02bf1dd58e2df91c76970dc data\testinggrounds\advancements\recipes\building_blocks\shop_mangrove.json
 e315acf405f214858be6e628a00b4fa5cf85dbca data\testinggrounds\advancements\recipes\building_blocks\shop_warped.json
@@ -18,6 +18,6 @@ cd1119e14b3e68c9e41f7920633a86e227bbc140 data\testinggrounds\recipes\shop_dark_o
 6a5ac43770a4b455a21d4c0a233ee64e5b03b432 data\testinggrounds\advancements\recipes\building_blocks\shop_spruce.json
 b352b30a08452692483dcfff6917ad233d9da535 data\testinggrounds\advancements\recipes\building_blocks\shop_bamboo.json
 8f141c3c3719e813e44d63749fd8cd700f32c077 data\testinggrounds\advancements\recipes\building_blocks\shop_jungle.json
-c80d29664dfbac00d1e8e9b5c7a38254ffb3ffd7 data\testinggrounds\recipes\shop_crimson.json
 c15d78b8d4db1352888e3972507d411616a948ae data\testinggrounds\recipes\shop_acacia.json
+c80d29664dfbac00d1e8e9b5c7a38254ffb3ffd7 data\testinggrounds\recipes\shop_crimson.json
 71a2923ad56cc8c059419c5e237b21b9c7e53f89 data\testinggrounds\recipes\shop_birch.json

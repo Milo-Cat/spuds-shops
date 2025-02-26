@@ -15,6 +15,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ItemScatterer;
 import net.spudacious5705.shops.block.entity.ShopEntity;
 
+import static net.minecraft.block.Block.dropStack;
+
 public class ShopScreenHandlerCustomer extends ScreenHandler {
     private final Inventory shopInventory;
     private final PropertyDelegate propertyDelegate;
@@ -85,17 +87,17 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
 
 
-        if (!this.insertItem(originalStack, 0, 35, false)) {
+        if (!this.insertItem(newStack, 0, 36, false)) {
             return ItemStack.EMPTY;
         }
 
         takeStack(64);
 
-        if (originalStack.isEmpty()) {
-            return ItemStack.EMPTY;
+        if (!originalStack.isEmpty()) {
+            dropStack(player.getWorld(), player.getBlockPos(), newStack);
         }
 
-        return originalStack;
+        return ItemStack.EMPTY;
     }
 
     @Override
