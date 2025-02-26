@@ -1,7 +1,0 @@
-{
-	"parent": "testinggrounds:block/shop",
-	"textures": {
-		"4": "testinggrounds:block/shop_spruce",
-		"particle": "minecraft:block/spruce_planks"
-	}
-}

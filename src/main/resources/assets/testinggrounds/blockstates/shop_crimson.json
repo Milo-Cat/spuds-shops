@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model" : "testinggrounds:block/shop_crimson"},
-    "facing=east": { "model" : "testinggrounds:block/shop_crimson", "y":  90},
-    "facing=south": { "model" : "testinggrounds:block/shop_crimson", "y":  180},
-    "facing=west": { "model" : "testinggrounds:block/shop_crimson", "y":  270}
-  }
-}

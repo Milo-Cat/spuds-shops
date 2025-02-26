@@ -1,0 +1,7 @@
+{
+  "parent": "spudaciousshops:block/shop",
+  "textures": {
+    "4": "spudaciousshops:block/shop_crimson",
+    "particle": "minecraft:block/crimson_planks"
+  }
+}

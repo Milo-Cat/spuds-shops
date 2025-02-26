@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model" : "testinggrounds:block/shop_spruce"},
-    "facing=east": { "model" : "testinggrounds:block/shop_spruce", "y":  90},
-    "facing=south": { "model" : "testinggrounds:block/shop_spruce", "y":  180},
-    "facing=west": { "model" : "testinggrounds:block/shop_spruce", "y":  270}
-  }
-}

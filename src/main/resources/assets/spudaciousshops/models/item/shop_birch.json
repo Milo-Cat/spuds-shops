@@ -1,0 +1,6 @@
+{
+  "parent": "spudaciousshops:block/shop",
+  "textures": {
+    "4": "spudaciousshops:block/shop_birch"
+  }
+}

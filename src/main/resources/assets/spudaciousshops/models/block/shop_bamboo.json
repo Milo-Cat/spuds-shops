@@ -1,0 +1,7 @@
+{
+  "parent": "spudaciousshops:block/shop",
+  "textures": {
+    "4": "spudaciousshops:block/shop_bamboo",
+    "particle": "minecraft:block/bamboo_planks"
+  }
+}

@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "testinggrounds:block/dense_wood_block"
-  }
-}
