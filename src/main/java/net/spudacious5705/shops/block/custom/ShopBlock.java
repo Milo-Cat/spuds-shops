@@ -1,5 +1,6 @@
 package net.spudacious5705.shops.block.custom;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -62,10 +63,15 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
 
 
     public ShopBlock(Settings settings) {
-        super(settings.resistance(Float.MAX_VALUE));
+        super(settings);
         this.setDefaultState(
                 this.stateManager.getDefaultState().with(FACING, Direction.NORTH)
         );
+    }
+
+    @Override
+    protected MapCodec<? extends BlockWithEntity> getCodec() {
+        return null;
     }
 
     public Direction getFacing(BlockState state) {
@@ -165,8 +171,9 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
         }
     }
 
+
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
 
         if (world.isClient) return ActionResult.SUCCESS;
 
@@ -196,7 +203,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(type, ModBlockEntities.SHOP_ENTITY,
+        return validateTicker(type, ModBlockEntities.SHOP_ENTITY,
                 (world1, pos, state1, blockEntity) -> blockEntity.tick(world1,pos,state1));
     }
 }

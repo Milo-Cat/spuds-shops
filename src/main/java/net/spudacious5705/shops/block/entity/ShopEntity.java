@@ -8,6 +8,7 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -33,8 +35,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
-    private  final  DefaultedList<ItemStack> itemStacks = DefaultedList.ofSize(78, ItemStack.EMPTY);
+public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory, Inventory {
+    private final int INV_SIZE = 78;
+    private  final  DefaultedList<ItemStack> itemStacks = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY);
 
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
@@ -71,7 +74,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         if (this.ownerID == null) {
             this.ownerID = id;
         }
-        writeNbt(this.createNbt());
+        //writeNbt(this.createNbt(RegistryWrapper.WrapperLookup));
         markDirty();
     }
 
@@ -103,7 +106,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
 
-    @Override
     public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
         packetByteBuf.writeBlockPos(this.pos);
     }
@@ -131,15 +133,49 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return super.getCachedState();
     }
 
-    @Override
     public DefaultedList<ItemStack> getItems() {
         return itemStacks;
+    }
+
+    @Override
+    public int size() {
+        return INV_SIZE;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeStack(int slot, int amount) {
+        return null;
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        return null;
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+
     }
 
     @Override
     public void markDirty() {
         world.updateListeners(pos,getCachedState(),getCachedState(),3);
         super.markDirty();
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return false;
     }
 
     public Item getPaymentType() {
@@ -154,21 +190,21 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        Inventories.readNbt(nbt, itemStacks);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup wrapper) {
+        super.readNbt(nbt, wrapper);
+        Inventories.readNbt(nbt, itemStacks, wrapper);
         if(nbt.containsUuid("owner_id")) {
             this.ownerID = nbt.getUuid("owner_id");
         }
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, itemStacks);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup wrapper) {
+        Inventories.writeNbt(nbt, itemStacks, wrapper);
         if(this.ownerID != null) {
             nbt.putUuid("owner_id", this.ownerID);
         }
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, wrapper);
     }
 
     public void clearFunctionalSlots() {
@@ -182,9 +218,10 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
+
     @Override
-    public NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
 
     public Direction getFacingDirection() {
@@ -219,12 +256,10 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return id.compareTo(ownerID) == 0;
     }
 
-    @Override
     public boolean canExtract(int slot, ItemStack stack, Direction side) {
         return false;
     }
 
-    @Override
     public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
         return slot <= STOCK_END;
     }
@@ -232,6 +267,16 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     public boolean canBreak(PlayerEntity player) {
         if(player.isCreative()){return true;}
         return this.isOwner(player.getUuid());
+    }
+
+    @Override
+    public Object getScreenOpeningData(ServerPlayerEntity serverPlayerEntity) {
+        return null;
+    }
+
+    @Override
+    public void clear() {
+
     }
 
     public final class RendererData{
