@@ -22,7 +22,8 @@ public class ModBlockEntities {
                             ModBlocks.SHOP_BLOCK_DARK_OAK,
                             ModBlocks.SHOP_BLOCK_MANGROVE,
                             ModBlocks.SHOP_BLOCK_SPRUCE,
-                            ModBlocks.SHOP_BLOCK_WARPED
+                            ModBlocks.SHOP_BLOCK_WARPED,
+                            ModBlocks.SHOP_BLOCK_JUNGLE
                             ).build());
 
 
