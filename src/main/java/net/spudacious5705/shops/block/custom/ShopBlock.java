@@ -5,12 +5,15 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 
 import net.minecraft.state.property.DirectionProperty;
@@ -29,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
+
+    public static final MapCodec<ShopBlock> CODEC = ShopBlock.createCodec(ShopBlock::new);
 
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
 
@@ -71,7 +76,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return null;
+        return CODEC;
     }
 
     public Direction getFacing(BlockState state) {
@@ -165,8 +170,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
 
     private void setOwner(World world, BlockPos pos, PlayerEntity player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof ShopEntity) {
-            ShopEntity shopEntity = (ShopEntity) blockEntity;
+        if (blockEntity instanceof ShopEntity shopEntity) {
             shopEntity.setOwnerID(player.getUuid());
         }
     }
@@ -177,9 +181,15 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
 
         if (world.isClient) return ActionResult.SUCCESS;
 
+        BlockEntity be = world.getBlockEntity(pos);
+
+        if(!( be instanceof ShopEntity shopEntity && player != null)) return ActionResult.FAIL;
+
+
         setOwner(world, pos, player);
 
-        NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
+
+        NamedScreenHandlerFactory screenHandlerFactory = (ShopEntity)world.getBlockEntity(pos);
         if (screenHandlerFactory != null) {
             player.openHandledScreen(screenHandlerFactory);
         }
@@ -188,13 +198,21 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
     }
 
     @Override
+    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        onUse(state, world, pos, player, hit);
+        return ItemActionResult.success(false);
+    }
+
+    @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof ShopEntity) {
-                ((ShopEntity) blockEntity).clearFunctionalSlots();
-                ItemScatterer.spawn(world, pos, (ShopEntity) blockEntity);
-                world.updateComparators(pos, this);
+            if (blockEntity != null) {
+                if (blockEntity instanceof ShopEntity shopEntity) {
+                    shopEntity.clearFunctionalSlots();
+                    ItemScatterer.spawn(world, pos, shopEntity);
+                    world.updateComparators(pos, this);
+                }
             }
             super.onStateReplaced(state, world, pos, newState, moved);
         }
@@ -203,6 +221,10 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        if(world.isClient()) {
+            return null;
+        }
+
         return validateTicker(type, ModBlockEntities.SHOP_ENTITY,
                 (world1, pos, state1, blockEntity) -> blockEntity.tick(world1,pos,state1));
     }

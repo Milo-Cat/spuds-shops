@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import net.spudacious5705.shops.SpudaciousShops;
 
 public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
-    private static final Identifier TEXTURE = new Identifier(SpudaciousShops.MOD_ID, "textures/gui/shop_seller.png");
+    private static final Identifier TEXTURE = Identifier.of(SpudaciousShops.MOD_ID, "textures/gui/shop_seller.png");
 
 
     public ShopScreenOwner(ShopScreenHandlerOwner handler1, PlayerInventory inventory, Text title) {
@@ -41,7 +41,6 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
     }

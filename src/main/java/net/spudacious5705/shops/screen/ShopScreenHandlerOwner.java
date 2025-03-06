@@ -10,16 +10,16 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.block.entity.ShopEntity;
+import net.spudacious5705.shops.network.BlockPosPayload;
 
 public class ShopScreenHandlerOwner extends ScreenHandler {
     private final Inventory shopInventory;
-    private final PropertyDelegate propertyDelegate;
     public final ShopEntity shop;
 
-    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, playerInventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
-                new ArrayPropertyDelegate(1));
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, BlockPosPayload payload) {
+        this(syncId, playerInventory, (ShopEntity)playerInventory.player.getWorld().getBlockEntity(payload.pos()));
     }
 
 
@@ -28,17 +28,13 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
     private static final int profit_itemStacks_start = 54;
-    private static final int profit_itemStacks_range = 21;
-    private static final int stock_itemStacks_start = 0;
-    private static final int stock_itemStacks_range = 53;
 
-    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, ShopEntity shopEntity) {
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, syncId);
-        checkSize(((Inventory) blockEntity), 78 );
-        this.shopInventory = ((Inventory) blockEntity);
+        checkSize(shopEntity, 78 );
+        this.shopInventory = shopEntity;
         playerInventory.onOpen(playerInventory.player);
-        this.propertyDelegate = arrayPropertyDelegate;
-        this.shop = (ShopEntity) blockEntity;
+        this.shop = shopEntity;
 
 
         addPlayerInventory(playerInventory);
@@ -47,9 +43,6 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
         this.addSlot(new shop_set_slot(shopInventory, PAYMENT_SLOT,23,11));
         this.addSlot(new shop_set_slot(shopInventory, VENDING_SLOT,23,49));
-
-
-        this.addProperties(arrayPropertyDelegate);
 
 
 

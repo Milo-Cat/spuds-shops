@@ -33,6 +33,6 @@ public final class ModItemGroups {
             .build();
 
     public static void initialise() {
-        Registry.register(Registries.ITEM_GROUP,new Identifier(SpudaciousShops.MOD_ID, "shop_item_group"), SHOP_ITEM_GROUP);
+        Registry.register(Registries.ITEM_GROUP,Identifier.of(SpudaciousShops.MOD_ID, "shop_item_group"), SHOP_ITEM_GROUP);
     }
 }

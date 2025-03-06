@@ -20,32 +20,32 @@ public class ModBlocks {
             .nonOpaque()
             .resistance(Float.MAX_VALUE);
 
-    public static final Block SHOP_BLOCK_ACACIA = registerBlock("shop_acacia",
+    public static final ShopBlock SHOP_BLOCK_ACACIA = registerBlock("shop_acacia",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_BAMBOO = registerBlock("shop_bamboo",
+    public static final ShopBlock SHOP_BLOCK_BAMBOO = registerBlock("shop_bamboo",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_BIRCH = registerBlock("shop_birch",
+    public static final ShopBlock SHOP_BLOCK_BIRCH = registerBlock("shop_birch",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_CHERRY = registerBlock("shop_cherry",
+    public static final ShopBlock SHOP_BLOCK_CHERRY = registerBlock("shop_cherry",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_CRIMSON = registerBlock("shop_crimson",
+    public static final ShopBlock SHOP_BLOCK_CRIMSON = registerBlock("shop_crimson",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_DARK_OAK = registerBlock("shop_dark_oak",
+    public static final ShopBlock SHOP_BLOCK_DARK_OAK = registerBlock("shop_dark_oak",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_MANGROVE = registerBlock("shop_mangrove",
+    public static final ShopBlock SHOP_BLOCK_MANGROVE = registerBlock("shop_mangrove",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_OAK = registerBlock("shop_oak",
+    public static final ShopBlock SHOP_BLOCK_OAK = registerBlock("shop_oak",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_SPRUCE = registerBlock("shop_spruce",
+    public static final ShopBlock SHOP_BLOCK_SPRUCE = registerBlock("shop_spruce",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_WARPED = registerBlock("shop_warped",
+    public static final ShopBlock SHOP_BLOCK_WARPED = registerBlock("shop_warped",
             new ShopBlock(settings));
-    public static final Block SHOP_BLOCK_JUNGLE = registerBlock("shop_jungle",
+    public static final ShopBlock SHOP_BLOCK_JUNGLE = registerBlock("shop_jungle",
             new ShopBlock(settings));
     /*public static final Block TROPHY = registerBlock("trophy",
             new Trophy(new Block(FabricBlockSettings.copyOf(Blocks.GOLD_BLOCK).nonOpaque()),FabricBlockSettings.copyOf(Blocks.GOLD_BLOCK).nonOpaque()));
 */
-    private static Block registerBlock(String name, Block block) {
+    private static <T extends Block> T registerBlock(String name, T block) {
         registerBlockItem(name, block);
         return Registry.register(Registries.BLOCK,Identifier.of(SpudaciousShops.MOD_ID, name), block);
     }

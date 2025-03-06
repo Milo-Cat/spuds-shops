@@ -13,21 +13,20 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.block.entity.ShopEntity;
+import net.spudacious5705.shops.network.BlockPosPayload;
 
 import static net.minecraft.block.Block.dropStack;
 
 public class ShopScreenHandlerCustomer extends ScreenHandler {
     private final Inventory shopInventory;
-    private final PropertyDelegate propertyDelegate;
     private final PlayerInventory playerInventory;
     public final ShopEntity shop;
 
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, playerInventory.player.getWorld().getBlockEntity(buf.readBlockPos()),
-                new ArrayPropertyDelegate(1));
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, BlockPosPayload payload) {
+        this(syncId, playerInventory, (ShopEntity) playerInventory.player.getWorld().getBlockEntity(payload.pos()));
     }
-
 
 
     private  static final int PAYMENT_SLOT = 76;
@@ -35,19 +34,17 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
     private static final int STOCK_END = 53;
     private static final int PROFIT_END = 75;
 
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory1, BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
+    //server constructor
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory1, ShopEntity shopEntity) {
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
-        checkSize(((Inventory) blockEntity), 78 );
-        this.shopInventory = ((Inventory) blockEntity);
+        checkSize(shopEntity, 78 );
+        this.shopInventory = shopEntity;
         this.playerInventory = playerInventory1;
         playerInventory.onOpen(playerInventory.player);
-        this.propertyDelegate = arrayPropertyDelegate;
-        this.shop = (ShopEntity) blockEntity;
+        this.shop = shopEntity;
 
         addPlayerInventory(playerInventory);
         addCustomerInventory();
-
-        this.addProperties(arrayPropertyDelegate);
 
 
 
@@ -152,7 +149,7 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
         for (int i = 0; i <= 36; i++) {
             if(inv.getStack(i).getItem() == paymentType){
                 money += inv.getStack(i).getCount();
-                if(money >= this.shop.getPrice()){return true;};
+                if(money >= this.shop.getPrice()){return true;}
             }
         }
         return false;

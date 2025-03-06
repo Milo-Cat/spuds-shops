@@ -2,13 +2,18 @@ package net.spudacious5705.shops.block.entity;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,6 +26,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
@@ -29,22 +35,48 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.spudacious5705.shops.block.custom.ShopBlock;
+import net.spudacious5705.shops.network.BlockPosPayload;
 import net.spudacious5705.shops.screen.ShopScreenHandlerCustomer;
 import net.spudacious5705.shops.screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory, Inventory {
+public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPosPayload>, Inventory{
     private final int INV_SIZE = 78;
     private  final  DefaultedList<ItemStack> itemStacks = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY);
+
+    /*private final SimpleInventory inventory = new SimpleInventory(78) {
+        @Override
+        public void markDirty() {
+            super.markDirty();
+            update();
+        }
+
+        @Override
+        public void onOpen(PlayerEntity player) {
+            super.onOpen(player);
+            update();
+        }
+
+        @Override
+        public void onClose(PlayerEntity player) {
+            super.onClose(player);
+            update();
+        }
+    };
+
+    private void update() {
+        markDirty();
+        if(world != null)
+            world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
+    }*/
+
 
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
     private static final int STOCK_END = 53;
     private static final int PROFIT_END = 75;
-
-    protected final PropertyDelegate propertyDelegate;
 
     private  final RendererData rendererData;
 
@@ -52,21 +84,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     public ShopEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SHOP_ENTITY, pos, state);
-        this.propertyDelegate = new PropertyDelegate() {
-            @Override
-            public int get(int index) {
-                return ShopEntity.this.getStack(index).getCount();
-            }
-
-            @Override
-            public void set(int index, int value) {
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        };
         this.rendererData = new RendererData(this);
     }
 
@@ -121,11 +138,11 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
         int result = player.getUuid().compareTo(ownerID);
 
-        if(result==0) return new ShopScreenHandlerOwner(syncId, playerInventory, this, this.propertyDelegate);
+        if(result==0) return new ShopScreenHandlerOwner(syncId, playerInventory, this);
 
         if(!isShopFunctional()) {return null;}
 
-        return new ShopScreenHandlerCustomer(syncId, playerInventory, this, this.propertyDelegate);
+        return new ShopScreenHandlerCustomer(syncId, playerInventory, this);
     }
 
     @Override
@@ -144,27 +161,27 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return itemStacks.isEmpty();
     }
 
     @Override
     public ItemStack getStack(int slot) {
-        return null;
+        return itemStacks.get(slot);
     }
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
-        return null;
+        return itemStacks.get(slot).split(amount);
     }
 
     @Override
     public ItemStack removeStack(int slot) {
-        return null;
+        return itemStacks.remove(slot);
     }
 
     @Override
     public void setStack(int slot, ItemStack stack) {
-
+        itemStacks.set(slot, stack);
     }
 
     @Override
@@ -175,7 +192,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     @Override
     public boolean canPlayerUse(PlayerEntity player) {
-        return false;
+        return true;
     }
 
     public Item getPaymentType() {
@@ -184,6 +201,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     public boolean isShopFunctional(){
         if(null == ownerID){return false;}
+        if(null == this.itemStacks){return false;}
         if(this.itemStacks.get(PAYMENT_SLOT).isEmpty()){return false;}
         if(this.itemStacks.get(VENDING_SLOT).isEmpty()){return false;}
         return this.getWorld() != null;
@@ -270,8 +288,8 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
     @Override
-    public Object getScreenOpeningData(ServerPlayerEntity serverPlayerEntity) {
-        return null;
+    public BlockPosPayload getScreenOpeningData(ServerPlayerEntity player) {
+        return new BlockPosPayload(this.pos);
     }
 
     @Override
