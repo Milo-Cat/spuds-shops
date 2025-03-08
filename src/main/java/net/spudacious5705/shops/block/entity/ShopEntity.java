@@ -1,14 +1,11 @@
 package net.spudacious5705.shops.block.entity;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -23,12 +20,11 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -42,35 +38,105 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPosPayload>, Inventory{
+public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPosPayload>{
     private final int INV_SIZE = 78;
+    private final ShopEntity self =  this;
     private  final  DefaultedList<ItemStack> itemStacks = DefaultedList.ofSize(INV_SIZE, ItemStack.EMPTY);
 
-    /*private final SimpleInventory inventory = new SimpleInventory(78) {
+    private final Inventory inv = new Inventory() {
+
+        @Override
+        public int size() {
+            return INV_SIZE;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return itemStacks.isEmpty();
+        }
+
+        @Override
+        public ItemStack getStack(int slot) {
+            return itemStacks.get(slot);
+        }
+
+        @Override
+        public ItemStack removeStack(int slot, int amount) {
+            return itemStacks.get(slot).split(amount);
+        }
+
+        @Override
+        public ItemStack removeStack(int slot) {
+            return itemStacks.remove(slot);
+        }
+
+        @Override
+        public void setStack(int slot, ItemStack stack) {
+            itemStacks.set(slot, stack);
+        }
+
         @Override
         public void markDirty() {
-            super.markDirty();
-            update();
+            self.markDirty();
         }
 
         @Override
-        public void onOpen(PlayerEntity player) {
-            super.onOpen(player);
-            update();
+        public boolean canPlayerUse(PlayerEntity player) {
+            return true;
         }
 
         @Override
-        public void onClose(PlayerEntity player) {
-            super.onClose(player);
-            update();
+        public void clear() {
+            itemStacks.clear();
         }
     };
+
+    public Inventory getInventory() {
+        return inv;
+    }
+
+        /*
+    @Override
+    public int size() {
+        return INV_SIZE;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return itemStacks.isEmpty();
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return itemStacks.get(slot);
+    }
+
+    @Override
+    public boolean canTransferTo(Inventory hopperInventory, int slot, ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        return null;//itemStacks.remove(slot);
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        //itemStacks.set(slot, stack);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return true;
+    }*/
+
 
     private void update() {
         markDirty();
         if(world != null)
             world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
-    }*/
+    }
 
 
     private  static final int PAYMENT_SLOT = 76;
@@ -99,9 +165,9 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         int stock = 0;
         Item displayItem = this.getDisplayItem();
         for (int i = 0; i <= STOCK_END; i++) {
-            if(this.getStack(i).getItem() == displayItem){
-                stock += this.getStack(i).getCount();
-                if(stock >= this.getStack(VENDING_SLOT).getCount()){return true;};
+            if(this.itemStacks.get(i).getItem() == displayItem){
+                stock += this.itemStacks.get(i).getCount();
+                if(stock >= this.itemStacks.get(VENDING_SLOT).getCount()){return true;};
             }
         }
         return false;
@@ -111,7 +177,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         int space = 0;
         ItemStack stack;
         for(int i = PROFIT_END; i > STOCK_END; i--) {
-            stack = this.getStack(i);
+            stack = this.itemStacks.get(i);
             if(stack.isEmpty()){
                 space += 64;
             } else if (stack.isOf(this.getPaymentType())) {
@@ -120,11 +186,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
             if(space >= this.getPrice()){return true;}
         }
         return false;
-    }
-
-
-    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
-        packetByteBuf.writeBlockPos(this.pos);
     }
 
     @Override
@@ -138,50 +199,16 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
         int result = player.getUuid().compareTo(ownerID);
 
-        if(result==0) return new ShopScreenHandlerOwner(syncId, playerInventory, this);
+        if(result==0) return new ShopScreenHandlerOwner(syncId, playerInventory, this, this.inv);
 
         if(!isShopFunctional()) {return null;}
 
-        return new ShopScreenHandlerCustomer(syncId, playerInventory, this);
+        return new ShopScreenHandlerCustomer(syncId, playerInventory, this, this.inv);
     }
 
     @Override
     public BlockState getCachedState() {
         return super.getCachedState();
-    }
-
-    public DefaultedList<ItemStack> getItems() {
-        return itemStacks;
-    }
-
-    @Override
-    public int size() {
-        return INV_SIZE;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return itemStacks.isEmpty();
-    }
-
-    @Override
-    public ItemStack getStack(int slot) {
-        return itemStacks.get(slot);
-    }
-
-    @Override
-    public ItemStack removeStack(int slot, int amount) {
-        return itemStacks.get(slot).split(amount);
-    }
-
-    @Override
-    public ItemStack removeStack(int slot) {
-        return itemStacks.remove(slot);
-    }
-
-    @Override
-    public void setStack(int slot, ItemStack stack) {
-        itemStacks.set(slot, stack);
     }
 
     @Override
@@ -190,13 +217,8 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         super.markDirty();
     }
 
-    @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-        return true;
-    }
-
     public Item getPaymentType() {
-        return this.itemStacks.get(PAYMENT_SLOT).getItem();
+        return this.inv.getStack(PAYMENT_SLOT).getItem();
     }
 
     public boolean isShopFunctional(){
@@ -225,11 +247,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         super.writeNbt(nbt, wrapper);
     }
 
-    public void clearFunctionalSlots() {
-        this.itemStacks.set(PAYMENT_SLOT, ItemStack.EMPTY);
-        this.itemStacks.set(VENDING_SLOT, ItemStack.EMPTY);
-    }
-
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
@@ -252,7 +269,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return dir;
     }
 
-    public Item getDisplayItem() {return itemStacks.get(VENDING_SLOT).getItem();}
+    public Item getDisplayItem() {return this.inv.getStack(VENDING_SLOT).getItem();}
 
     public int getPrice() {
         if(this.itemStacks.get(PAYMENT_SLOT).isEmpty()){return 0;}
@@ -274,14 +291,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return id.compareTo(ownerID) == 0;
     }
 
-    public boolean canExtract(int slot, ItemStack stack, Direction side) {
-        return false;
-    }
-
-    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
-        return slot <= STOCK_END;
-    }
-
     public boolean canBreak(PlayerEntity player) {
         if(player.isCreative()){return true;}
         return this.isOwner(player.getUuid());
@@ -292,9 +301,10 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
         return new BlockPosPayload(this.pos);
     }
 
-    @Override
-    public void clear() {
-
+    public void itemScatter(World world, BlockPos pos) {
+        itemStacks.set(PAYMENT_SLOT, ItemStack.EMPTY);
+        itemStacks.set(VENDING_SLOT, ItemStack.EMPTY);
+        ItemScatterer.spawn(world, pos, inv);
     }
 
     public final class RendererData{

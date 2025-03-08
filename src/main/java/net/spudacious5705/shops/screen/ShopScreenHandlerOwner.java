@@ -23,16 +23,18 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     }
 
 
-
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, ShopEntity shopEntity) {
+        this(syncId, playerInventory, shopEntity, shopEntity.getInventory());
+    }
 
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
     private static final int profit_itemStacks_start = 54;
 
-    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, ShopEntity shopEntity) {
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, ShopEntity shopEntity, Inventory shopInv) {
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, syncId);
-        checkSize(shopEntity, 78 );
-        this.shopInventory = shopEntity;
+        checkSize(shopInv, 78 );
+        this.shopInventory = shopInv;
         playerInventory.onOpen(playerInventory.player);
         this.shop = shopEntity;
 
