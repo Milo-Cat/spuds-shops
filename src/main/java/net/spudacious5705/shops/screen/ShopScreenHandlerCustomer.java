@@ -25,7 +25,7 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
     public final ShopEntity shop;
 
     public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, BlockPosPayload payload) {
-        this(syncId, playerInventory, (ShopEntity) playerInventory.player.getWorld().getBlockEntity(payload.pos()));
+        this(syncId, playerInventory, (ShopEntity) playerInventory.player.getWorld().getBlockEntity(payload.pos()), null);
     }
 
 
@@ -35,10 +35,10 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
     private static final int PROFIT_END = 75;
 
     //server constructor
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory1, ShopEntity shopEntity) {
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory1, ShopEntity shopEntity, Inventory shopInv) {
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
-        checkSize(shopEntity, 78 );
-        this.shopInventory = shopEntity;
+        checkSize(shopInv, 78 );
+        this.shopInventory = shopInv;
         this.playerInventory = playerInventory1;
         playerInventory.onOpen(playerInventory.player);
         this.shop = shopEntity;

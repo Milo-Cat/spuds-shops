@@ -209,8 +209,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity != null) {
                 if (blockEntity instanceof ShopEntity shopEntity) {
-                    shopEntity.clearFunctionalSlots();
-                    ItemScatterer.spawn(world, pos, shopEntity);
+                    shopEntity.itemScatter(world,pos);
                     world.updateComparators(pos, this);
                 }
             }
