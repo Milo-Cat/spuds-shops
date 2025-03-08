@@ -226,7 +226,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     @Override
     public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
-        return slot <= STOCK_END;
+        return false;
     }
 
     public boolean canBreak(PlayerEntity player) {
