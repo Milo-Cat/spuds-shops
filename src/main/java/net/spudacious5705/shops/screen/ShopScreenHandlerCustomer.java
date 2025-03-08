@@ -25,7 +25,7 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
     public final ShopEntity shop;
 
     public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, BlockPosPayload payload) {
-        this(syncId, playerInventory, (ShopEntity) playerInventory.player.getWorld().getBlockEntity(payload.pos()));
+        this(syncId, playerInventory, (ShopEntity) playerInventory.player.getWorld().getBlockEntity(payload.pos()), null);
     }
 
     public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, ShopEntity shop) {
