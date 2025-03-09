@@ -10,6 +10,7 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -120,32 +121,39 @@ public class ShopBlockEntityRenderer implements BlockEntityRenderer<ShopEntity> 
             this.context.getItemRenderer().renderItem(data.paymentType(), ModelTransformationMode.GUI, data.lightLevel(), OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, data.world(), 1);
             matrices.pop();
 
-            if(data.updateIconRotation()) {
-                PlayerEntity player1 = MinecraftClient.getInstance().player;
-                if(player1 != null){
-                    double x = player1.getX() - ((double) shop.getPos().getX() + 0.5);
-                    double z = player1.getZ() - ((double) shop.getPos().getZ() + 0.5);
-                    data.SetTargetRotation((float) MathHelper.atan2(z, x));
-                }
-            }
-
             if(data.stockWarning || data.paymentWarning){
 
-                float h = data.currentRotation - data.lastRotation;
 
-                while (h >= (float) Math.PI) {
-                    h -= (float) (Math.PI * 2);
+                if(data.updateIconRotation()) {
+                    PlayerEntity player1 = MinecraftClient.getInstance().player;
+                    if(player1 != null){
+                        double x = player1.getX() - ((double) shop.getPos().getX() + 0.5);
+                        double z = player1.getZ() - ((double) shop.getPos().getZ() + 0.5);
+                        data.targetRotation = -MathHelper.atan2(z, x);
+                        player1.sendMessage(Text.of(String.valueOf(data.targetRotation)));
+                    }
                 }
 
-                while (h < (float) -Math.PI) {
-                    h += (float) (Math.PI * 2);
+                data.frameRotation = (data.targetRotation - data.lastRotation);
+                if(data.frameRotation > Math.PI){
+                    data.frameRotation -= Math.PI*2;
+                } else if (data.frameRotation < -Math.PI){
+                    data.frameRotation += Math.PI*2;
                 }
 
-                float k = data.lastRotation + h * tickDelta;
+                data.frameRotation *= tickDelta*0.08;
+
+                data.lastRotation += data.frameRotation;
+
+                if(data.lastRotation > Math.PI){
+                    data.lastRotation -= data.doublePi;
+                } else if (data.lastRotation < -Math.PI){
+                    data.lastRotation += data.doublePi;
+                }
 
                 matrices.push();
                 matrices.translate(0.5f, 1.4f, 0.5f);
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotation(-k));
+                matrices.multiply(RotationAxis.POSITIVE_Y.rotation((float)data.lastRotation));
                 matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f));
                 matrices.scale(0.5f, 0.5f, 0.5f);
 
@@ -172,14 +180,5 @@ public class ShopBlockEntityRenderer implements BlockEntityRenderer<ShopEntity> 
 
 
         }
-    }
-
-    private int getRotation(Direction direction){
-        return switch (direction) {
-            default -> 180;
-            case EAST -> 90;
-            case SOUTH -> 0;
-            case WEST -> 270;
-        };
     }
 }

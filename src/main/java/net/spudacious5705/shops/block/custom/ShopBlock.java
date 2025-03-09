@@ -220,7 +220,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        if(world.isClient()) {
+        if(!world.isClient()) {
             return null;
         }
 

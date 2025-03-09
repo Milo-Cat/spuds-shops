@@ -10,12 +10,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -308,9 +306,12 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
     }
 
     public final class RendererData{
+
         private final ShopEntity shop;
-        public float lastRotation;
-        public float currentRotation;
+        public double lastRotation = 0;
+        public double targetRotation = 0;
+        public double frameRotation = 0;
+        public final double doublePi = Math.PI*2;
         private World world;
         private Direction direction = Direction.NORTH;
         private int rotation;
@@ -334,6 +335,10 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
         public void tickAccumulator(float tickDelta){//makes retreiving data periodic instead of on frame
             if (this.tickAccumulation == 0.0f) {
+
+                this.tickAccumulation += (float) Math.random()*40;
+
+                tickPassed = true;
 
                 this.shopFunctional = shop.isShopFunctional();
 
@@ -442,38 +447,7 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
             tickPassed = true;
         }
 
-        public void SetTargetRotation(float r) {
 
-            this.lastRotation = this.currentRotation;
-
-            while (this.currentRotation >= (float) Math.PI) {
-                this.currentRotation -= (float) (Math.PI * 2);
-            }
-
-            while (this.currentRotation < (float) -Math.PI) {
-                this.currentRotation += (float) (Math.PI * 2);
-            }
-
-            while (r >= (float) Math.PI) {
-                r -= (float) (Math.PI * 2);
-            }
-
-            while (r < (float) -Math.PI) {
-                r += (float) (Math.PI * 2);
-            }
-
-            float g = r - this.currentRotation;
-
-            while (g >= (float) Math.PI) {
-                g -= (float) (Math.PI * 2);
-            }
-
-            while (g < (float) -Math.PI) {
-                g += (float) (Math.PI * 2);
-            }
-
-            this.currentRotation += g* 0.4f;
-        }
     }
 
 
