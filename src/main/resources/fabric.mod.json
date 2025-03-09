@@ -3,9 +3,9 @@
 	"id": "spuds_shops",
 	"version": "${version}",
 	"name": "spudsShops",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Simple and decorative shop mod",
 	"authors": [
-		"Me!"
+		"Spudacious5705"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
