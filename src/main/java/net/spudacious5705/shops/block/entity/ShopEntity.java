@@ -236,8 +236,10 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
     public final class RendererData{
         private final ShopEntity shop;
-        public float lastRotation;
-        public float currentRotation;
+        public double lastRotation = 0;
+        public double targetRotation = 0;
+        public double frameRotation = 0;
+        public double doublePi = Math.PI*2;
         private World world;
         private Direction direction = Direction.NORTH;
         private int rotation;
@@ -367,39 +369,6 @@ public class ShopEntity extends BlockEntity implements ExtendedScreenHandlerFact
 
         public void onTick(){
             tickPassed = true;
-        }
-
-        public void SetTargetRotation(float r) {
-
-            this.lastRotation = this.currentRotation;
-
-            while (this.currentRotation >= (float) Math.PI) {
-                this.currentRotation -= (float) (Math.PI * 2);
-            }
-
-            while (this.currentRotation < (float) -Math.PI) {
-                this.currentRotation += (float) (Math.PI * 2);
-            }
-
-            while (r >= (float) Math.PI) {
-                r -= (float) (Math.PI * 2);
-            }
-
-            while (r < (float) -Math.PI) {
-                r += (float) (Math.PI * 2);
-            }
-
-            float g = r - this.currentRotation;
-
-            while (g >= (float) Math.PI) {
-                g -= (float) (Math.PI * 2);
-            }
-
-            while (g < (float) -Math.PI) {
-                g += (float) (Math.PI * 2);
-            }
-
-            this.currentRotation += g* 0.4f;
         }
     }
 
