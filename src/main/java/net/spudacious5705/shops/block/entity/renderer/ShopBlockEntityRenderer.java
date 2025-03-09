@@ -130,7 +130,6 @@ public class ShopBlockEntityRenderer implements BlockEntityRenderer<ShopEntity> 
                         double x = player1.getX() - ((double) shop.getPos().getX() + 0.5);
                         double z = player1.getZ() - ((double) shop.getPos().getZ() + 0.5);
                         data.targetRotation = -MathHelper.atan2(z, x);
-                        player1.sendMessage(Text.of(String.valueOf(data.targetRotation)));
                     }
                 }
 
