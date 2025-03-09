@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "p": {
+      "item": "minecraft:birch_planks"
+    },
+    "w": {
+      "item": "minecraft:white_wool"
+    }
+  },
+  "pattern": [
+    " g ",
+    "pwp",
+    "ccc"
+  ],
+  "result": {
+    "count": 1,
+    "id": "spudaciousshops:shop_birch"
+  }
+}
