@@ -17,7 +17,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 
 import net.minecraft.state.property.DirectionProperty;
-
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +35,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
 
     public static final MapCodec<ShopBlock> CODEC = ShopBlock.createCodec(ShopBlock::new);
 
-    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
+    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
 
     public static final VoxelShape CULLING_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
@@ -91,7 +91,7 @@ public class ShopBlock extends BlockWithEntity implements BlockEntityProvider{
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        switch ((Direction) state.get(FACING)) {
+        switch (state.get(FACING)) {
             case NORTH:
                 return NORTH_SHAPE;
             case SOUTH:
