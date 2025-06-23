@@ -2,8 +2,7 @@ package net.spudacious5705.shops.block.custom;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -35,13 +34,14 @@ import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
 
-public abstract class AbstractShopBlock extends BlockWithEntity implements BlockEntityProvider{
+public abstract class AbstractShopBlock extends Block implements BlockEntityProvider{
 
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final BooleanProperty BREAKABLE = ModProperties.BREAKABLE;
@@ -66,6 +66,7 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
                 )
         );
     }
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -139,8 +140,8 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
 
     public abstract static class AbstractShopBlockState extends BlockState {
 
-        public AbstractShopBlockState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+        public AbstractShopBlockState(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> reference2ObjectArrayMap, MapCodec<BlockState> mapCodec) {
+            super(block, reference2ObjectArrayMap, mapCodec);
         }
 
         @Override
@@ -148,7 +149,7 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
             if(this.getBlock() instanceof AbstractShopBlock) {
                 AbstractShopEntity shop = (AbstractShopEntity) world.getBlockEntity(pos);
                 if(shop != null){
-                if (!shop.canBreak(player)) {
+                if (shop.isUnbreakable(player)) {
                     world.setBlockState(pos, this.withIfExists(BREAKABLE, false));
                     if (world.isClient()) {
                         player.sendMessage(shop.cantBreakMessage(), true);
@@ -172,14 +173,15 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
             world.setBlockState(pos,this.withIfExists(BREAKABLE,false));
         }
 
+
         @Override
-        public ActionResult onUse(World world, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        public ActionResult onUse(World world, PlayerEntity player, BlockHitResult hit) {
 
             if (world.isClient) return ActionResult.SUCCESS;
 
             BlockPos pos = hit.getBlockPos();
 
-            ItemStack stack = player.getStackInHand(hand);
+            ItemStack stack = player.getStackInHand(Hand.MAIN_HAND);
 
             BlockEntity be = world.getBlockEntity(pos);
 
@@ -192,7 +194,7 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
             }
 
             if(world.getBlockEntity(pos) instanceof AbstractShopEntity shop){
-                ExtendedScreenHandlerFactory screenHandlerFactory = shop.createScreenHandlerFactory(false);
+                ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload> screenHandlerFactory = shop.createScreenHandlerFactory(false);
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);
             }}
@@ -276,7 +278,7 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         BlockEntity be = world.getBlockEntity(pos);
         if(be instanceof AbstractShopEntity shop){
-            if(!shop.canBreak(player)){
+            if(shop.isUnbreakable(player)){
                 if(world.isClient()) {
                     player.sendMessage(shop.cantBreakMessage(), true);
                 }

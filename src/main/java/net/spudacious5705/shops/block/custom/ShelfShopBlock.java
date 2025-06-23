@@ -33,6 +33,7 @@ import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
 import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.Nullable;
 
@@ -237,13 +238,13 @@ public class ShelfShopBlock extends AbstractShopBlock{
         }
 
         @Override
-        public ActionResult onUse(World world, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        public ActionResult onUse(World world, PlayerEntity player, BlockHitResult hit) {
 
             if (world.isClient) return ActionResult.SUCCESS;
 
             BlockPos pos = hit.getBlockPos();
 
-            ItemStack stack = player.getStackInHand(hand);
+            ItemStack stack = player.getStackInHand(Hand.MAIN_HAND);
 
             BlockEntity be = world.getBlockEntity(pos);
 
@@ -257,7 +258,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
             if(world.getBlockEntity(pos) instanceof ShelfShopEntity shop){
 
-                ExtendedScreenHandlerFactory screenHandlerFactory =
+                ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload> screenHandlerFactory =
                         shop.createScreenHandlerFactory(
                                 hit.getPos().y > 0.5 + pos.getY()
                         );

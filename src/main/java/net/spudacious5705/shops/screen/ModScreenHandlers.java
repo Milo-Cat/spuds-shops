@@ -1,10 +1,14 @@
 package net.spudacious5705.shops.screen;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.SpudaciousShops;
 
 import java.util.HashMap;
@@ -12,13 +16,26 @@ import java.util.Map;
 
 public class ModScreenHandlers {
 
+    public record ShopScreenPayload(BlockPos pos, boolean openTop) implements CustomPayload {
+        public static final Id<ShopScreenPayload> ID = new Id<>(SpudaciousShops.id("shop_screen_payload"));
+
+        public static final PacketCodec<RegistryByteBuf, ShopScreenPayload> PACKET_CODEC =
+                PacketCodec.tuple(BlockPos.PACKET_CODEC, ShopScreenPayload::pos, pos1 -> new ShopScreenPayload(pos1, openTop));
+
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return ID;
+        }
+    }
+
     public  static  final ScreenHandlerType<ShopScreenHandlerOwner> SHOP_SCREEN_HANDLER_OWNER =
             Registry.register(Registries.SCREEN_HANDLER, id("shop_gui_owner"),
-                    new ExtendedScreenHandlerType<>(ShopScreenHandlerOwner::new));
+                    new ExtendedScreenHandlerType<>(ShopScreenHandlerOwner::new, ShopScreenPayload.PACKET_CODEC));
 
     public  static  final ScreenHandlerType<ShopScreenHandlerCustomer> SHOP_SCREEN_HANDLER_CUSTOMER =
-            Registry.register(Registries.SCREEN_HANDLER, id("shop_gui_customer"),
-                    new ExtendedScreenHandlerType<>(ShopScreenHandlerCustomer::new));
+                        Registry.register(Registries.SCREEN_HANDLER, id("shop_gui_customer"),
+                                new ExtendedScreenHandlerType<>(ShopScreenHandlerCustomer::new,ShopScreenPayload.PACKET_CODEC));
+
 
 
     public static Identifier id(String path) {

@@ -9,6 +9,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -19,10 +21,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -39,6 +41,7 @@ import net.spudacious5705.shops.block.entity.renderer.ShopRenderUtils;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.item.custom.ContractScroll;
 import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ShopScreenHandlerCustomer;
 import net.spudacious5705.shops.screen.ShopScreenHandlerOwner;
@@ -52,7 +55,7 @@ import static net.spudacious5705.shops.block.entity.ShopInventory.*;
 import static net.spudacious5705.shops.item.custom.ContractScroll.isSigned;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
 
-public abstract class AbstractShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory{
+public abstract class AbstractShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload>{
 
     //region INVENTORY
 
@@ -317,16 +320,21 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         public static final PlayerID EMPTY = new PlayerID(new UUID(0,0),"##OWNER NAME NULL##",PermissionLevel.CUSTOMER);
 
         public static PlayerID fromContract(ItemStack contract, PermissionLevel permissionLevel) {
-            NbtCompound nbt = contract.getNbt();
-            if(nbt != null) {
-                if (ContractScroll.isSigned(contract)) {//technically dont need this 2nd check
-                    return new PlayerID(
-                            nbt.getUuid(ContractScroll.NBTuuid),
-                            nbt.getString(ContractScroll.NBTname),
-                            permissionLevel
-                    );
-                }
+
+            if (ContractScroll.isSigned(contract)) {
+
+                Text nameText = ContractScroll.getPlayerName(contract);
+                UUID uuid = ContractScroll.getUUID(contract);
+
+                String name = nameText == null ? "##OWNER NAME NULL##" : nameText.getString();
+
+                return new PlayerID(
+                        uuid,
+                        name,
+                        permissionLevel
+                );
             }
+
             return null;
         }
 
@@ -522,14 +530,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
         ItemStack stack = new ItemStack(ModItems.CONTRACT_SCROLL);
 
-        NbtCompound nbt = new NbtCompound();
+        ContractScroll.sign(stack, Text.of(id.name), id.uuid);
 
-        nbt.putString("player_name", id.name);
-        nbt.putUuid("player_uuid", id.uuid);
-
-        stack.setNbt(nbt);
-
-        return stack.setCustomName(Text.of("Contract - "+id.name));
+        return stack;
     }
 
     public PermissionLevel quickUserSignIn(@NotNull PlayerEntity player){
@@ -549,7 +552,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     public PermissionLevel userSignIn(PlayerEntity player) {
 
         if(identificationRecords.isEmpty()) {
-            identificationRecords.add(new PlayerID(player.getUuid(), player.getEntityName(), PermissionLevel.OWNER));
+            identificationRecords.add(new PlayerID(player.getUuid(), player.getName().getString(), PermissionLevel.OWNER));
             markDirty();
             return PermissionLevel.OWNER;
         }
@@ -611,10 +614,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
     }
 
-
     @Override
-    public void readNbt(NbtCompound nbt) {
-        Inventories.readNbt(nbt, shopInventory);
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.readNbt(nbt, shopInventory,registryLookup);
         identificationRecords.clear();
 
         if(nbt.contains(CONTRACTS, NbtCompound.LIST_TYPE)){
@@ -671,8 +673,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     private static final String CONTRACTS = "contracts";
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, shopInventory, false);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        Inventories.writeNbt(nbt, shopInventory, false,registryLookup);
 
         NbtList contractList = new NbtList();
 
@@ -693,13 +695,15 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
 
         nbt.putInt("decay_timer",this.decayTimer);
-        super.writeNbt(nbt);
+        super.writeNbt(nbt,registryLookup);
     }
 
     @Override
-    public final NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
     }
+
+    
     //endregion
 
 
@@ -792,13 +796,13 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         return null;
     }
 
-    public ExtendedScreenHandlerFactory createScreenHandlerFactory(boolean openTop) {
+    public ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload> createScreenHandlerFactory(boolean openTop) {
 
-        return new ExtendedScreenHandlerFactory() {
+        return new ExtendedScreenHandlerFactory<>() {
+
             @Override
-            public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-                buf.writeBlockPos(pos);
-                buf.writeBoolean(openTop);
+            public ModScreenHandlers.ShopScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
+                return new ModScreenHandlers.ShopScreenPayload(pos,openTop);
             }
 
             @Override
@@ -828,17 +832,16 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBlockPos(this.pos);
-        buf.writeBoolean(false);
-    }
-
-    @Override
     public Text getDisplayName() {
         return Text.literal("Shop");
     }
 
     public abstract int getTextureId();
+
+    @Override
+    public ModScreenHandlers.ShopScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
+        return new ModScreenHandlers.ShopScreenPayload(pos,false);
+    }
 
     //endregion
     
@@ -854,12 +857,12 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     @Override
     public abstract Packet<ClientPlayPacketListener> toUpdatePacket();
 
-    public boolean canBreak(PlayerEntity player) {
-        if(player.isCreative()||decayed)return true;
+    public boolean isUnbreakable(PlayerEntity player) {
+        if(player.isCreative()||decayed)return false;
         if(identificationRecords.isEmpty()){
-            return userSignIn(player).canBreakBlock();
+            return !userSignIn(player).canBreakBlock();
         }
-        return quickUserSignIn(player).canBreakBlock();
+        return !quickUserSignIn(player).canBreakBlock();
     }
 
 

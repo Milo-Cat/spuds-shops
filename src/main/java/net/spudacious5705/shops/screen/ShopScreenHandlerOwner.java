@@ -31,6 +31,11 @@ import static net.spudacious5705.shops.screen.networking.NetworkHelper.SHOP_TAB_
 
 public class ShopScreenHandlerOwner extends ScreenHandler {
 
+    public ShopScreenHandlerOwner(int syncID, PlayerInventory playerInventory, ModScreenHandlers.ShopScreenPayload shopScreenPayload) {
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER,syncID);
+
+    }
+
     void initiateWarn(WarningActivator function) {
         warningActivator = function;
     }

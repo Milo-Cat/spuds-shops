@@ -68,6 +68,10 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
         finishSetup();
     }
 
+    public ShopScreenHandlerCustomer(int syncID, PlayerInventory playerInventory, ModScreenHandlers.ShopScreenPayload payload) {
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncID);
+    }
+
     private void finishSetup(){
 
         playerInventory.onOpen(playerInventory.player);

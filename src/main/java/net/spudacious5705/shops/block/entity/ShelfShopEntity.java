@@ -12,9 +12,12 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,7 +108,7 @@ public class ShelfShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtList nbtList = new NbtList();
 
         for (int i = 0; i < shopInventoryTop.size(); i++) {
@@ -113,29 +116,32 @@ public class ShelfShopEntity extends AbstractShopEntity{
             if (!itemStack.isEmpty()) {
                 NbtCompound nbtCompound = new NbtCompound();
                 nbtCompound.putByte("SlotTwo", (byte)i);
-                itemStack.writeNbt(nbtCompound);
-                nbtList.add(nbtCompound);
+                nbtList.add(itemStack.encode(registryLookup, nbtCompound));
             }
         }
 
         if (!nbtList.isEmpty()) {
             nbt.put("ItemsTwo", nbtList);
         }
-        super.writeNbt(nbt);
+
+        super.writeNbt(nbt, registryLookup);
     }
 
+
     @Override
-    public void readNbt(NbtCompound nbt) {
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+
         NbtList nbtList = nbt.getList("ItemsTwo", NbtElement.COMPOUND_TYPE);
 
         for (int i = 0; i < nbtList.size(); i++) {
             NbtCompound nbtCompound = nbtList.getCompound(i);
             int j = nbtCompound.getByte("SlotTwo") & 255;
             if (j < shopInventoryTop.size()) {
-                shopInventoryTop.set(j, ItemStack.fromNbt(nbtCompound));
+                shopInventoryTop.set(j, ItemStack.fromNbt(registryLookup ,nbtCompound).orElse(ItemStack.EMPTY));
             }
         }
-        super.readNbt(nbt);
+
+        super.readNbt(nbt, registryLookup);
     }
     
     

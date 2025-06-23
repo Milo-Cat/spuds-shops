@@ -1,10 +1,16 @@
 package net.spudacious5705.shops.item.custom;
 
-import net.minecraft.client.item.TooltipContext;
+
+import net.minecraft.component.Component;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -13,6 +19,7 @@ import net.minecraft.util.Rarity;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
@@ -21,14 +28,23 @@ import java.util.List;
 import java.util.UUID;
 
 public class ContractScroll extends Item {
+
+    public static final ComponentType<Text> PLAYER_NAME_COMPONENT = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            SpudaciousShops.id("player_name"),
+            ComponentType.<Text>builder().build()
+    );
+
+    public static final ComponentType<UUID> PLAYER_UUID_COMPONENT = Registry.register(
+            Registries.DATA_COMPONENT_TYPE,
+            SpudaciousShops.id("player_uuid"),
+            ComponentType.<UUID>builder().build()
+    );
+
     public ContractScroll(Settings settings) {
-        super(settings.rarity(Rarity.UNCOMMON).maxCount(1));
+        super(settings.rarity(Rarity.UNCOMMON).maxCount(1).component(PLAYER_NAME_COMPONENT,null).component(PLAYER_UUID_COMPONENT,null));
     }
 
-    @Override
-    public Rarity getRarity(ItemStack stack) {
-        return Rarity.UNCOMMON;
-    }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
@@ -38,16 +54,7 @@ public class ContractScroll extends Item {
             return TypedActionResult.pass(stack);
         }
 
-        NbtCompound nbt = new NbtCompound();
-
-        String name = user.getEntityName();
-
-        nbt.putString(NBTname, name);
-        nbt.putUuid(NBTuuid, user.getUuid());
-
-        stack.setNbt(nbt);
-
-        stack.setCustomName(Text.of("Contract - "+name));
+        sign(stack,user.getName(),user.getUuid());
 
         BlockPos pos = user.getBlockPos();
         world.playSound(pos.getX(),pos.getY(),pos.getZ(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f,1f,true);
@@ -60,35 +67,40 @@ public class ContractScroll extends Item {
         return isSigned(stack);
     }
 
-    @MagicConstant
-    public static final String NBTuuid = "player_uuid";
-    @MagicConstant
-    public static final String NBTname = "player_name";
-
     public static boolean isSigned(ItemStack stack){
-        if (stack.hasNbt()) {
-            NbtCompound originalNBT = stack.getNbt();
-            if(originalNBT != null) {
-                boolean v = originalNBT.contains(NBTuuid);
-                return v;
-            }
+        if (stack.getComponents().contains(PLAYER_UUID_COMPONENT)) {
+            UUID originalUUID = stack.getComponents().get(PLAYER_UUID_COMPONENT);
+            return originalUUID != null;
         }
         return false;
     }
 
     @Nullable
     public static UUID getUUID(ItemStack stack){
-        if(isSigned(stack)) {
-            assert stack.getNbt() != null;
-            return stack.getNbt().getUuid(NBTuuid);
+        if (stack.getComponents().contains(PLAYER_UUID_COMPONENT)) {
+            return stack.getComponents().get(PLAYER_UUID_COMPONENT);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Text getPlayerName(ItemStack stack){
+        if (stack.getComponents().contains(PLAYER_NAME_COMPONENT)) {
+            return stack.getComponents().get(PLAYER_NAME_COMPONENT);
         }
         return null;
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         if(isSigned(stack)){
-                tooltip.add(Text.of("Signed by - " + stack.getNbt().getString(NBTname)));//ignore warning
+            tooltip.add(Text.of("Signed by - " + getPlayerName(stack)));
         }
+    }
+
+    public static void sign(ItemStack stack, Text name, UUID uuid) {
+        stack.set(PLAYER_NAME_COMPONENT,name);
+        stack.set(PLAYER_UUID_COMPONENT,uuid);
+        stack.set(DataComponentTypes.CUSTOM_NAME,Text.of("Contract - "+name));
     }
 }
