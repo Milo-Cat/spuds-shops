@@ -8,6 +8,7 @@ import net.minecraft.data.server.recipe.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.RegistryWrapper;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.ModBlocks;
 import net.spudacious5705.shops.block.custom.AngledShopBlock;
@@ -17,23 +18,26 @@ import net.spudacious5705.shops.util.CushionResources;
 import net.spudacious5705.shops.properties.Colour;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static net.spudacious5705.shops.block.ModBlocks.getAllShops;
 
 public class ModRecipeProvider extends FabricRecipeProvider {
-    public ModRecipeProvider(FabricDataOutput output) {
-        super(output);
+
+
+    public ModRecipeProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, registriesFuture);
     }
 
     @Override
-    public void generate(Consumer<RecipeJsonProvider> consumer) {
+    public void generate(RecipeExporter exporter) {
         CushionResources.initialise();
 
         for (Colour colour : Colour.values()) {
 
             for (Wood wood : Wood.values()) {
-                makeAngledShopRecipe(consumer, wood.angledShopBlock.getColouredShopItem(colour), wood.block, CushionResources.COLOUR_MAP.get(colour).wool());
+                makeAngledShopRecipe(exporter, wood.angledShopBlock.getColouredShopItem(colour), wood.block, CushionResources.COLOUR_MAP.get(colour).wool());
             }
 
         }
@@ -44,7 +48,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .toList();
 
         for (ShelfShopBlock shelf : shelfShops) {
-            makeShelfShopRecipe(consumer, shelf);
+            makeShelfShopRecipe(exporter, shelf);
         }
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, ModBlocks.SHOP_BLOCK_HOOK.asItem())
@@ -57,7 +61,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.CHAIN), conditionsFromItem(Blocks.CHAIN))
                 .criterion(hasItem(Blocks.CHEST), conditionsFromItem(Blocks.CHEST))
                 .criterion(hasItem(Blocks.TRIPWIRE_HOOK), conditionsFromItem(Blocks.TRIPWIRE_HOOK))
-                .offerTo(consumer);
+                .offerTo(exporter);
 
 
         ModBlocks.ALL_RUG_SHOPS.forEach(rug -> {ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, rug.asItem())
@@ -70,7 +74,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(rug.CARPET), conditionsFromItem(rug.CARPET))
                 .criterion(hasItem(Blocks.CHEST), conditionsFromItem(Blocks.CHEST))
                 .criterion(hasItem(Items.GOLD_NUGGET), conditionsFromItem(Items.GOLD_NUGGET))
-                .offerTo(consumer);
+                .offerTo(exporter);
         });
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, ModBlocks.SHOP_BLOCK_CRATE.asItem())
@@ -79,7 +83,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("b  ")
                 .input('b', Blocks.BARREL)
                 .criterion(hasItem(Blocks.BARREL), conditionsFromItem(Blocks.BARREL))
-                .offerTo(consumer);
+                .offerTo(exporter);
 
         ModBlocks.ALL_WINDOW_SHOPS.forEach(window -> {ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, window.asItem())
                 .pattern("   ")
@@ -90,7 +94,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(window.STONE_TYPE), conditionsFromItem(window.STONE_TYPE))
                 .criterion(hasItem(Blocks.CHEST), conditionsFromItem(Blocks.CHEST))
                 .criterion(hasItem(Items.GOLD_NUGGET), conditionsFromItem(Items.GOLD_NUGGET))
-                .offerTo(consumer);
+                .offerTo(exporter);
         });
 
         ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.CONTRACT_SCROLL)
@@ -98,16 +102,16 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input(Items.FEATHER)
                 .criterion(hasItem(Items.PAPER), conditionsFromItem(Items.PAPER))
                 .criterion(hasItem(Items.FEATHER), conditionsFromItem(Items.FEATHER))
-                .offerTo(consumer);
+                .offerTo(exporter);
 
         ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.CONTRACT_SCROLL)
                 .input(ModItems.CONTRACT_SCROLL)
                 .criterion(hasItem(ModItems.CONTRACT_SCROLL), conditionsFromItem(ModItems.CONTRACT_SCROLL))
-                .offerTo(consumer, SpudaciousShops.id("contract_scroll_wipe"));
+                .offerTo(exporter, SpudaciousShops.id("contract_scroll_wipe"));
 
     }
 
-    private void makeAngledShopRecipe(Consumer<RecipeJsonProvider> consumer, Item shopItem, Block wood, Item wool){
+    private void makeAngledShopRecipe(RecipeExporter exporter, Item shopItem, Block wood, Item wool){
         ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, shopItem)
                 .pattern(" g ").pattern("pwp").pattern("ccc")
                 .input('g', Blocks.GLASS)
@@ -120,11 +124,11 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(wood), conditionsFromItem(wood))
                 .criterion(hasItem(wool),
                         conditionsFromItem(wool))
-                .offerTo(consumer);
+                .offerTo(exporter);
 
     }
 
-    private void makeShelfShopRecipe(Consumer<RecipeJsonProvider> consumer, ShelfShopBlock shopItem){
+    private void makeShelfShopRecipe(RecipeExporter exporter, ShelfShopBlock shopItem){
         Block slab = shopItem.SlabWoodType;
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, shopItem, 2)
@@ -133,7 +137,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .input('s', slab)
                 .criterion(hasItem(Blocks.CHEST),conditionsFromItem(Blocks.CHEST))
                 .criterion(hasItem(slab), conditionsFromItem(slab))
-                .offerTo(consumer);
+                .offerTo(exporter);
 
     }
 

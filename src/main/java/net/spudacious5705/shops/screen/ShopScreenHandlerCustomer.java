@@ -10,14 +10,16 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 
 import static net.minecraft.block.Block.dropStack;
 
 public class ShopScreenHandlerCustomer extends ScreenHandler {
     private final AbstractShopEntity.InventoryDelegate shopInventory;
-    final int SCREEN_TEXTURE_ID;
+    final ScreenSettingsGroup.ScreenSettings SCREEN_TEXTURE_ID;
     private final PlayerInventory playerInventory;
 
 
@@ -29,10 +31,10 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
 
 
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {//clientInit
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, ShopScreenPayload payload) {//clientInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
-        BlockPos pos = buf.readBlockPos();
-        boolean openTop = buf.readBoolean();
+        BlockPos pos = payload.pos();
+        boolean openTop = payload.openTop();
         PlayerEntity player = playerInventory.player;
 
         this.playerInventory = playerInventory;
@@ -50,26 +52,22 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
             checkSize(inventoryDelegate, 78 );
             this.shopInventory = inventoryDelegate;
 
-            this.SCREEN_TEXTURE_ID = shop.getTextureId();
+            this.SCREEN_TEXTURE_ID = shop.getScreenSettings().CUSTOMER();
 
             finishSetup();
         } else {
             MinecraftClient.getInstance().setScreen(null);
             this.shopInventory = null;
-            this.SCREEN_TEXTURE_ID = 0;
+            this.SCREEN_TEXTURE_ID = null;
         }
     }
 
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, AbstractShopEntity.InventoryDelegate inventory, int SCREEN_TEXTURE_ID) {//serverInit
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, AbstractShopEntity.InventoryDelegate inventory, ScreenSettingsGroup screen_settings) {//serverInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
         this.shopInventory = inventory;
-        this.SCREEN_TEXTURE_ID = SCREEN_TEXTURE_ID;
+        this.SCREEN_TEXTURE_ID = screen_settings.CUSTOMER();
         this.playerInventory = playerInventory;
         finishSetup();
-    }
-
-    public ShopScreenHandlerCustomer(int syncID, PlayerInventory playerInventory, ModScreenHandlers.ShopScreenPayload payload) {
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncID);
     }
 
     private void finishSetup(){
@@ -82,8 +80,8 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
     }
 
-    public int textureId() {
-        return this.SCREEN_TEXTURE_ID;
+    public Identifier texture() {
+        return this.SCREEN_TEXTURE_ID.textureID();
     }
 
     public void addCustomerInventory() {

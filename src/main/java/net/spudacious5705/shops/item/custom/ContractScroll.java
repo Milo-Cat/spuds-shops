@@ -1,14 +1,13 @@
 package net.spudacious5705.shops.item.custom;
 
 
-import net.minecraft.component.Component;
+import com.mojang.serialization.Codec;
 import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
@@ -20,8 +19,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spudacious5705.shops.SpudaciousShops;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
-import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,16 +26,27 @@ import java.util.UUID;
 
 public class ContractScroll extends Item {
 
-    public static final ComponentType<Text> PLAYER_NAME_COMPONENT = Registry.register(
+    public static class UUIDUtil {
+        public static final Codec<UUID> CODEC = Codec.STRING.xmap(
+                UUID::fromString,
+                UUID::toString
+        );
+    }
+
+    public static final ComponentType<String> PLAYER_NAME_COMPONENT = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
             SpudaciousShops.id("player_name"),
-            ComponentType.<Text>builder().build()
+            ComponentType.<String>builder()
+                    .codec(Codec.STRING)
+                    .build()
     );
 
     public static final ComponentType<UUID> PLAYER_UUID_COMPONENT = Registry.register(
             Registries.DATA_COMPONENT_TYPE,
             SpudaciousShops.id("player_uuid"),
-            ComponentType.<UUID>builder().build()
+            ComponentType.<UUID>builder()
+                    .codec(UUIDUtil.CODEC)
+                    .build()
     );
 
     public ContractScroll(Settings settings) {
@@ -86,7 +94,7 @@ public class ContractScroll extends Item {
     @Nullable
     public static Text getPlayerName(ItemStack stack){
         if (stack.getComponents().contains(PLAYER_NAME_COMPONENT)) {
-            return stack.getComponents().get(PLAYER_NAME_COMPONENT);
+            return Text.of(stack.getComponents().get(PLAYER_NAME_COMPONENT));
         }
         return null;
     }
@@ -99,7 +107,7 @@ public class ContractScroll extends Item {
     }
 
     public static void sign(ItemStack stack, Text name, UUID uuid) {
-        stack.set(PLAYER_NAME_COMPONENT,name);
+        stack.set(PLAYER_NAME_COMPONENT,name.getString());
         stack.set(PLAYER_UUID_COMPONENT,uuid);
         stack.set(DataComponentTypes.CUSTOM_NAME,Text.of("Contract - "+name));
     }

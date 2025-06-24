@@ -1,6 +1,6 @@
 package net.spudacious5705.shops.block;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -156,7 +156,7 @@ public abstract class ModBlocks{
         Registry.register(
                 Registries.ITEM,
                 id,
-                new BlockItem(shop, new FabricItemSettings())
+                new BlockItem(shop, new Item.Settings())
         );
 
         shop = addToAllShops(
@@ -179,7 +179,7 @@ public abstract class ModBlocks{
         Registry.register(
                 Registries.ITEM,
                 id,
-                new BlockItem(shop, new FabricItemSettings())
+                new BlockItem(shop, new Item.Settings())
         );
 
         return addToBasicShops(
@@ -213,7 +213,7 @@ public abstract class ModBlocks{
     private static ShopItem registerShopBlockItem(String name, AngledShopBlock block, Colour colour) {
         Identifier id = SpudaciousShops.id(name + "_" + colour.asString());
         return Registry.register(Registries.ITEM, id,
-                new ShopItem(block, new FabricItemSettings(), colour));
+                new ShopItem(block, new Item.Settings(), colour));
 
     }
 

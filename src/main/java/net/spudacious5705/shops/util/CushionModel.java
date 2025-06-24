@@ -31,11 +31,7 @@ public class CushionModel extends Model {
 	}
 
 	@Override
-	public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
+	public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
 		main.render(matrices, vertices, light, overlay);
-	}
-
-	public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay) {
-		render(matrices, vertices, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
 	}
 }

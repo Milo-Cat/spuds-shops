@@ -2,6 +2,7 @@ package net.spudacious5705.shops.block.custom;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -35,6 +36,7 @@ import net.spudacious5705.shops.block.entity.ShelfShopEntity;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -176,19 +178,26 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(
-                type,
-                ModBlockEntities.SHELF_SHOP_ENTITY,
+        return
                 world.isClient() ?
-                        (world1, pos, state1, blockEntity) -> blockEntity.renderTick()
+                        (world1, pos, state1, blockEntity) -> {
+                            if (blockEntity instanceof ShelfShopEntity be) {
+                                be.renderTick();
+                            }
+                        }
                         :
-                        (world1, pos, shopState, blockEntity) -> blockEntity.serverTick((ServerWorld) world1, pos, (ShelfShopState) shopState)
-        );
+                        (world1, pos, shopState, blockEntity) -> {
+                            if(blockEntity instanceof ShelfShopEntity be){
+                                be.serverTick((ServerWorld) world1, pos, (ShelfShopState) shopState);
+                            }
+                        };
     }
 
     public static class ShelfShopState extends AbstractShopBlockState {
-        public ShelfShopState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+
+
+        public ShelfShopState(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> reference2ObjectArrayMap, MapCodec<BlockState> mapCodec) {
+            super(block, reference2ObjectArrayMap, mapCodec);
         }
 
         @Override
@@ -258,7 +267,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
             if(world.getBlockEntity(pos) instanceof ShelfShopEntity shop){
 
-                ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload> screenHandlerFactory =
+                ExtendedScreenHandlerFactory<ShopScreenPayload> screenHandlerFactory =
                         shop.createScreenHandlerFactory(
                                 hit.getPos().y > 0.5 + pos.getY()
                         );

@@ -1,25 +1,36 @@
 package net.spudacious5705.shops.lootcondition;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.*;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.LootConditionType;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.util.JsonSerializer;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
-import org.spongepowered.include.com.google.common.collect.ImmutableSet;
-
 import java.util.Set;
 
 public class MatchingCushionColourCondition implements LootCondition {
+    public static final MapCodec<MatchingCushionColourCondition> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    Codec.STRING.fieldOf("expected_colour").forGetter(c -> c.expectedColourName)
+            ).apply(instance, MatchingCushionColourCondition::new)
+    );
+
     private final String expectedColourName;
 
     public MatchingCushionColourCondition(String expectedColourName) {
         this.expectedColourName = expectedColourName;
+    }
+
+    @Override
+    public boolean test(LootContext context) {
+        BlockEntity blockEntity = context.get(LootContextParameters.BLOCK_ENTITY);
+        if (blockEntity instanceof AngledShopEntity shop) {
+            return shop.getCushionColour().matchesString(expectedColourName);
+        }
+        return false;
     }
 
     @Override
@@ -29,28 +40,7 @@ public class MatchingCushionColourCondition implements LootCondition {
 
     @Override
     public Set<LootContextParameter<?>> getRequiredParameters() {
-        return ImmutableSet.of(LootContextParameters.BLOCK_ENTITY);
-    }
-
-    @Override
-    public boolean test(LootContext lootContext) {
-        BlockEntity blockEntity = lootContext.get(LootContextParameters.BLOCK_ENTITY);
-        if (blockEntity instanceof AngledShopEntity shop) {
-            return shop.getCushionColour().matchesString(expectedColourName);
-        }
-        return false;
-    }
-
-    public static class Serializer implements JsonSerializer<MatchingCushionColourCondition> {
-        @Override
-        public void toJson(JsonObject json, MatchingCushionColourCondition condition, JsonSerializationContext context) {
-            json.addProperty("expected_colour", condition.expectedColourName);
-        }
-
-        @Override
-        public MatchingCushionColourCondition fromJson(JsonObject json, JsonDeserializationContext context) {
-            String colourName = json.get("expected_colour").getAsString();
-            return new MatchingCushionColourCondition(colourName);
-        }
+        return Set.of(LootContextParameters.BLOCK_ENTITY);
     }
 }
+

@@ -2,7 +2,11 @@ package net.spudacious5705.shops.block.custom;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
-import net.fabricmc.fabric.api.mininglevel.v1.FabricMineableTags;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+import net.fabricmc.fabric.api.block.v1.FabricBlock;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.tag.FabricTagKey;
+import net.fabricmc.fabric.impl.datagen.FabricTagBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -10,11 +14,13 @@ import net.minecraft.block.SideShapeType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.data.server.tag.TagProvider;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -23,6 +29,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -31,6 +38,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.RugShopEntity;
 import org.jetbrains.annotations.Nullable;
@@ -132,19 +140,26 @@ public class RugShopBlock extends AbstractShopBlock{
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(
-                type,
-                ModBlockEntities.RUG_SHOP_ENTITY,
+        return
                 world.isClient() ?
-                        (world1, pos, state1, blockEntity) -> blockEntity.renderTick()
+                        (world1, pos, state1, blockEntity) -> {
+                            if (blockEntity instanceof RugShopEntity be) {
+                                be.renderTick();
+                            }
+                        }
                         :
-                        (world1, pos, shopState, blockEntity) -> blockEntity.serverTick((ServerWorld) world1, pos, (RugShopBlockState) shopState)
-        );
+                        (world1, pos, shopState, blockEntity) -> {
+                            if(blockEntity instanceof RugShopEntity be){
+                                be.serverTick((ServerWorld) world1, pos, (RugShopBlockState) shopState);
+                            }
+                        };
     }
 
     public static class RugShopBlockState extends AbstractShopBlockState {
-        public RugShopBlockState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+
+
+        public RugShopBlockState(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> reference2ObjectArrayMap, MapCodec<BlockState> mapCodec) {
+            super(block, reference2ObjectArrayMap, mapCodec);
         }
 
         @Override
@@ -206,6 +221,6 @@ public class RugShopBlock extends AbstractShopBlock{
 
     @Override
     public TagKey<Block> getPreferredTool() {
-        return FabricMineableTags.SHEARS_MINEABLE;
+        return TagKey.of(RegistryKeys.BLOCK, Identifier.of("fabric", "my_block_tag"));
     }
 }

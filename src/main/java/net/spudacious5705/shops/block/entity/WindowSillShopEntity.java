@@ -13,16 +13,9 @@ public class WindowSillShopEntity extends AbstractShopEntity{
         super(ModBlockEntities.WINDOW_SHOP_ENTITY, pos, state, -0.3f);
     }
 
-
-
     @Override
     public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    @Override
-    public int getTextureId() {
-        return 0;
     }
 
 }

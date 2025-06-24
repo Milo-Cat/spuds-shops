@@ -103,11 +103,6 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
 
     @Override
-    public int getTextureId() {
-        return 0;
-    }
-
-    @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtList nbtList = new NbtList();
 

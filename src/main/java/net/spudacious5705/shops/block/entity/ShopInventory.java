@@ -5,11 +5,10 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
-import org.apache.commons.lang3.Validate;
 
 import java.util.*;
 
-import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
+import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canMerge;
 
 public class ShopInventory extends DefaultedList<ItemStack> {
 
@@ -34,7 +33,7 @@ public class ShopInventory extends DefaultedList<ItemStack> {
         ItemStack stockStack;
         for (int i = 0; i <= STOCK_END; i++) {
             stockStack = get(i);
-            if(canUseInTrade(vend,stockStack)){
+            if(canMerge(vend,stockStack)){
                 stock += stockStack.getCount();
                 if(stock >= vend.getCount()){return false;}
             }
@@ -51,7 +50,7 @@ public class ShopInventory extends DefaultedList<ItemStack> {
             paymentSlot = get(i);
             if(paymentSlot.isEmpty()){
                 space += paymentType.getMaxCount();
-            } else if(canUseInTrade(paymentSlot,paymentType)){
+            } else if(canMerge(paymentSlot,paymentType)){
                 space += paymentSlot.getMaxCount() - paymentSlot.getCount();
             }
             if(space >= price){return false;}
@@ -64,7 +63,7 @@ public class ShopInventory extends DefaultedList<ItemStack> {
         ItemStack payment = getPaymentStack();
         int money = 0;
         for (int i = 0; i <= 36; i++) {
-            if(canUseInTrade(inv.getStack(i),payment)){
+            if(canMerge(inv.getStack(i),payment)){
                 money += inv.getStack(i).getCount();
                 if(money >= payment.getCount()){return false;};
             }

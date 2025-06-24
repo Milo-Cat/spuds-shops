@@ -1,7 +1,7 @@
 package net.spudacious5705.shops.block.custom;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.fabricmc.fabric.api.block.BlockPickInteractionAware;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -24,6 +24,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import net.spudacious5705.shops.item.custom.ShopItem;
@@ -138,8 +139,9 @@ public class AngledShopBlock extends AbstractShopBlock implements BlockPickInter
 
     public static class AngledShopBlockState extends AbstractShopBlockState {
 
-        public AngledShopBlockState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+
+        public AngledShopBlockState(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> reference2ObjectArrayMap, MapCodec<BlockState> mapCodec) {
+            super(block, reference2ObjectArrayMap, mapCodec);
         }
 
         @Override
@@ -224,14 +226,19 @@ public class AngledShopBlock extends AbstractShopBlock implements BlockPickInter
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(
-                type,
-                ModBlockEntities.ANGLED_SHOP_ENTITY,
+        return
                 world.isClient() ?
-                        (world1, pos, state1, blockEntity) -> blockEntity.renderTick()
+                        (world1, pos, state1, blockEntity) -> {
+                            if (blockEntity instanceof AngledShopEntity be) {
+                                be.renderTick();
+                            }
+                        }
                         :
-                        (world1, pos, shopState, blockEntity) -> blockEntity.serverTick((ServerWorld) world1, pos, (AngledShopBlock.AngledShopBlockState) shopState)
-        );
+                        (world1, pos, shopState, blockEntity) -> {
+                            if(blockEntity instanceof AngledShopEntity be){
+                                be.serverTick((ServerWorld) world1, pos, (AngledShopBlockState) shopState);
+                            }
+                        };
     }
 
     private static BlockState importProperties(BlockState defaultState, BlockState originalState) {

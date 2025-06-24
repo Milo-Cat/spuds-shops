@@ -3,13 +3,11 @@ package net.spudacious5705.shops.screen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,24 +15,19 @@ import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
+import net.spudacious5705.shops.screenNetworking.TabSyncPayload;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static net.spudacious5705.shops.block.entity.AbstractShopEntity.player_ID_Records_Delegate.checkAction;
 import static net.spudacious5705.shops.block.entity.ShopInventory.PAYMENT_SLOT;
 import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
-import static net.spudacious5705.shops.screen.networking.NetworkHelper.SHOP_TAB_SYNC_ID;
 
 public class ShopScreenHandlerOwner extends ScreenHandler {
-
-    public ShopScreenHandlerOwner(int syncID, PlayerInventory playerInventory, ModScreenHandlers.ShopScreenPayload shopScreenPayload) {
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER,syncID);
-
-    }
 
     void initiateWarn(WarningActivator function) {
         warningActivator = function;
@@ -76,10 +69,10 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
     private static final int profit_itemStacks_start = 54;
 
-    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {//clientInit
+    public ShopScreenHandlerOwner(int syncId, PlayerInventory playerInventory, ShopScreenPayload payload) {//clientInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, syncId);
-        BlockPos pos = buf.readBlockPos();
-        boolean openTop = buf.readBoolean();
+        BlockPos pos = payload.pos();
+        boolean openTop = payload.openTop();
         PlayerEntity player = playerInventory.player;
 
         this.playerInventory = playerInventory;
@@ -180,9 +173,7 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     @Environment(EnvType.CLIENT)
     public void updateTabSelectionClientside(int tab){
         activeTab = tab;
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeInt(activeTab);
-        ClientPlayNetworking.send(SHOP_TAB_SYNC_ID, buf);
+        ClientPlayNetworking.send(new TabSyncPayload(activeTab));
         updateTabSelection();
     }
 
@@ -458,11 +449,11 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
         @Override
         public boolean canInsert(ItemStack stack) {
-            if(stack.getItem() != this.getStack().getItem()) {
-                this.setStack(ItemStack.EMPTY);
-                return false;
+            if(canMerge(stack, this.getStack())){
+                return true;
             }
-            return true;
+            this.setStack(ItemStack.EMPTY);
+            return false;
         }
 
         @Override
@@ -580,12 +571,8 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
         this.shopInventory.trade(playerInventory);
     }
 
-    public static boolean canUseInTrade(ItemStack stack, ItemStack otherStack) {
-        if (!stack.isOf(otherStack.getItem())) {
-            return false;
-        } else {
-            return Objects.equals(stack.getNbt(), otherStack.getNbt());
-        }
+    public static boolean canMerge(ItemStack stack, ItemStack otherStack) {
+        return ItemStack.areItemsAndComponentsEqual(stack, otherStack);
     }
 
 }

@@ -36,6 +36,7 @@ import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -194,7 +195,7 @@ public abstract class AbstractShopBlock extends Block implements BlockEntityProv
             }
 
             if(world.getBlockEntity(pos) instanceof AbstractShopEntity shop){
-                ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload> screenHandlerFactory = shop.createScreenHandlerFactory(false);
+                ExtendedScreenHandlerFactory<ShopScreenPayload> screenHandlerFactory = shop.createScreenHandlerFactory(false);
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);
             }}
@@ -275,14 +276,14 @@ public abstract class AbstractShopBlock extends Block implements BlockEntityProv
     public abstract<T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type);
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         BlockEntity be = world.getBlockEntity(pos);
         if(be instanceof AbstractShopEntity shop){
             if(shop.isUnbreakable(player)){
                 if(world.isClient()) {
                     player.sendMessage(shop.cantBreakMessage(), true);
                 }
-                return;
+                return state;
             }
         }
         if(player.isCreative()){
@@ -291,6 +292,7 @@ public abstract class AbstractShopBlock extends Block implements BlockEntityProv
         }
         this.spawnBreakParticles(world, player, pos, state);
         world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(player, state));
+        return state;
     }
 
     public ScreenSettingsGroup getScreenSettings(){

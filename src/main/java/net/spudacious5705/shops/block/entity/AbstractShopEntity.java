@@ -9,8 +9,6 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -45,6 +43,7 @@ import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ShopScreenHandlerCustomer;
 import net.spudacious5705.shops.screen.ShopScreenHandlerOwner;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,9 +52,9 @@ import java.util.*;
 
 import static net.spudacious5705.shops.block.entity.ShopInventory.*;
 import static net.spudacious5705.shops.item.custom.ContractScroll.isSigned;
-import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
+import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canMerge;
 
-public abstract class AbstractShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload>{
+public abstract class AbstractShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory<ShopScreenPayload>{
 
     //region INVENTORY
 
@@ -128,7 +127,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             int ptr = 0;
             for(int i = STOCK_END+1; i <= PROFIT_END; i++){
                 storageStack = inventory.get(i);
-                if(canUseInTrade(storageStack,allowStack)||storageStack.isEmpty()){
+                if(canMerge(storageStack,allowStack)||storageStack.isEmpty()){
                     while (ptr<(payList.size()) && (storageStack.getCount() < storageStack.getMaxCount())){
                         space = getAvalableSpace(storageStack);
                         if(storageStack.isEmpty()){
@@ -188,7 +187,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             int moneyRequired = retrieveStack.getCount();
             for (int i = start; i <= end; i++) {
                 ItemStack stack = inventory.getStack(i);
-                if(canUseInTrade(stack,retrieveStack)){
+                if(canMerge(stack,retrieveStack)){
                     if(stack.getCount()>=moneyRequired){
                         addToList(list,stack.split(moneyRequired));
                         break;
@@ -703,7 +702,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         return createNbt(registryLookup);
     }
 
-    
+
     //endregion
 
 
@@ -796,13 +795,13 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         return null;
     }
 
-    public ExtendedScreenHandlerFactory<ModScreenHandlers.ShopScreenPayload> createScreenHandlerFactory(boolean openTop) {
+    public ExtendedScreenHandlerFactory<ShopScreenPayload> createScreenHandlerFactory(boolean openTop) {
 
         return new ExtendedScreenHandlerFactory<>() {
 
             @Override
-            public ModScreenHandlers.ShopScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
-                return new ModScreenHandlers.ShopScreenPayload(pos,openTop);
+            public ShopScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
+                return new ShopScreenPayload(pos,openTop);
             }
 
             @Override
@@ -826,7 +825,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                     return null;
                 }
 
-                return new ShopScreenHandlerCustomer(syncId, playerInventory, inventoryDelegate, getTextureId());
+                return new ShopScreenHandlerCustomer(syncId, playerInventory, inventoryDelegate, getScreenSettings());
             }
         };
     }
@@ -836,11 +835,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         return Text.literal("Shop");
     }
 
-    public abstract int getTextureId();
-
     @Override
-    public ModScreenHandlers.ShopScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
-        return new ModScreenHandlers.ShopScreenPayload(pos,false);
+    public ShopScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
+        return new ShopScreenPayload(pos,false);
     }
 
     //endregion

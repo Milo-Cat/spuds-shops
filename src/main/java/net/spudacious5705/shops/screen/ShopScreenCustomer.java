@@ -11,10 +11,6 @@ import net.spudacious5705.shops.SpudaciousShops;
 
 public class ShopScreenCustomer extends HandledScreen<ShopScreenHandlerCustomer> {
 
-    private static final String[] TEXTURE_BANK = {
-            "textures/gui/shop_customer.png",
-    };
-
     private final Identifier TEXTURE;
 
     protected int backgroundWidth = 176;
@@ -22,7 +18,7 @@ public class ShopScreenCustomer extends HandledScreen<ShopScreenHandlerCustomer>
 
     public ShopScreenCustomer(ShopScreenHandlerCustomer handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        TEXTURE = SpudaciousShops.id(TEXTURE_BANK[handler.SCREEN_TEXTURE_ID]);
+        TEXTURE = handler.texture();
     }
 
     @Override
@@ -48,7 +44,7 @@ public class ShopScreenCustomer extends HandledScreen<ShopScreenHandlerCustomer>
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
+        renderBackground(context,mouseX,mouseY,delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
     }

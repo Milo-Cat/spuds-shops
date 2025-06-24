@@ -2,6 +2,7 @@ package net.spudacious5705.shops.block.custom;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -21,6 +22,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.HookShopEntity;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import org.jetbrains.annotations.Nullable;
@@ -46,19 +48,26 @@ public class HookShopBlock extends AbstractShopBlock{
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(
-                type,
-                ModBlockEntities.HOOK_SHOP_ENTITY,
+        return
                 world.isClient() ?
-                        (world1, pos, state1, blockEntity) -> blockEntity.renderTick()
+                        (world1, pos, state1, blockEntity) -> {
+                            if (blockEntity instanceof HookShopEntity be) {
+                                be.renderTick();
+                            }
+                        }
                         :
-                        (world1, pos, shopState, blockEntity) -> blockEntity.serverTick((ServerWorld) world1, pos, (HookShopBlockState) shopState)
-        );
+                        (world1, pos, shopState, blockEntity) -> {
+                    if(blockEntity instanceof HookShopEntity be){
+                        be.serverTick((ServerWorld) world1, pos, (HookShopBlockState) shopState);
+                    }
+                };
     }
 
     public static class HookShopBlockState extends AbstractShopBlockState {
-        public HookShopBlockState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+
+
+        public HookShopBlockState(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> reference2ObjectArrayMap, MapCodec<BlockState> mapCodec) {
+            super(block, reference2ObjectArrayMap, mapCodec);
         }
 
         @Override

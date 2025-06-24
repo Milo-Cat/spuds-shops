@@ -2,6 +2,7 @@ package net.spudacious5705.shops.block.custom;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -18,6 +19,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.CrateShopEntity;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
@@ -76,19 +78,26 @@ public class CrateShopBlock extends AbstractShopBlock{
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(
-                type,
-                ModBlockEntities.CRATE_SHOP_ENTITY,
+        return
                 world.isClient() ?
-                        (world1, pos, state1, blockEntity) -> blockEntity.renderTick()
+                        (world1, pos, state1, blockEntity) -> {
+                            if (blockEntity instanceof CrateShopEntity be) {
+                                be.renderTick();
+                            }
+                        }
                         :
-                        (world1, pos, shopState, blockEntity) -> blockEntity.serverTick((ServerWorld) world1, pos, (CrateShopState) shopState)
-        );
+                        (world1, pos, shopState, blockEntity) -> {
+                            if(blockEntity instanceof CrateShopEntity be){
+                                be.serverTick((ServerWorld) world1, pos, (CrateShopState) shopState);
+                            }
+                        };
     }
 
     public static class CrateShopState extends AbstractShopBlockState {
-        public CrateShopState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+
+
+        public CrateShopState(Block block, Reference2ObjectArrayMap<Property<?>, Comparable<?>> reference2ObjectArrayMap, MapCodec<BlockState> mapCodec) {
+            super(block, reference2ObjectArrayMap, mapCodec);
         }
 
         @Override

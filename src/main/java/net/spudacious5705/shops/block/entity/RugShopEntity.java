@@ -75,8 +75,4 @@ public class RugShopEntity extends AbstractShopEntity {
         this.rendererData = new RendererData(shopInventory);
         this.furtherData = new RugRenderData();
     }
-
-    public int getTextureId() {
-        return 0;
-    }
 }

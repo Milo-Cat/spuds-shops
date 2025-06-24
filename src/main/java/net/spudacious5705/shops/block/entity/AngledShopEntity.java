@@ -5,7 +5,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.state.property.Property;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.util.CushionTextures;
@@ -13,8 +13,6 @@ import net.spudacious5705.shops.properties.Colour;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Properties;
 
 public class AngledShopEntity extends AbstractShopEntity{
 
@@ -36,13 +34,8 @@ public class AngledShopEntity extends AbstractShopEntity{
     private static final String COLOUR_NBT_TAG = "cushion_colour";
 
     @Override
-    public int getTextureId() {
-        return 0;
-    }
-
-    @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
+    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
         if(nbt.contains(COLOUR_NBT_TAG)) {
             this.cushionColour = Colour.fromId(nbt.getInt(COLOUR_NBT_TAG));
         }else{
@@ -51,9 +44,9 @@ public class AngledShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
-        super.writeNbt(nbt);
+        super.writeNbt(nbt, registryLookup);
     }
 
     public Colour getCushionColour() {

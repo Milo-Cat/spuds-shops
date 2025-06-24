@@ -13,18 +13,17 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spudacious5705.shops.SpudaciousShops;
+import net.spudacious5705.shops.screenNetworking.SelfDemotePayload;
 import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.List;
 
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
-import static net.spudacious5705.shops.screen.networking.NetworkHelper.SHOP_SELF_DEMOTE;
 
 public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     private final ScreenSettingsGroup SETTINGS;
@@ -57,8 +56,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     }
 
     private void WarnPopupContinue(){
-        PacketByteBuf buf = PacketByteBufs.create();
-        ClientPlayNetworking.send(SHOP_SELF_DEMOTE,buf);
+        ClientPlayNetworking.send(new SelfDemotePayload(0));
 
     }
 
@@ -192,7 +190,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
+        renderBackground(context,mouseX,mouseY,delta);
         super.render(context, mouseX, mouseY, delta);
 
         int activeTab = this.handler.getActiveTab();
@@ -361,7 +359,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         }
 
         @Override
-        protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
             int x = this.getX()-3;
             int y = this.getY()-6;
             if(toggle){
@@ -408,7 +406,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         }
 
         @Override
-        protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
             int x = this.getX();
             int y = this.getY()-16;
             if(hovered){

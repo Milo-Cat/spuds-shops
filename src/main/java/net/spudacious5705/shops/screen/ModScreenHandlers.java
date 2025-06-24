@@ -10,23 +10,12 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.SpudaciousShops;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModScreenHandlers {
-
-    public record ShopScreenPayload(BlockPos pos, boolean openTop) implements CustomPayload {
-        public static final Id<ShopScreenPayload> ID = new Id<>(SpudaciousShops.id("shop_screen_payload"));
-
-        public static final PacketCodec<RegistryByteBuf, ShopScreenPayload> PACKET_CODEC =
-                PacketCodec.tuple(BlockPos.PACKET_CODEC, ShopScreenPayload::pos, pos1 -> new ShopScreenPayload(pos1, openTop));
-
-        @Override
-        public Id<? extends CustomPayload> getId() {
-            return ID;
-        }
-    }
 
     public  static  final ScreenHandlerType<ShopScreenHandlerOwner> SHOP_SCREEN_HANDLER_OWNER =
             Registry.register(Registries.SCREEN_HANDLER, id("shop_gui_owner"),

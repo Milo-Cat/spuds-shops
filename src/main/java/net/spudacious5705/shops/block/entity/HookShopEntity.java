@@ -15,10 +15,6 @@ public class HookShopEntity extends AbstractShopEntity{
         super(ModBlockEntities.HOOK_SHOP_ENTITY, pos, state, -2.1f);
     }
 
-    @Override
-    public int getTextureId() {
-        return 0;
-    }
 
     @Override
     public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
