@@ -102,7 +102,10 @@ public class ContractScroll extends Item {
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         if(isSigned(stack)){
-            tooltip.add(Text.of("Signed by - " + getPlayerName(stack)));
+            Text t = getPlayerName(stack);
+            if(t != null) {
+                tooltip.add(Text.of("Signed by - " + t.getString()));
+            }
         }
     }
 

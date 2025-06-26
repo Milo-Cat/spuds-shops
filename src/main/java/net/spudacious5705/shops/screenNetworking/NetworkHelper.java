@@ -32,11 +32,6 @@ public class NetworkHelper {
                 ServerPlayNetworking.send(context.player(), new TabSyncPayload(tab));
             }
         });
-        ClientPlayNetworking.registerGlobalReceiver(TabSyncPayload.ID, (payload, context) -> {
-            if (context.player().currentScreenHandler instanceof ShopScreenHandlerOwner screenHandler) {
-                screenHandler.updateTabSelectionResponse(payload.screenID()); // Update UI on client
-            }
-        });
 
         ServerPlayNetworking.registerGlobalReceiver(SelfDemotePayload.ID, (payload, context) -> {
             ServerPlayerEntity player = context.player();
@@ -49,17 +44,14 @@ public class NetworkHelper {
 
     }
 
-    /*@Environment(EnvType.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static void initialiseCLIENT(){
-
-
-        ClientPlayNetworking.registerGlobalReceiver(TabSyncResponsePayload.ID,
-                (payload, context) -> {
-                    if (context.player().currentScreenHandler instanceof ShopScreenHandlerOwner screenHandler) {
-                        screenHandler.updateTabSelectionResponse(payload.screenID()); // Update UI on client
-                    }
-                });
-    }*/
+        ClientPlayNetworking.registerGlobalReceiver(TabSyncPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof ShopScreenHandlerOwner screenHandler) {
+                screenHandler.updateTabSelectionResponse(payload.screenID()); // Update UI on client
+            }
+        });
+    }
 
 
 }
