@@ -40,12 +40,9 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
     public ShopScreenOwner(ShopScreenHandlerOwner handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        this.backgroundWidth = 256;
-        this.backgroundHeight = 256;
+
         this.SETTINGS = handler.getSettings();
         this.TEXTURE = SETTINGS.SELLER().textureID();
-        this.x = (width - backgroundWidth)/2;
-        this.y = (height - backgroundHeight)/2;
 
         handler.initiateWarn(this::openWarnPopup);
     }
@@ -80,7 +77,10 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
     @Override
     protected void init() {
-        super.init();
+        this.backgroundWidth = 256;
+        this.backgroundHeight = 256;
+        this.x = (width - backgroundWidth)/2+15;
+        this.y = (height - backgroundHeight)/2;
         playerInventoryTitleX = 1000;
         titleX = 1000;
 

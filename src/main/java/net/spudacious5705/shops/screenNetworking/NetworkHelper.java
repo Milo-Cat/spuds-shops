@@ -15,9 +15,10 @@ public class NetworkHelper {
     public static void initialise(){
 
         PayloadTypeRegistry.playC2S().register(TabSyncPayload.ID,TabSyncPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playS2C().register(TabSyncPayload.ID,TabSyncPayload.PACKET_CODEC);
+
         PayloadTypeRegistry.playC2S().register(SelfDemotePayload.ID,SelfDemotePayload.PACKET_CODEC);
         PayloadTypeRegistry.playS2C().register(ShopScreenPayload.ID,ShopScreenPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(TabSyncResponsePayload.ID,TabSyncResponsePayload.PACKET_CODEC);
 
 
         ServerPlayNetworking.registerGlobalReceiver(TabSyncPayload.ID, (payload, context) -> {
@@ -28,7 +29,12 @@ public class NetworkHelper {
                 //update client
                 PacketByteBuf responseBuf = PacketByteBufs.create();
                 responseBuf.writeInt(tab);
-                ServerPlayNetworking.send(context.player(), new TabSyncResponsePayload(tab));
+                ServerPlayNetworking.send(context.player(), new TabSyncPayload(tab));
+            }
+        });
+        ClientPlayNetworking.registerGlobalReceiver(TabSyncPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof ShopScreenHandlerOwner screenHandler) {
+                screenHandler.updateTabSelectionResponse(payload.screenID()); // Update UI on client
             }
         });
 
@@ -39,9 +45,11 @@ public class NetworkHelper {
                 player.closeHandledScreen();
             }
         });
+
+
     }
 
-    @Environment(EnvType.CLIENT)
+    /*@Environment(EnvType.CLIENT)
     public static void initialiseCLIENT(){
 
 
@@ -51,7 +59,7 @@ public class NetworkHelper {
                         screenHandler.updateTabSelectionResponse(payload.screenID()); // Update UI on client
                     }
                 });
-    }
+    }*/
 
 
 }

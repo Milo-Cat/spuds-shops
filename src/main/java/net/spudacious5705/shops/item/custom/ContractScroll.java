@@ -109,6 +109,6 @@ public class ContractScroll extends Item {
     public static void sign(ItemStack stack, Text name, UUID uuid) {
         stack.set(PLAYER_NAME_COMPONENT,name.getString());
         stack.set(PLAYER_UUID_COMPONENT,uuid);
-        stack.set(DataComponentTypes.CUSTOM_NAME,Text.of("Contract - "+name));
+        stack.set(DataComponentTypes.CUSTOM_NAME,Text.of("Contract - "+name.getString()));
     }
 }
