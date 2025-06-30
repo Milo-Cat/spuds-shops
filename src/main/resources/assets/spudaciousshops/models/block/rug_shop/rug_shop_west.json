@@ -1,0 +1,31 @@
+{
+	"credit": "Made with Blockbench, by Spudacious5705",
+	"texture_size": [32, 32],
+	"textures": {
+		"all": "spudaciousshops:block/rug/red"
+	},
+	"elements": [
+		{
+			"name": "joinWest",
+			"from": [0, 0.01, 1],
+			"to": [5, 0.01, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 1]},
+			"faces": {
+				"north": {"uv": [0, 0, 2.5, 0], "texture": "all"},
+				"east": {"uv": [0, 0, 7, 0], "texture": "all"},
+				"south": {"uv": [0, 0, 2.5, 0], "texture": "all"},
+				"west": {"uv": [0, 0, 7, 0], "texture": "all"},
+				"up": {"uv": [8, 15.5, 5.5, 8.5], "texture": "all"},
+				"down": {"uv": [8, 8.5, 5.5, 15.5], "texture": "all"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "main",
+			"origin": [0, 0, 1],
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

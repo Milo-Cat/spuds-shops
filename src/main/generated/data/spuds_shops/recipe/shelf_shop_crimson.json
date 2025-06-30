@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "s": {
+      "item": "minecraft:crimson_slab"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "sss",
+    "ccc"
+  ],
+  "result": {
+    "count": 2,
+    "id": "spudaciousshops:shelf_shop_crimson"
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "itemGroup.spudaciousshops.shop_item_group": "Spud's winkels",
+
+  "block.spudaciousshops.shop_acacia": "Acaciahouten Winkel",
+  "item.spudaciousshops.shop_acacia": "Acaciahouten Winkel",
+
+  "block.spudaciousshops.shop_bamboo": "Bamboe Winkel",
+  "item.spudaciousshops.shop_bamboo": "Bamboe Winkel",
+
+  "block.spudaciousshops.shop_birch": "Berkenhouten Winkel",
+  "item.spudaciousshops.shop_birch": "Berkenhouten Winkel",
+
+  "block.spudaciousshops.shop_cherry": "Kersenhouten Winkel",
+  "item.spudaciousshops.shop_cherry": "Kersenhouten Winkel",
+
+  "block.spudaciousshops.shop_crimson": "Helrode houten Winkel",
+  "item.spudaciousshops.shop_crimson": "Helrode houten Winkel",
+
+  "block.spudaciousshops.shop_dark_oak": "Donkereikenhouten Winkel",
+  "item.spudaciousshops.shop_dark_oak": "Donkereikenhouten Winkel",
+
+  "block.spudaciousshops.shop_mangrove": "Mangrovehouten Winkel",
+  "item.spudaciousshops.shop_mangrove": "Mangrovehouten Winkel",
+
+  "block.spudaciousshops.shop_oak": "Eikenhouten Winkel",
+  "item.spudaciousshops.shop_oak": "Eikenhouten Winkel",
+
+  "block.spudaciousshops.shop_spruce": "Sparrenhouten Winkel",
+  "item.spudaciousshops.shop_spruce": "Sparrenhouten Winkel",
+
+  "block.spudaciousshops.shop_warped": "Spookachtige houten Winkel",
+  "item.spudaciousshops.shop_warped": "Spookachtige houten Winkel",
+
+  "block.spudaciousshops.shop_jungle": "Oerwoudhouten Winkel",
+  "item.spudaciousshops.shop_jungle": "Oerwoudhouten Winkel",
+
+  "block.spudaciousshops.shop_window_andesite": "Andesiet Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_andesite": "Andesiet Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_calcite": "Calciet Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_calcite": "Calciet Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_deepslate": "Wrevelstenen Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_deepslate": "Wrevelstenen Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_granite": "Graniet Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_granite": "Graniet Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_stone": "Stenen Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_stone": "Stenen Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_tuff": "Tufstenen Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_tuff": "Tufstenen Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_dripstone": "Druipstenen Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_dripstone": "Druipstenen Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_blackstone": "Zwartstenen Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_blackstone": "Zwartstenen Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_amethyst": "Amethist Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_amethyst": "Amethist Vensterbank Winkel",
+
+  "block.spudaciousshops.shop_window_end_stone": "Endstenen Vensterbank Winkel",
+  "item.spudaciousshops.shop_window_end_stone": "Endstenen Vensterbank Winkel",
+
+  "block.spudaciousshops.hook_shop": "Haak Winkel",
+  "item.spudaciousshops.hook_shop": "Haak Winkel",
+
+  "block.spudaciousshops.rug_shop": "Kleed Winkel",
+  "item.spudaciousshops.rug_shop": "Kleed Winkel",
+
+  "block.spudaciousshops.crate_shop": "Handelaar's Krat",
+  "item.spudaciousshops.crate_shop": "Handelaar's Krat",
+
+  "item.spudaciousshops.contract_scroll": "Contract Roll",
+
+  "gui.spudaciousshops.owner": "EIGENAAR",
+  "gui.spudaciousshops.manager": "MANAGER",
+  "gui.spudaciousshops.supervisor": "TOEZICHTHOUDER",
+  "gui.spudaciousshops.clerk": "VAKKENVULLER",
+
+  "gui.spudaciousshops.delete_warn_title": "VERWIJDER JE CONTRACT",
+  "gui.spudaciousshops.delete_warn_message_line1": "Je staat op het punt je contract the verwijderen",
+  "gui.spudaciousshops.delete_warn_message_line2": "en all je machtiging weg te halen.",
+  "gui.spudaciousshops.cancel": "ANNULEREN",
+  "gui.spudaciousshops.delete": "VERWIJDEREN",
+
+  "gui.spudaciousshops.text_permissions": "Permissions",
+  "gui.spudaciousshops.text_import_items": "Importeer Voorwerp",
+  "gui.spudaciousshops.text_take_items": "Pak Voorwerp",
+  "gui.spudaciousshops.text_edit_perms": "Verander Machtigingen Van",
+  "gui.spudaciousshops.text_change_trade": "Verander Winkelhandel",
+  "gui.spudaciousshops.text_break_shop": "Sloop Winkel",
+  "gui.spudaciousshops.text_yes": "JA",
+  "gui.spudaciousshops.text_no": "NEE",
+  "gui.spudaciousshops.text_all": "ALLE",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Toezichthouder en lager",
+  "gui.spudaciousshops.text_none": "GEEN",
+
+
+  "block.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_bamboo": "Bamboe Plank Winkel",
+  "item.spudaciousshops.shelf_shop_bamboo": "Bamboe Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_birch": "Berkenhouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_birch": "Berkenhouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_cherry": "Kersenhouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_cherry": "Kersenhouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_crimson": "Helrode houten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_crimson": "Helrode houten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_dark_oak": "Donkereikenhouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_dark_oak": "Donkereikenhouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_mangrove": "Mangrovehouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_mangrove": "Mangrovehouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_oak": "Eikenhouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_oak": "Eikenhouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_spruce": "Sparrenhouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_spruce": "Sparrenhouten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_warped": "Spookachtige houten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_warped": "Spookachtige houten Plank Winkel",
+
+  "block.spudaciousshops.shelf_shop_jungle": "Oerwoudhouten Plank Winkel",
+  "item.spudaciousshops.shelf_shop_jungle": "Oerwoudhouten Plank Winkel"
+}

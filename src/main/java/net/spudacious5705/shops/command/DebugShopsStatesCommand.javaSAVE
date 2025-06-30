@@ -1,0 +1,111 @@
+package net.spudacious5705.shops.command;
+
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.block.BlockState;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import net.spudacious5705.shops.block.ModBlocks;
+import net.spudacious5705.shops.block.custom.AngledShopBlock;
+// getString(ctx, "string")
+// word()
+// literal("foo")
+// argument("bar", word())
+import static net.minecraft.server.command.CommandManager.argument;
+// Import everything in the CommandManager
+
+
+public class DebugShopsStatesCommand {
+
+    public static void register(){
+        CommandRegistrationCallback.EVENT.register(DebugShopsStatesCommand::register);
+    }
+
+    private static void register
+            (
+            CommandDispatcher<ServerCommandSource> dispatcher,
+            CommandRegistryAccess registryAccess,
+            CommandManager.RegistrationEnvironment environment
+    ){
+        dispatcher.register(CommandManager.literal("spudshopdebugstates")
+                .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
+                .executes(DebugShopsStatesCommand::command)
+        );
+        dispatcher.register(CommandManager.literal("countblockstates")
+                .executes(DebugShopsStatesCommand::count)
+        );
+    }
+
+    private static void testRegister
+            (
+                    CommandDispatcher<ServerCommandSource> dispatcher,
+                    CommandRegistryAccess registryAccess,
+                    CommandManager.RegistrationEnvironment environment
+            ){
+        dispatcher.register(CommandManager.literal("foo")
+                .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
+                .then(
+                        argument("value", IntegerArgumentType.integer())
+                        .executes(DebugShopsStatesCommand::square)
+                        .then(
+                                argument("value2", IntegerArgumentType.integer())
+                                .executes(DebugShopsStatesCommand::multiply)
+        )));
+    }
+
+    private static int command(CommandContext<ServerCommandSource> context) {
+        final ServerPlayerEntity player = context.getSource().getPlayer();
+
+        if(player == null){
+            context.getSource().sendFeedback(() -> Text.literal("Null Player"), false);
+            return 0;
+        }
+
+        final BlockPos pos = player.getBlockPos();
+
+        final ServerWorld world = context.getSource().getWorld();
+
+        int x = 0;
+        int y = 0;
+
+        for(AngledShopBlock shop :ModBlocks.getAllShops()){
+            x+=2;
+            for(BlockState state:shop.getStateManager().getStates()){
+                y+=2;
+                world.setBlockState(pos.add(x,0,y),state);
+            }
+            y=0;
+        }
+
+        context.getSource().sendFeedback(() -> Text.literal("generated all shop block states"), true);
+        return 1;
+    }
+
+    private static int count(CommandContext<ServerCommandSource> context) {
+        final int count = ModBlocks.SHOP_BLOCK_ANGLED_ACACIA.getStateManager().getStates().size();
+        context.getSource().sendFeedback(() -> Text.literal("shop blockstate count is: "+ count), true);
+        return count;
+    }
+
+    private static int square(CommandContext<ServerCommandSource> context) {
+        final int value = IntegerArgumentType.getInteger(context, "value");
+        final int result = value*value;
+        context.getSource().sendFeedback(() -> Text.literal(value+"^2 = "+result), true);
+        return 1;
+    }
+    private static int multiply(CommandContext<ServerCommandSource> context) {
+        final int value = IntegerArgumentType.getInteger(context, "value");
+        final int value2 = IntegerArgumentType.getInteger(context, "value2");
+        final int result = value*value2;
+        context.getSource().sendFeedback(() -> Text.literal(value+" * "+value2+" = "+result), true);
+        return 1;
+    }
+
+}

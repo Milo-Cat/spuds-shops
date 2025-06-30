@@ -1,10 +1,12 @@
 package net.spudacious5705.shops.datagen;
 
+import net.fabricmc.fabric.api.block.v1.FabricBlock;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.data.client.BlockStateModelGenerator;
+import net.fabricmc.fabric.api.tag.FabricTagKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
+import net.spudacious5705.shops.block.ModBlockTags;
 import net.spudacious5705.shops.block.ModBlocks;
 
 import java.util.concurrent.CompletableFuture;
@@ -16,17 +18,20 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
-                .add(ModBlocks.SHOP_BLOCK_ACACIA)
-                .add(ModBlocks.SHOP_BLOCK_BAMBOO)
-                .add(ModBlocks.SHOP_BLOCK_BIRCH)
-                .add(ModBlocks.SHOP_BLOCK_CHERRY)
-                .add(ModBlocks.SHOP_BLOCK_CRIMSON)
-                .add(ModBlocks.SHOP_BLOCK_DARK_OAK)
-                .add(ModBlocks.SHOP_BLOCK_MANGROVE)
-                .add(ModBlocks.SHOP_BLOCK_OAK)
-                .add(ModBlocks.SHOP_BLOCK_SPRUCE)
-                .add(ModBlocks.SHOP_BLOCK_WARPED);
+        ModBlocks.registerModBlocks();
 
+
+        FabricTagBuilder pick = getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE);
+        FabricTagBuilder axe = getOrCreateTagBuilder(BlockTags.AXE_MINEABLE);
+        ModBlocks.getAllShops().forEach(shop ->{
+            getOrCreateTagBuilder(shop.getPreferredTool()).add(shop);
+        });
+
+
+        addShops(getOrCreateTagBuilder(ModBlockTags.SPUDS_SHOPS));
+    }
+
+    private void addShops(FabricTagBuilder builder) {
+        ModBlocks.getAllShops().forEach(builder::add);
     }
 }

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "g": {
+      "item": "minecraft:glass"
+    },
+    "p": {
+      "item": "minecraft:warped_planks"
+    },
+    "w": {
+      "item": "minecraft:pink_wool"
+    }
+  },
+  "pattern": [
+    " g ",
+    "pwp",
+    "ccc"
+  ],
+  "result": {
+    "item": "spudaciousshops:shop_warped_pink"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "s": {
+      "item": "minecraft:birch_slab"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "sss",
+    "ccc"
+  ],
+  "result": {
+    "count": 2,
+    "item": "spudaciousshops:shelf_shop_birch"
+  },
+  "show_notification": true
+}

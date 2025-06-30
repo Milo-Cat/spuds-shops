@@ -10,20 +10,27 @@ import net.minecraft.util.Identifier;
 import net.spudacious5705.shops.SpudaciousShops;
 
 public class ShopScreenCustomer extends HandledScreen<ShopScreenHandlerCustomer> {
-    private static final Identifier TEXTURE = Identifier.of(SpudaciousShops.MOD_ID, "textures/gui/shop_customer.png");
-    protected int backgroundWidth = 176;
-    protected int backgroundHeight = 165;
 
-    public ShopScreenCustomer(ShopScreenHandlerCustomer handler1, PlayerInventory inventory, Text title) {
-        super(handler1, inventory, title);
+    private final Identifier TEXTURE;
+
+    public ShopScreenCustomer(ShopScreenHandlerCustomer handler, PlayerInventory inventory, Text title) {
+        super(handler, inventory, title);
+        TEXTURE = handler.texture();
     }
+
+    private int textureX = 0;
+    private int textureY = 0;
 
     @Override
     protected void init() {
-        super.init();
         playerInventoryTitleX = 1000;
         titleX = 1000;
-
+        this.backgroundWidth = 256;
+        this.backgroundHeight = 256;
+        x = (width - backgroundWidth)/2+45;
+        y = (height - backgroundHeight)/2+50;
+        textureX = x-25;
+        textureY = y-90;
     }
 
     @Override
@@ -31,16 +38,15 @@ public class ShopScreenCustomer extends HandledScreen<ShopScreenHandlerCustomer>
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        x = (width - backgroundWidth)/2;
-        y = (height - backgroundHeight)/2;
         RenderSystem.setShaderTexture(0, TEXTURE);
-        context.drawTexture(TEXTURE, x , y, 0, 0, backgroundWidth, backgroundHeight);
+        context.drawTexture(TEXTURE, textureX , textureY, 0, 0, backgroundWidth, backgroundHeight);
     }
 
 
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context,mouseX,mouseY,delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
     }

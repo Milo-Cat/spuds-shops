@@ -1,0 +1,5 @@
+// 1.20.1	2025-06-20T01:32:02.243111779	Spud's Shops/Tags for minecraft:block
+280d54aba1ed49efec41c13c963b9096295e526d data/fabric/tags/blocks/mineable/shears.json
+504c0d46a8c0c9cb7c0e9bf98ef63f8b01cb30b5 data/minecraft/tags/blocks/mineable/axe.json
+32d17aef3ab51ad8c6299e265e95dcca68e64bef data/spudaciousshops/tags/blocks/spuds_shops.json
+99dbd5c94ee7361e74ad4c4c56c609807cc5c319 data/minecraft/tags/blocks/mineable/pickaxe.json

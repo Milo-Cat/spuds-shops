@@ -1,36 +1,27 @@
 package net.spudacious5705.shops.screen;
 
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
-import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.spudacious5705.shops.block.entity.ShopEntity;
-import net.spudacious5705.shops.network.BlockPosPayload;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
+import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 
 import static net.minecraft.block.Block.dropStack;
 
 public class ShopScreenHandlerCustomer extends ScreenHandler {
-    private final Inventory shopInventory;
+    private final AbstractShopEntity.InventoryDelegate shopInventory;
+    final ScreenSettingsGroup.ScreenSettings SCREEN_TEXTURE_ID;
     private final PlayerInventory playerInventory;
-    public final ShopEntity shop;
 
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, BlockPosPayload payload) {
-        this(syncId, playerInventory, (ShopEntity) playerInventory.player.getWorld().getBlockEntity(payload.pos()));
-    }
-
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, ShopEntity shop) {
-        this(syncId, playerInventory, shop, shop.getInventory());
-    }
 
 
     private  static final int PAYMENT_SLOT = 76;
@@ -38,29 +29,68 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
     private static final int STOCK_END = 53;
     private static final int PROFIT_END = 75;
 
-    //server constructor
-    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory1, ShopEntity shopEntity, Inventory shopInv) {
+
+
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, ShopScreenPayload payload) {//clientInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
-        checkSize(shopInv, 78 );
-        this.shopInventory = shopInv;
-        this.playerInventory = playerInventory1;
+        BlockPos pos = payload.pos();
+        boolean openTop = payload.openTop();
+        PlayerEntity player = playerInventory.player;
+
+        this.playerInventory = playerInventory;
+
+        if(player.getWorld().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
+            AbstractShopEntity.InventoryDelegate inventoryDelegate = null;
+
+            if (openTop) {
+                inventoryDelegate = shop.getOtherInventoryDelegate(player);
+            }
+
+            if (inventoryDelegate == null) {
+                inventoryDelegate = shop.getInventoryDelegate(player);
+            }
+            checkSize(inventoryDelegate, 78 );
+            this.shopInventory = inventoryDelegate;
+
+            this.SCREEN_TEXTURE_ID = shop.getScreenSettings().CUSTOMER();
+
+            finishSetup();
+        } else {
+            MinecraftClient.getInstance().setScreen(null);
+            this.shopInventory = null;
+            this.SCREEN_TEXTURE_ID = null;
+        }
+    }
+
+    public ShopScreenHandlerCustomer(int syncId, PlayerInventory playerInventory, AbstractShopEntity.InventoryDelegate inventory, ScreenSettingsGroup screen_settings) {//serverInit
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, syncId);
+        this.shopInventory = inventory;
+        this.SCREEN_TEXTURE_ID = screen_settings.CUSTOMER();
+        this.playerInventory = playerInventory;
+        finishSetup();
+    }
+
+    private void finishSetup(){
+
         playerInventory.onOpen(playerInventory.player);
-        this.shop = shopEntity;
+
 
         addPlayerInventory(playerInventory);
         addCustomerInventory();
 
+    }
 
-
+    public Identifier texture() {
+        return this.SCREEN_TEXTURE_ID.textureID();
     }
 
     public void addCustomerInventory() {
-        this.addSlot(new shop_payment_slot(shopInventory, PAYMENT_SLOT, 80, 11));
-        this.addSlot(new shop_vendor_slot(shopInventory, VENDING_SLOT, 80, 59, this));
+        this.addSlot(new shop_payment_slot(shopInventory, PAYMENT_SLOT, 80-34, 11+25));
+        this.addSlot(new shop_vendor_slot(shopInventory, VENDING_SLOT, 80+35, 59-23, this));
     }
 
     public void addPlayerInventory(PlayerInventory playerInv) {
-            addPlayerInventory(playerInv,8,84);
+        addPlayerInventory(playerInv,8,84);
     }
 
     private void addPlayerInventory(PlayerInventory playerInventory, int offsetx, int offsety) {
@@ -77,27 +107,9 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
 
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
-        ItemStack newStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(invSlot);
-        if (!slot.hasStack()) {return newStack;}
-        ItemStack originalStack = slot.getStack();
-        newStack = originalStack.copy();
-
-        if(!(this.slots.get(invSlot) instanceof ShopScreenHandlerCustomer.shop_vendor_slot vendorSlot)){return ItemStack.EMPTY;}
-        if(!vendorSlot.canTakeItems(player)){return ItemStack.EMPTY;}
-
-
-
-        if (!this.insertItem(newStack, 0, 36, false)) {
-            return ItemStack.EMPTY;
+        while(shopInventory.canTrade(player)){
+            shopInventory.trade(playerInventory);
         }
-
-        takeStack(64);
-
-        if (!originalStack.isEmpty()) {
-            dropStack(player.getWorld(), player.getBlockPos(), newStack);
-        }
-
         return ItemStack.EMPTY;
     }
 
@@ -142,121 +154,22 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
         }
     }
 
-    public boolean hasEnoughStock(){
-        return this.shop.hasEnoughStock();
-    }
-
-    private boolean hasEnoughMoneyyyyyyyy(PlayerEntity player) {
-        Inventory inv = player.getInventory();
-        Item paymentType = this.shop.getPaymentType();
-        int money = 0;
-        for (int i = 0; i <= 36; i++) {
-            if(inv.getStack(i).getItem() == paymentType){
-                money += inv.getStack(i).getCount();
-                if(money >= this.shop.getPrice()){return true;}
-            }
-        }
-        return false;
-    }
-
-    private boolean spaceForMoney(){
-        return this.shop.spaceForMoney();
-    }
-
-    private void extractItems(int quantity, int endPoint, Item item, Inventory inv){
-
-        for(int i = STOCK_END; i >= 0; i--){
-
-            if(inv.getStack(i).getItem() != item){continue;}
-
-            if(inv.getStack(i).getCount() >= quantity){
-                inv.getStack(i).decrement(quantity);
-                break;
-            } else {
-                quantity -= inv.getStack(i).getCount();
-                inv.removeStack(i);
-            }
-        }
-    }
-
-
-
-    public ItemStack takeStack(int amount) {
-        int vendQuantity = shopInventory.getStack(VENDING_SLOT).getCount();
-        if(amount<vendQuantity){return ItemStack.EMPTY;}
-
-        //extract from stockpile
-
-        extractItems(vendQuantity, STOCK_END, this.shop.getDisplayItem(), this.shopInventory);
-
-        //extract payment from player inventory
-
-        extractItems(this.shop.getPrice(), 35, this.shop.getPaymentType(), this.playerInventory);
-
-        //insert payment into shop
-
-        ItemStack stack = new ItemStack(this.shop.getPaymentType(),this.shop.getPrice());
-        int pointer = STOCK_END;
-        ItemStack shopStack;
-        int space;
-
-        while (stack.getCount() > 0){
-            pointer++;
-            shopStack = this.shopInventory.getStack(pointer);
-            if(shopStack.isEmpty()){
-                this.shopInventory.setStack(pointer, stack);
-                break;
-            }
-            if(!shopStack.isOf(this.shop.getPaymentType())){continue;}
-
-            space = 64 - shopStack.getCount();
-            if(space >= stack.getCount()){
-                shopInventory.getStack(pointer).increment(stack.getCount());
-                break;
-            } else {
-                stack.decrement(space);
-                shopInventory.getStack(pointer).increment(space);
-            }
-
-        }
-
-
-        return new ItemStack(shopInventory.getStack(VENDING_SLOT).getItem(), shopInventory.getStack(VENDING_SLOT).getCount());
-    }
-
-    private void message(String message){
-
-        PlayerEntity player = playerInventory.player;
-        if(player.getWorld().isClient()) {
-            player.sendMessage(Text.of(message), true);
-        }
-    }
-
-    static class shop_vendor_slot extends Slot {
+    class shop_vendor_slot extends Slot {
         private final ShopScreenHandlerCustomer handler;
-        public shop_vendor_slot(Inventory inventory, int index, int x, int y, ShopScreenHandlerCustomer handler1) {
+        public shop_vendor_slot(AbstractShopEntity.InventoryDelegate inventory, int index, int x, int y, ShopScreenHandlerCustomer handler) {
             super(inventory, index, x, y);
-            this.handler = handler1;
-
+            this.handler = handler;
         }
 
         @Override
         public ItemStack takeStack(int amount) {
-            return this.handler.takeStack(amount);
+            handler.trade();
+            return ItemStack.EMPTY;
         }
 
         @Override
         public boolean canTakeItems(PlayerEntity playerEntity) {
-            if(!handler.hasEnoughStock()){errorMessage("Shop is out of stock",playerEntity);return false;}
-            if(!handler.spaceForMoney()){errorMessage("Shop cannot store any more currency",playerEntity);return false;}
-            if(!handler.hasEnoughMoneyyyyyyyy(playerEntity)){errorMessage("You do not have enough currency",playerEntity);return false;}
-            return true;
-        }
-
-        private void errorMessage(String message, PlayerEntity player){
-            if(player.getWorld().isClient()) {
-                player.sendMessage(Text.of(message), true);
-            }
+            return shopInventory.canTrade(playerEntity);
         }
 
         @Override
@@ -265,8 +178,21 @@ public class ShopScreenHandlerCustomer extends ScreenHandler {
         }
 
         @Override
+        public boolean canTakePartial(PlayerEntity player) {
+            return false;
+        }
+
+        @Override
         public ItemStack insertStack(ItemStack stack, int amount) {
             return stack;
         }
+
+        @Override
+        public void setStack(ItemStack stack) {}
     }
+
+    private void trade() {
+        this.shopInventory.trade(playerInventory);
+    }
+
 }

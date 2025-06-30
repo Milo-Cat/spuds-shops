@@ -1,7 +1,7 @@
 {
   "parent": "spudaciousshops:block/shop",
   "textures": {
-    "4": "spudaciousshops:block/shop_warped",
+    "4": "spudaciousshops:block/angled_shop/warped_angled",
     "particle": "minecraft:block/warped_planks"
   }
 }

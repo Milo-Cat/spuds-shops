@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "r": {
+      "item": "minecraft:calcite"
+    }
+  },
+  "pattern": [
+    "   ",
+    " r ",
+    "ccc"
+  ],
+  "result": {
+    "item": "spudaciousshops:shop_window_calcite"
+  },
+  "show_notification": true
+}

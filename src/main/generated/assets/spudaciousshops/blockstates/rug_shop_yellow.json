@@ -1,0 +1,41 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "spudaciousshops:block/rug_shop_yellow_main"
+      }
+    },
+    {
+      "apply": {
+        "model": "spudaciousshops:block/rug_shop_yellow_east"
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "spudaciousshops:block/rug_shop_yellow_north"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "spudaciousshops:block/rug_shop_yellow_south"
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "spudaciousshops:block/rug_shop_yellow_west"
+      },
+      "when": {
+        "west": "true"
+      }
+    }
+  ]
+}

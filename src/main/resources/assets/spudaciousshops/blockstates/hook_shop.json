@@ -1,0 +1,60 @@
+{
+  "multipart": [
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_chain", "y":  90},
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_chain", "y":  90},
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_chain", "y":  270},
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_chain", "y":  270},
+      "when": {
+        "facing": "west"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_plaque"},
+      "when": {
+        "facing": "north"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_plaque", "y":  90},
+      "when": {
+        "facing": "east"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_plaque", "y":  180},
+      "when": {
+        "facing": "south"
+      }
+    },
+    {
+      "apply":
+        { "model" : "spudaciousshops:block/hook_shop_plaque", "y":  270},
+      "when": {
+        "facing": "west"
+      }
+    }
+  ]
+}

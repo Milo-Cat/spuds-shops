@@ -2,16 +2,17 @@
 	"schemaVersion": 1,
 	"id": "spuds_shops",
 	"version": "${version}",
-	"name": "spudsShops",
-	"description": "Simple and decorative shop mod",
+	"name": "Spud's Shops",
+	"description": "A simple and decorative shop mod",
 	"authors": [
 		"Spudacious5705"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/spuds-shops",
+		"issues": "https://modrinth.com/mod/spuds-shops/issues",
+		"sources": "https://github.com/Milo-Cat/spuds-shops"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/spudaciousshops/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -23,6 +24,9 @@
 		],
 		"fabric-datagen": [
 			"net.spudacious5705.shops.SpudaciousShopsDataGenerator"
+		],
+		"server": [
+			"net.spudacious5705.shops.SpudaciousShopsServer"
 		]
 	},
 	"mixins": [

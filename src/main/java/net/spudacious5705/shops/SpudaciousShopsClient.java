@@ -3,31 +3,25 @@ package net.spudacious5705.shops;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.spudacious5705.shops.block.ModBlocks;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
-import net.spudacious5705.shops.block.entity.renderer.ShopBlockEntityRenderer;
-import net.spudacious5705.shops.model.CushionModel;
-import net.spudacious5705.shops.model.CushionResources;
-import net.spudacious5705.shops.model.CushionTextures;
+import net.spudacious5705.shops.block.entity.renderer.*;
+import net.spudacious5705.shops.screenNetworking.NetworkHelper;
+import net.spudacious5705.shops.util.CushionModel;
+import net.spudacious5705.shops.util.CushionResources;
+import net.spudacious5705.shops.util.CushionTextures;
 import net.spudacious5705.shops.screen.*;
 
 public class SpudaciousShopsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_BIRCH, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_OAK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_WARPED, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_SPRUCE, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_CHERRY, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_MANGROVE, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_BAMBOO, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_DARK_OAK, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_CRIMSON, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_ACACIA, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.SHOP_BLOCK_JUNGLE, RenderLayer.getCutout());
+
+        ModBlocks.getAllShops().forEach((Block shop) -> BlockRenderLayerMap.INSTANCE.putBlock(shop, RenderLayer.getCutout()));
+
 
         EntityModelLayerRegistry.registerModelLayer(CushionModel.LAYER_LOCATION, CushionModel::getTexturedModelData);
 
@@ -37,8 +31,13 @@ public class SpudaciousShopsClient implements ClientModInitializer {
         CushionTextures.initialiseCushionTextures();
         CushionResources.initialise();
 
-        BlockEntityRendererFactories.register(ModBlockEntities.SHOP_ENTITY, ShopBlockEntityRenderer::new);
-        //BlockEntityRendererFactories.register(ModBlockEntities.SHOP_ENTITY, ShopBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.ANGLED_SHOP_ENTITY, AngledShopBlockRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.WINDOW_SHOP_ENTITY, WindowSillShopEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.HOOK_SHOP_ENTITY, HookShopEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.RUG_SHOP_ENTITY, RugShopEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.CRATE_SHOP_ENTITY, CrateShopEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.SHELF_SHOP_ENTITY, ShelfShopEntityRenderer::new);
 
+        NetworkHelper.initialiseCLIENT();
     }
 }

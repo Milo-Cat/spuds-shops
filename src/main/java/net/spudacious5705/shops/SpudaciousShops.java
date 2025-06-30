@@ -2,19 +2,21 @@ package net.spudacious5705.shops;
 
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.util.Identifier;
+import net.spudacious5705.shops.block.ModBlockTags;
 import net.spudacious5705.shops.block.ModBlocks;
+import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.ModBlockEntities;
-import net.spudacious5705.shops.event.ShopBreakHandler;
 import net.spudacious5705.shops.item.ModItemGroups;
 import net.spudacious5705.shops.item.ModItems;
+import net.spudacious5705.shops.lootcondition.ModLootConditions;
 import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
+import net.spudacious5705.shops.screenNetworking.NetworkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+//import net.spudacious5705.shops.command.DebugShopsStatesCommand;
 
 
 public class SpudaciousShops implements ModInitializer {
@@ -24,17 +26,23 @@ public class SpudaciousShops implements ModInitializer {
 	@Override
 	public void onInitialize() {
 
-		ModProperties.registerModProperties();
+		ModBlockTags.initialise();
+        ModProperties.registerModProperties();
 
-		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
+		ModItems.registerModItems();
+		VariantResources.register();
 
 		ModBlockEntities.registerBlockEntities();
 		ModScreenHandlers.registerScreenHandlers();
-		AttackBlockCallback.EVENT.register(new ShopBreakHandler());
 
 		ModItemGroups.initialise();
 
+		//DebugShopsStatesCommand.register(); //for DEBUG purposes only
+
+		ModLootConditions.registerLootConditions();
+
+		NetworkHelper.initialise();
 	}
 
 	public static Identifier id(String path) {

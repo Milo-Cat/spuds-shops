@@ -1,0 +1,134 @@
+{
+  "itemGroup.spudaciousshops.shop_item_group": "Les boutiques de Spud",
+
+"block.spudaciousshops.shop_acacia": "Boutique en acacia",
+  "item.spudaciousshops.shop_acacia": "Boutique en acacia",
+  
+  "block.spudaciousshops.shop_bamboo": "Boutique en bambou",
+  "item.spudaciousshops.shop_bamboo": "Boutique en bambou",
+  
+  "block.spudaciousshops.shop_birch": "Boutique en bouleau",
+  "item.spudaciousshops.shop_birch": "Boutique en bouleau",
+  
+  "block.spudaciousshops.shop_cherry": "Boutique en cerisier",
+  "item.spudaciousshops.shop_cherry": "Boutique en cerisier",
+  
+  "block.spudaciousshops.shop_crimson": "Boutique carmin",
+  "item.spudaciousshops.shop_crimson": "Boutique carmin",
+  
+  "block.spudaciousshops.shop_dark_oak": "Boutique en chêne noir",
+  "item.spudaciousshops.shop_dark_oak": "Boutique en chêne noir",
+  
+  "block.spudaciousshops.shop_mangrove": "Boutique en mangrove",
+  "item.spudaciousshops.shop_mangrove": "Boutique en mangrove",
+  
+  "block.spudaciousshops.shop_oak": "Boutique en chêne",
+  "item.spudaciousshops.shop_oak": "Boutique en chêne",
+  
+  "block.spudaciousshops.shop_spruce": "Boutique en sapin",
+  "item.spudaciousshops.shop_spruce": "Boutique en sapin",
+  
+  "block.spudaciousshops.shop_warped": "Boutique biscornue",
+  "item.spudaciousshops.shop_warped": "Boutique biscornue",
+  
+  "block.spudaciousshops.shop_jungle": "Boutique en acajou",
+  "item.spudaciousshops.shop_jungle": "Boutique an acajou",
+
+  "block.spudaciousshops.shop_window_andesite": "Boutique rebord de fenêtre en andesite",
+  "item.spudaciousshops.shop_window_andesite": "Boutique rebord de fenêtre en andesite",
+
+  "block.spudaciousshops.shop_window_calcite": "Boutique rebord de fenêtre en calcite",
+  "item.spudaciousshops.shop_window_calcite": "Boutique rebord de fenêtre en calcite",
+
+  "block.spudaciousshops.shop_window_deepslate": "Boutique rebord de fenêtre en ardoise des abîmes",
+  "item.spudaciousshops.shop_window_deepslate": "Boutique rebord de fenêtre en ardoise des abîmes",
+
+  "block.spudaciousshops.shop_window_granite": "Boutique rebord de fenêtre en granite",
+  "item.spudaciousshops.shop_window_granite": "Boutique rebord de fenêtre en granite",
+
+  "block.spudaciousshops.shop_window_stone": "Boutique rebord de fenêtre en roche",
+  "item.spudaciousshops.shop_window_stone": "Boutique rebord de fenêtre en roche",
+
+  "block.spudaciousshops.shop_window_tuff": "Boutique rebord de fenêtre en tuf",
+  "item.spudaciousshops.shop_window_tuff": "Boutique rebord de fenêtre en tuf",
+
+  "block.spudaciousshops.shop_window_dripstone": "Boutique rebord de fenêtre en spéléothème",
+  "item.spudaciousshops.shop_window_dripstone": "Boutique rebord de fenêtre en spéléothème",
+
+  "block.spudaciousshops.shop_window_blackstone": "Boutique rebord de fenêtre en roche noire",
+  "item.spudaciousshops.shop_window_blackstone": "Boutique rebord de fenêtre en roche noire",
+
+  "block.spudaciousshops.shop_window_amethyst": "Boutique rebord de fenêtre en améthyste",
+  "item.spudaciousshops.shop_window_amethyst": "Boutique rebord de fenêtre en améthyste",
+
+  "block.spudaciousshops.shop_window_end_stone": "Boutique rebord de fenêtre en pierre de l'End",
+  "item.spudaciousshops.shop_window_end_stone": "Boutique rebord de fenêtre en pierre de l'End",
+
+  "block.spudaciousshops.hook_shop": "Boutique à crochet",
+  "item.spudaciousshops.hook_shop": "Boutique à crochet",
+
+  "block.spudaciousshops.rug_shop": "Boutique sur tapis",
+  "item.spudaciousshops.rug_shop": "Boutique sur tapis",
+
+  "block.spudaciousshops.crate_shop": "Caisse de marchant",
+  "item.spudaciousshops.crate_shop": "Caisse de marchant",
+
+  "item.spudaciousshops.contract_scroll": "Rouleau de Contrat",
+
+  "gui.spudaciousshops.owner": "PROPRIÉTAIRE",
+  "gui.spudaciousshops.manager": "GÉRANT",
+  "gui.spudaciousshops.supervisor": "SUPERVISEUR",
+  "gui.spudaciousshops.clerk": "VENDEUR",
+  
+  "gui.spudaciousshops.delete_warn_title": "SUPPRIMER VOTRE CONTRAT",
+  "gui.spudaciousshops.delete_warn_message_line1": "Vous êtes sur le point de supprimez votre contrat",
+  "gui.spudaciousshops.delete_warn_message_line2": "et retirer toutes vos permissions.",
+  "gui.spudaciousshops.cancel": "ANNULER",
+  "gui.spudaciousshops.delete": "SUPPRIMER",
+
+  "gui.spudaciousshops.text_permissions": "Permissions",
+  "gui.spudaciousshops.text_import_items": "Ajouter des objets",
+  "gui.spudaciousshops.text_take_items": "Prendre des objets",
+  "gui.spudaciousshops.text_edit_perms": "Editer les Permissions de",
+  "gui.spudaciousshops.text_change_trade": "Changer l'échange de la boutique",
+  "gui.spudaciousshops.text_break_shop": "Casser la boutique",
+  "gui.spudaciousshops.text_yes": "OUI",
+  "gui.spudaciousshops.text_no": "NON",
+  "gui.spudaciousshops.text_all": "TOUT",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Superviseur et subordonné",
+  "gui.spudaciousshops.text_none": "RIEN",
+
+
+  "block.spudaciousshops.shelf_shop_acacia": "Boutique en étagère d'acacia",
+  "item.spudaciousshops.shelf_shop_acacia": "Boutique en étagère d'acacia",
+
+  "block.spudaciousshops.shelf_shop_bamboo": "Boutique en étagère de bambou",
+  "item.spudaciousshops.shelf_shop_bamboo": "Boutique en étagère de bambou",
+
+  "block.spudaciousshops.shelf_shop_birch": "Boutique en étagère de bouleau",
+  "item.spudaciousshops.shelf_shop_birch": "Boutique en étagère de bouleau",
+
+  "block.spudaciousshops.shelf_shop_cherry": "Boutique en étagère de cerisier",
+  "item.spudaciousshops.shelf_shop_cherry": "Boutique en étagère de cerisier",
+
+  "block.spudaciousshops.shelf_shop_crimson": "Boutique en étagère carmin",
+  "item.spudaciousshops.shelf_shop_crimson": "Boutique en étagère carmin",
+
+  "block.spudaciousshops.shelf_shop_dark_oak": "Boutique en étagère de chêne noir",
+  "item.spudaciousshops.shelf_shop_dark_oak": "Boutique en étagère de chêne noir",
+
+  "block.spudaciousshops.shelf_shop_mangrove": "Boutique en étagère de mangrove",
+  "item.spudaciousshops.shelf_shop_mangrove": "Boutique en étagère de mangrove",
+
+  "block.spudaciousshops.shelf_shop_oak": "Boutique en étagère de chêne",
+  "item.spudaciousshops.shelf_shop_oak": "Boutique en étagère de chêne",
+
+  "block.spudaciousshops.shelf_shop_spruce": "Boutique en étagère de sapin",
+  "item.spudaciousshops.shelf_shop_spruce": "Boutique en étagère de sapin",
+
+  "block.spudaciousshops.shelf_shop_warped": "Boutique en étagère biscornue",
+  "item.spudaciousshops.shelf_shop_warped": "Boutique en étagère biscornue",
+
+  "block.spudaciousshops.shelf_shop_jungle": "Boutique en étagère d'acajou",
+  "item.spudaciousshops.shelf_shop_jungle": "Boutique en étagère d'acajou"
+}

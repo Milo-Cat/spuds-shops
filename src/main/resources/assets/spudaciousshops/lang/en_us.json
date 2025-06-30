@@ -1,25 +1,182 @@
 {
+  "itemGroup.spudaciousshops.shop_item_group": "Spud's shops",
+
   "block.spudaciousshops.shop_acacia": "Acacia Shop",
   "item.spudaciousshops.shop_acacia": "Acacia Shop",
+
   "block.spudaciousshops.shop_bamboo": "Bamboo Shop",
   "item.spudaciousshops.shop_bamboo": "Bamboo Shop",
+
   "block.spudaciousshops.shop_birch": "Birch Shop",
   "item.spudaciousshops.shop_birch": "Birch Shop",
+
   "block.spudaciousshops.shop_cherry": "Cherry Shop",
   "item.spudaciousshops.shop_cherry": "Cherry Shop",
+
   "block.spudaciousshops.shop_crimson": "Crimson Shop",
   "item.spudaciousshops.shop_crimson": "Crimson Shop",
+
   "block.spudaciousshops.shop_dark_oak": "Dark oak Shop",
   "item.spudaciousshops.shop_dark_oak": "Dark oak Shop",
+
   "block.spudaciousshops.shop_mangrove": "Mangrove Shop",
   "item.spudaciousshops.shop_mangrove": "Mangrove Shop",
+
   "block.spudaciousshops.shop_oak": "Oak Shop",
   "item.spudaciousshops.shop_oak": "Oak Shop",
+
   "block.spudaciousshops.shop_spruce": "Spruce Shop",
   "item.spudaciousshops.shop_spruce": "Spruce Shop",
+
   "block.spudaciousshops.shop_warped": "Warped Shop",
   "item.spudaciousshops.shop_warped": "Warped Shop",
+
   "block.spudaciousshops.shop_jungle": "Jungle Shop",
   "item.spudaciousshops.shop_jungle": "Jungle Shop",
-  "itemGroup.spudaciousshops.shop_item_group": "Spud's shops"
+
+  "block.spudaciousshops.shop_window_andesite": "Andesite Windowsill Shop",
+  "item.spudaciousshops.shop_window_andesite": "Andesite Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_calcite": "Calcite Windowsill Shop",
+  "item.spudaciousshops.shop_window_calcite": "Calcite Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_deepslate": "Deepslate Windowsill Shop",
+  "item.spudaciousshops.shop_window_deepslate": "Deepslate Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_granite": "Granite Windowsill Shop",
+  "item.spudaciousshops.shop_window_granite": "Granite Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_stone": "Stone Windowsill Shop",
+  "item.spudaciousshops.shop_window_stone": "Stone Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_tuff": "Tuff Windowsill Shop",
+  "item.spudaciousshops.shop_window_tuff": "Tuff Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_dripstone": "Dripstone Windowsill Shop",
+  "item.spudaciousshops.shop_window_dripstone": "Dripstone Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_blackstone": "Blackstone Windowsill Shop",
+  "item.spudaciousshops.shop_window_blackstone": "Blackstone Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_amethyst": "Amethyst Windowsill Shop",
+  "item.spudaciousshops.shop_window_amethyst": "Amethyst Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_end_stone": "End Stone Windowsill Shop",
+  "item.spudaciousshops.shop_window_end_stone": "End Stone Windowsill Shop",
+
+  "block.spudaciousshops.hook_shop": "Hook Shop",
+  "item.spudaciousshops.hook_shop": "Hook Shop",
+
+  "block.spudaciousshops.rug_shop_white": "Rug Shop White",
+  "item.spudaciousshops.rug_shop_white": "Rug Shop White",
+
+  "block.spudaciousshops.rug_shop_orange": "Rug Shop Orange",
+  "item.spudaciousshops.rug_shop_orange": "Rug Shop Orange",
+
+  "block.spudaciousshops.rug_shop_magenta": "Rug Shop Magenta",
+  "item.spudaciousshops.rug_shop_magenta": "Rug Shop Magenta",
+
+  "block.spudaciousshops.rug_shop_light_blue": "Rug Shop Light Blue",
+  "item.spudaciousshops.rug_shop_light_blue": "Rug Shop Light Blue",
+
+  "block.spudaciousshops.rug_shop_yellow": "Rug Shop Yellow",
+  "item.spudaciousshops.rug_shop_yellow": "Rug Shop Yellow",
+
+  "block.spudaciousshops.rug_shop_lime": "Rug Shop Lime",
+  "item.spudaciousshops.rug_shop_lime": "Rug Shop Lime",
+
+  "block.spudaciousshops.rug_shop_pink": "Rug Shop Pink",
+  "item.spudaciousshops.rug_shop_pink": "Rug Shop Pink",
+
+  "block.spudaciousshops.rug_shop_gray": "Rug Shop Gray",
+  "item.spudaciousshops.rug_shop_gray": "Rug Shop Gray",
+
+  "block.spudaciousshops.rug_shop_light_gray": "Rug Shop Light Gray",
+  "item.spudaciousshops.rug_shop_light_gray": "Rug Shop Light Gray",
+
+  "block.spudaciousshops.rug_shop_cyan": "Rug Shop Cyan",
+  "item.spudaciousshops.rug_shop_cyan": "Rug Shop Cyan",
+
+  "block.spudaciousshops.rug_shop_purple": "Rug Shop Purple",
+  "item.spudaciousshops.rug_shop_purple": "Rug Shop Purple",
+
+  "block.spudaciousshops.rug_shop_blue": "Rug Shop Blue",
+  "item.spudaciousshops.rug_shop_blue": "Rug Shop Blue",
+
+  "block.spudaciousshops.rug_shop_brown": "Rug Shop Brown",
+  "item.spudaciousshops.rug_shop_brown": "Rug Shop Brown",
+
+  "block.spudaciousshops.rug_shop_green": "Rug Shop Green",
+  "item.spudaciousshops.rug_shop_green": "Rug Shop Green",
+
+  "block.spudaciousshops.rug_shop": "Rug Shop Red",
+  "item.spudaciousshops.rug_shop": "Rug Shop Red",
+
+  "block.spudaciousshops.rug_shop_black": "Rug Shop Black",
+  "item.spudaciousshops.rug_shop_black": "Rug Shop Black",
+
+
+  "block.spudaciousshops.crate_shop": "Merchant's Crate",
+  "item.spudaciousshops.crate_shop": "Merchant's Crate",
+
+  "item.spudaciousshops.contract_scroll": "Contract Scroll",
+
+  "gui.spudaciousshops.currency_type": "£",
+
+  "gui.spudaciousshops.owner": "OWNER",
+  "gui.spudaciousshops.manager": "MANAGER",
+  "gui.spudaciousshops.supervisor": "SUPERVISOR",
+  "gui.spudaciousshops.clerk": "CLERK",
+
+  "gui.spudaciousshops.delete_warn_title": "DELETE YOUR CONTRACT",
+  "gui.spudaciousshops.delete_warn_message_line1": "You are about to delete your contract",
+  "gui.spudaciousshops.delete_warn_message_line2": "and remove all your permissions.",
+  "gui.spudaciousshops.cancel": "CANCEL",
+  "gui.spudaciousshops.delete": "DELETE",
+
+  "gui.spudaciousshops.text_permissions": "Permissions",
+  "gui.spudaciousshops.text_import_items": "Import Items",
+  "gui.spudaciousshops.text_take_items": "Take Items",
+  "gui.spudaciousshops.text_edit_perms": "Edit Permissions Of",
+  "gui.spudaciousshops.text_change_trade": "Change Shop Trade",
+  "gui.spudaciousshops.text_break_shop": "Break Shop",
+  "gui.spudaciousshops.text_yes": "YES",
+  "gui.spudaciousshops.text_no": "NO",
+  "gui.spudaciousshops.text_all": "ALL",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor and Lower",
+  "gui.spudaciousshops.text_none": "NONE",
+
+
+  "block.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
+  "item.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_bamboo": "Bamboo Shelf Shop",
+  "item.spudaciousshops.shelf_shop_bamboo": "Bamboo Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_birch": "Birch Shelf Shop",
+  "item.spudaciousshops.shelf_shop_birch": "Birch Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_cherry": "Cherry Shelf Shop",
+  "item.spudaciousshops.shelf_shop_cherry": "Cherry Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_crimson": "Crimson Shelf Shop",
+  "item.spudaciousshops.shelf_shop_crimson": "Crimson Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_dark_oak": "Dark Oak Shelf Shop",
+  "item.spudaciousshops.shelf_shop_dark_oak": "Dark Oak Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_mangrove": "Mangrove Shelf Shop",
+  "item.spudaciousshops.shelf_shop_mangrove": "Mangrove Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_oak": "Oak Shelf Shop",
+  "item.spudaciousshops.shelf_shop_oak": "Oak Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_spruce": "Spruce Shelf Shop",
+  "item.spudaciousshops.shelf_shop_spruce": "Spruce Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_warped": "Warped Shelf Shop",
+  "item.spudaciousshops.shelf_shop_warped": "Warped Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
+  "item.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop"
 }

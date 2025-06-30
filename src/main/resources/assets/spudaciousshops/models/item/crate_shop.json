@@ -1,0 +1,82 @@
+{
+	"credit": "Made with Blockbench, by Spudacious5705",
+	"texture_size": [64, 64],
+	"textures": {
+		"4": "spudaciousshops:block/crate_shop",
+		"particle": "spudaciousshops:block/crate_shop"
+	},
+	"elements": [
+		{
+			"name": "exterior",
+			"from": [1, 0, -0.5],
+			"to": [15, 7, 16.5],
+			"faces": {
+				"north": {"uv": [11.25, 6, 7.75, 7.75], "rotation": 180, "texture": "#4"},
+				"east": {"uv": [6, 4.25, 7.75, 8.5], "rotation": 270, "texture": "#4"},
+				"south": {"uv": [11.25, 6, 7.75, 4.25], "texture": "#4"},
+				"west": {"uv": [7, 0, 8.75, 4.25], "rotation": 90, "texture": "#4"},
+				"up": {"uv": [0, 0, 3.5, 4.25], "rotation": 180, "texture": "#4"},
+				"down": {"uv": [3.5, 0, 7, 4.25], "texture": "#4"}
+			}
+		},
+		{
+			"name": "interior",
+			"from": [14, 1, 0.5],
+			"to": [2, 7, 15.5],
+			"rotation": {"angle": 0, "axis": "x", "origin": [12, 0, 0]},
+			"faces": {
+				"north": {"uv": [3.75, 8.5, 6.75, 10], "texture": "#4"},
+				"east": {"uv": [7.75, 7.75, 11.5, 9.25], "texture": "#4"},
+				"south": {"uv": [8.75, 0, 11.75, 1.5], "texture": "#4"},
+				"west": {"uv": [0, 8, 3.75, 9.5], "texture": "#4"},
+				"up": {"uv": [3, 8, 0, 4.25], "texture": "#4"},
+				"down": {"uv": [6, 4.25, 3, 8], "texture": "#4"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, -45, 0],
+			"translation": [2, 2.25, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, -45, 0],
+			"translation": [2, 2.25, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 2, 0],
+			"scale": [0.5, 0.5, 0.5]
+		},
+		"gui": {
+			"rotation": [30, 225, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"rotation": [180, 0, 0],
+			"translation": [0, -0.75, 0]
+		},
+		"fixed": {
+			"rotation": [0, 180, 0]
+		}
+	},
+	"groups": [
+		{
+			"name": "main",
+			"origin": [0, 0, 0],
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}
