@@ -1,0 +1,182 @@
+{
+  "itemGroup.spudaciousshops.shop_item_group": "Tiendas de Spud",
+
+  "block.spudaciousshops.shop_acacia": "Tienda de Acacia",
+  "item.spudaciousshops.shop_acacia": "Tienda de Acacia",
+
+  "block.spudaciousshops.shop_bamboo": "Tienda de Bambú",
+  "item.spudaciousshops.shop_bamboo": "Tienda de Bambú",
+
+  "block.spudaciousshops.shop_birch": "Tienda de Abedul",
+  "item.spudaciousshops.shop_birch": "Tienda de Abedul",
+
+  "block.spudaciousshops.shop_cherry": "Tienda de Cerezo",
+  "item.spudaciousshops.shop_cherry": "Tienda de Cerezo",
+
+  "block.spudaciousshops.shop_crimson": "Tienda Carmesí",
+  "item.spudaciousshops.shop_crimson": "Tienda Carmesí",
+
+  "block.spudaciousshops.shop_dark_oak": "Tienda de Roble Oscuro",
+  "item.spudaciousshops.shop_dark_oak": "Tienda de Roble Oscuro",
+
+  "block.spudaciousshops.shop_mangrove": "Tienda de Manglar",
+  "item.spudaciousshops.shop_mangrove": "Tienda de Manglar",
+
+  "block.spudaciousshops.shop_oak": "Tienda de Roble",
+  "item.spudaciousshops.shop_oak": "Tienda de Roble",
+
+  "block.spudaciousshops.shop_spruce": "Tienda de Abeto",
+  "item.spudaciousshops.shop_spruce": "Tienda de Abeto",
+
+  "block.spudaciousshops.shop_warped": "Tienda Distorsionada",
+  "item.spudaciousshops.shop_warped": "Tienda Distorsionada",
+
+  "block.spudaciousshops.shop_jungle": "Tienda de Jungla",
+  "item.spudaciousshops.shop_jungle": "Tienda de Jungla",
+
+  "block.spudaciousshops.shop_window_andesite": "Tienda de Repisa de Andesita",
+  "item.spudaciousshops.shop_window_andesite": "Tienda de Repisa de Andesita",
+
+  "block.spudaciousshops.shop_window_calcite": "Tienda de Repisa de Calcita",
+  "item.spudaciousshops.shop_window_calcite": "Tienda de Repisa de Calcita",
+
+  "block.spudaciousshops.shop_window_deepslate": "Tienda de Repisa de Pizarra Profunda",
+  "item.spudaciousshops.shop_window_deepslate": "Tienda de Repisa de Pizarra Profunda",
+
+  "block.spudaciousshops.shop_window_granite": "Tienda de Repisa de Granito",
+  "item.spudaciousshops.shop_window_granite": "Tienda de Repisa de Granito",
+
+  "block.spudaciousshops.shop_window_stone": "Tienda de Repisa de Piedra",
+  "item.spudaciousshops.shop_window_stone": "Tienda de Repisa de Piedra",
+
+  "block.spudaciousshops.shop_window_tuff": "Tienda de Repisa de Toba",
+  "item.spudaciousshops.shop_window_tuff": "Tienda de Repisa de Toba",
+
+  "block.spudaciousshops.shop_window_dripstone": "Tienda de Repisa de Caliza",
+  "item.spudaciousshops.shop_window_dripstone": "Tienda de Repisa de Caliza",
+
+  "block.spudaciousshops.shop_window_blackstone": "Tienda de Repisa de Piedra Negra",
+  "item.spudaciousshops.shop_window_blackstone": "Tienda de Repisa de Piedra Negra",
+
+  "block.spudaciousshops.shop_window_amethyst": "Tienda de Repisa de Amatista",
+  "item.spudaciousshops.shop_window_amethyst": "Tienda de Repisa de Amatista",
+
+  "block.spudaciousshops.shop_window_end_stone": "Tienda de Repisa de Piedra del End",
+  "item.spudaciousshops.shop_window_end_stone": "Tienda de Repisa de Piedra del End",
+
+  "block.spudaciousshops.hook_shop": "Tienda Gancho",
+  "item.spudaciousshops.hook_shop": "Tienda Gancho",
+
+  "block.spudaciousshops.rug_shop_white": "Tienda de Alfombra Blanca",
+  "item.spudaciousshops.rug_shop_white": "Tienda de Alfombra Blanca",
+
+  "block.spudaciousshops.rug_shop_orange": "Tienda de Alfombra Naranja",
+  "item.spudaciousshops.rug_shop_orange": "Tienda de Alfombra Naranja",
+
+  "block.spudaciousshops.rug_shop_magenta": "Tienda de Alfombra Magenta",
+  "item.spudaciousshops.rug_shop_magenta": "Tienda de Alfombra Magenta",
+
+  "block.spudaciousshops.rug_shop_light_blue": "Tienda de Alfombra Azul Clara",
+  "item.spudaciousshops.rug_shop_light_blue": "Tienda de Alfombra Azul Clara",
+
+  "block.spudaciousshops.rug_shop_yellow": "Tienda de Alfombra Amarilla",
+  "item.spudaciousshops.rug_shop_yellow": "Tienda de Alfombra Amarilla",
+
+  "block.spudaciousshops.rug_shop_lime": "Tienda de Alfombra Lima",
+  "item.spudaciousshops.rug_shop_lime": "Tienda de Alfombra Lima",
+
+  "block.spudaciousshops.rug_shop_pink": "Tienda de Alfombra Rosa",
+  "item.spudaciousshops.rug_shop_pink": "Tienda de Alfombra Rosa",
+
+  "block.spudaciousshops.rug_shop_gray": "Tienda de Alfombra Gris",
+  "item.spudaciousshops.rug_shop_gray": "Tienda de Alfombra Gris",
+
+  "block.spudaciousshops.rug_shop_light_gray": "Tienda de Alfombra Gris Clara",
+  "item.spudaciousshops.rug_shop_light_gray": "Tienda de Alfombra Gris Clara",
+
+  "block.spudaciousshops.rug_shop_cyan": "Tienda de Alfombra Cian",
+  "item.spudaciousshops.rug_shop_cyan": "Tienda de Alfombra Cian",
+
+  "block.spudaciousshops.rug_shop_purple": "Tienda de Alfombra Morada",
+  "item.spudaciousshops.rug_shop_purple": "Tienda de Alfombra Morada",
+
+  "block.spudaciousshops.rug_shop_blue": "Tienda de Alfombra Azul",
+  "item.spudaciousshops.rug_shop_blue": "Tienda de Alfombra Azul",
+
+  "block.spudaciousshops.rug_shop_brown": "Tienda de Alfombra Marrón",
+  "item.spudaciousshops.rug_shop_brown": "Tienda de Alfombra Marrón",
+
+  "block.spudaciousshops.rug_shop_green": "Tienda de Alfombra Verde",
+  "item.spudaciousshops.rug_shop_green": "Tienda de Alfombra Verde",
+
+  "block.spudaciousshops.rug_shop": "Tienda de Alfombra",
+  "item.spudaciousshops.rug_shop": "Tienda de Alfombra",
+
+  "block.spudaciousshops.rug_shop_black": "Tienda de Alfombra Negra",
+  "item.spudaciousshops.rug_shop_black": "Tienda de Alfombra Negra",
+
+
+  "block.spudaciousshops.crate_shop": "Caja del Mercader",
+  "item.spudaciousshops.crate_shop": "Caja del Mercader",
+
+  "item.spudaciousshops.contract_scroll": "Contrato de Trabajo",
+
+  "gui.spudaciousshops.currency_type": "€",
+
+  "gui.spudaciousshops.owner": "Propietario",
+  "gui.spudaciousshops.manager": "Manager",
+  "gui.spudaciousshops.supervisor": "Supervisor",
+  "gui.spudaciousshops.clerk": "Empleado",
+
+  "gui.spudaciousshops.delete_warn_title": "QUITA UN CONTRATO",
+  "gui.spudaciousshops.delete_warn_message_line1": "Estás a punto de quitar tu contrato",
+  "gui.spudaciousshops.delete_warn_message_line2": "y revocarte todos tus permisos.",
+  "gui.spudaciousshops.cancel": "CANCELAR",
+  "gui.spudaciousshops.delete": "QUITAR",
+
+  "gui.spudaciousshops.text_permissions": "Permisos",
+  "gui.spudaciousshops.text_import_items": "Importar Items",
+  "gui.spudaciousshops.text_take_items": "Coger Items",
+  "gui.spudaciousshops.text_edit_perms": "Editar permisos de",
+  "gui.spudaciousshops.text_change_trade": "Cambiar Tradeo de Tienda",
+  "gui.spudaciousshops.text_break_shop": "Romper Tienda",
+  "gui.spudaciousshops.text_yes": "Sí",
+  "gui.spudaciousshops.text_no": "NO",
+  "gui.spudaciousshops.text_all": "TODO",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor y Empleado",
+  "gui.spudaciousshops.text_none": "NINGUNO",
+
+
+  "block.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",
+  "item.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",
+
+  "block.spudaciousshops.shelf_shop_bamboo": "Tienda de Estantería de Bambú",
+  "item.spudaciousshops.shelf_shop_bamboo": "Tienda de Estantería de Bambú",
+
+  "block.spudaciousshops.shelf_shop_birch": "Tienda de Estantería de Abedul",
+  "item.spudaciousshops.shelf_shop_birch": "Tienda de Estantería de Abedul",
+
+  "block.spudaciousshops.shelf_shop_cherry": "Tienda de Estantería de Cerezo",
+  "item.spudaciousshops.shelf_shop_cherry": "Tienda de Estantería de Cerezo",
+
+  "block.spudaciousshops.shelf_shop_crimson": "Tienda de Estantería Carmesí",
+  "item.spudaciousshops.shelf_shop_crimson": "Tienda de Estantería Carmesí",
+
+  "block.spudaciousshops.shelf_shop_dark_oak": "Tienda de Estantería de Roble Oscuro",
+  "item.spudaciousshops.shelf_shop_dark_oak": "Tienda de Estantería de Roble Oscuro",
+
+  "block.spudaciousshops.shelf_shop_mangrove": "Tienda de Estantería de Manglar",
+  "item.spudaciousshops.shelf_shop_mangrove": "Tienda de Estantería de Manglar",
+
+  "block.spudaciousshops.shelf_shop_oak": "Tienda de Estantería de Roble",
+  "item.spudaciousshops.shelf_shop_oak": "Tienda de Estantería de Roble",
+
+  "block.spudaciousshops.shelf_shop_spruce": "Tienda de Estantería de Abeto",
+  "item.spudaciousshops.shelf_shop_spruce": "Tienda de Estantería de Abeto",
+
+  "block.spudaciousshops.shelf_shop_warped": "Tienda de Estantería Distorsionada",
+  "item.spudaciousshops.shelf_shop_warped": "Tienda de Estantería Distorsionada",
+
+  "block.spudaciousshops.shelf_shop_jungle": "Tienda de Estantería de Jungla",
+  "item.spudaciousshops.shelf_shop_jungle": "Tienda de Estantería de Jungla"
+}
