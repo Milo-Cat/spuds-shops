@@ -330,8 +330,10 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         if(activeTab==CUSTOMER_TAB){
-            while(shopInventory.canTrade(player)){
+            int tradeCount = 0;
+            while(tradeCount<64&shopInventory.canTrade(player)){
                 shopInventory.trade(playerInventory);
+                tradeCount++;
             }
             return ItemStack.EMPTY;
         }

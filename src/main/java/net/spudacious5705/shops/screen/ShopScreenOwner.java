@@ -448,6 +448,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         private final Identifier TEXTURE_ON;
         private final Identifier TEXTURE_OFF;
 
+
         private final ToggleSyncPayload.ToggleButtonID BUTTON_ID;
         private final Text tooltip;
 
@@ -468,6 +469,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
             int x = this.getX();
             int y = this.getY();
 
+            context.drawTexture(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
             context.drawTexture(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
 
             if(hovered){

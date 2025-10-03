@@ -44,6 +44,7 @@ public class VariantResources {
         public final Identifier owner_trade;
         public final Identifier settings;
         public final Identifier storage;
+        public final Identifier settings_button;
         public final int settings_text_colour;
 
         wood_variant(String texture, int text_colour) {
@@ -53,6 +54,7 @@ public class VariantResources {
             owner_trade = ids[1];
             settings = ids[2];
             storage = ids[3];
+            settings_button = ids[4];
             settings_text_colour = text_colour;
         }
 
@@ -62,7 +64,8 @@ public class VariantResources {
                     SpudaciousShops.id("textures/gui/wood_gui/customer_"+texture+".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/owner_trade_"+texture+".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/settings_"+texture+".png"),
-                    SpudaciousShops.id("textures/gui/wood_gui/storage_"+texture+".png")
+                    SpudaciousShops.id("textures/gui/wood_gui/storage_"+texture+".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/button_back_"+texture+".png")
             };
 
         }

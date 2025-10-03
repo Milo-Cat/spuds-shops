@@ -9,6 +9,7 @@ public record ScreenSettingsGroup(
         ScreenSettings CUSTOMER,
         ScreenSettings SELLER,
         ScreenSettings SETTINGS,
+        Identifier BUTTON_BACKGROUND,
 
         int tab1ButtonX,  int tab1ButtonY,
         int tab2ButtonX,  int tab2ButtonY,
@@ -82,18 +83,20 @@ public record ScreenSettingsGroup(
     }
 
     public static ScreenSettingsGroup createBasicWood(VariantResources.wood_variant VARIANT){
-        return createBasic(VARIANT.owner_trade,VARIANT.storage,VARIANT.settings,VARIANT.settings_text_colour);
+        return createBasic(VARIANT.owner_trade,VARIANT.storage,VARIANT.settings,VARIANT.settings_button, VARIANT.settings_text_colour);
     }
 
     public static ScreenSettingsGroup createBasic(
             Identifier CUSTOMER,
             Identifier SELLER,
             Identifier SETTINGS,
+            Identifier BUTTON_BACKGROUND,
             int colour){
         return new ScreenSettingsGroup(
                 ScreenSettings.createBasicCUSTOMER(CUSTOMER),
                 ScreenSettings.createBasicSELLER(SELLER),
                 ScreenSettings.createBasicSETTINGS(SETTINGS),
+                BUTTON_BACKGROUND,
                 203,174,
                 203,199,
                 203,225,
