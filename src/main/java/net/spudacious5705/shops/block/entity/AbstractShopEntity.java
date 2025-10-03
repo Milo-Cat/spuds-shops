@@ -36,14 +36,15 @@ import net.minecraft.world.World;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.ShopRenderUtils;
+import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.item.custom.ContractScroll;
 import net.spudacious5705.shops.properties.PermissionLevel;
-import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ShopScreenHandlerCustomer;
 import net.spudacious5705.shops.screen.ShopScreenHandlerOwner;
 import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
+import net.spudacious5705.shops.screenNetworking.ToggleSyncPayload;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,6 +77,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     public ScreenSettingsGroup getScreenSettings() {
         return ((AbstractShopBlock) this.getCachedState().getBlock()).getScreenSettings();
     }
+
 
     public final class InventoryDelegate implements Inventory{
         private final ShopInventory inventory;
@@ -117,33 +119,43 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
 
         public void trade(PlayerInventory playerInv){
-            DefaultedList<ItemStack> vendList = takeItems(inventory.getVendingStack(), inventory::get, 0, STOCK_END);
+            DefaultedList<ItemStack> vendList;
+            boolean tradeCreative = toggleSettings.getOrDefault(ToggleSyncPayload.ToggleButtonID.CreativeToggle,false);
+            if(tradeCreative) {
+                vendList = DefaultedList.ofSize(STOCK_END);
+                vendList.add(0, inventory.getVendingStack().copy());
+            } else {
+                vendList = takeItems(inventory.getVendingStack(), inventory::get, 0, STOCK_END);
+            }
             DefaultedList<ItemStack> payList = takeItems(inventory.getPaymentStack(), playerInv::getStack,0,36);
 
 
-            ItemStack allowStack = inventory.getPaymentStack();
-            ItemStack storageStack;
-            int space;
-            int ptr = 0;
-            for(int i = STOCK_END+1; i <= PROFIT_END; i++){
-                storageStack = inventory.get(i);
-                if(canMerge(storageStack,allowStack)||storageStack.isEmpty()){
-                    while (ptr<(payList.size()) && (storageStack.getCount() < storageStack.getMaxCount())){
-                        space = getAvalableSpace(storageStack);
-                        if(storageStack.isEmpty()){
-                            storageStack = payList.get(ptr).copyAndEmpty();
-                        }else {
-                            storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
-                        }
-                        inventory.set(i,storageStack);
-                        if(payList.get(ptr).isEmpty()){
-                            ptr++;
+            if(!tradeCreative) {
+                //place players payment into register
+                ItemStack allowStack = inventory.getPaymentStack();
+                ItemStack storageStack;
+                int space;
+                int ptr = 0;
+                for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
+                    storageStack = inventory.get(i);
+                    if (canMerge(storageStack, allowStack) || storageStack.isEmpty()) {
+                        while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxCount())) {
+                            space = getAvalableSpace(storageStack);
+                            if (storageStack.isEmpty()) {
+                                storageStack = payList.get(ptr).copyAndEmpty();
+                            } else {
+                                storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
+                            }
+                            inventory.set(i, storageStack);
+                            if (payList.get(ptr).isEmpty()) {
+                                ptr++;
+                            }
                         }
                     }
                 }
             }
 
-            ptr = 0;
+            int ptr = 0;
             boolean success = true;
             while(success && ptr<(vendList.size())){
                 success = playerInv.insertStack(vendList.get(ptr));
@@ -155,13 +167,15 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         public boolean canTrade(PlayerEntity playerEntity){
-            if (inventory.outOfStock()) {
-                errorMessage("Shop is out of stock", playerEntity);
-                return false;
-            }
-            if (inventory.paymentRegisterFull()) {
-                errorMessage("Shop cannot store any more currency", playerEntity);
-                return false;
+            if(!toggleSettings.getOrDefault(ToggleSyncPayload.ToggleButtonID.CreativeToggle,false)) {
+                if (inventory.outOfStock()) {
+                    errorMessage("Shop is out of stock", playerEntity);
+                    return false;
+                }
+                if (inventory.paymentRegisterFull()) {
+                    errorMessage("Shop cannot store any more currency", playerEntity);
+                    return false;
+                }
             }
             if (inventory.isPlayerPoor(playerEntity)) {
                 errorMessage("You do not have enough currency", playerEntity);
@@ -550,6 +564,12 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
     public PermissionLevel userSignIn(PlayerEntity player) {
 
+        if(toggleSettings.getOrDefault(ToggleSyncPayload.ToggleButtonID.CreativeToggle,false)){
+            if(!player.isCreative()){
+                return PermissionLevel.CUSTOMER;
+            }
+        }
+
         if(identificationRecords.isEmpty()) {
             identificationRecords.add(new PlayerID(player.getUuid(), player.getName().getString(), PermissionLevel.OWNER));
             markDirty();
@@ -577,6 +597,50 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         return quickUserSignIn(player);
     }
 
+    public final class settings_Delegate {
+        private final boolean isCreative;
+        private final boolean canEditSettings;
+
+        private settings_Delegate(PermissionLevel perms, PlayerEntity player){
+            isCreative = player.isCreative();
+            canEditSettings = perms.canEditTrades();
+        }
+
+        public boolean getState(@NotNull ToggleSyncPayload.ToggleButtonID ID){
+            return toggleSettings.get(ID);
+        }
+
+        public boolean attemptSetState(@NotNull ToggleSyncPayload.ToggleButtonID ID, @NotNull Boolean state){
+            if(
+                    canEditSettings
+                    &&
+                    (
+                            ID != ToggleSyncPayload.ToggleButtonID.CreativeToggle
+                                    ||
+                                    isCreative
+                    )
+            ){
+                toggleSettings.put(ID,state);
+                markDirty();
+                checkShouldRenderParticles();
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public boolean isPlayerCreative() {
+            return isCreative;
+        }
+    }
+
+    public settings_Delegate getSettingsDelegate(PlayerEntity player) {
+        return new settings_Delegate(
+                quickUserSignIn(player),
+                player
+        );
+    }
 
     //endregion
 
@@ -615,10 +679,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        Inventories.readNbt(nbt, shopInventory,registryLookup);
+        Inventories.readNbt(nbt, shopInventory, registryLookup);
         identificationRecords.clear();
 
-        if(nbt.contains(CONTRACTS, NbtCompound.LIST_TYPE)){
+        if (nbt.contains(CONTRACTS, NbtCompound.LIST_TYPE)) {
             NbtList contractList = nbt.getList(CONTRACTS, NbtElement.COMPOUND_TYPE);
 
             for (int index = 0; index < contractList.size(); index++) {
@@ -628,7 +692,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                 UUID uuid = contract.getUuid(CONTRACT_UUID);
                 PermissionLevel perms = PermissionLevel.fromInt(contract.getInt(CONTRACT_LEVEL));
 
-                if(perms.asInt()>0){
+                if (perms.asInt() > 0) {
                     identificationRecords.add(
                             new PlayerID(
                                     uuid,
@@ -643,10 +707,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
         copyRecordsToContracts();
 
-        if(nbt.containsUuid("owner_id")) {//convert legacy owner to updated system
+        if (nbt.containsUuid("owner_id")) {//convert legacy owner to updated system
             UUID ownerID = nbt.getUuid("owner_id");
             String name;
-            if(nbt.contains("owner_name")) {
+            if (nbt.contains("owner_name")) {
                 name = nbt.getString("owner_name");
             } else {
                 name = ownerID.toString();
@@ -657,9 +721,23 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
 
-        if(nbt.contains("decay_timer")) {
+        if (nbt.contains("decay_timer")) {
             this.decayTimer = nbt.getInt("decay_timer");
         }
+
+        for (ToggleSyncPayload.ToggleButtonID id : ToggleSyncPayload.ToggleButtonID.values()) {
+            String nbtName = "toggle_" + id.getSerialised();
+            if (nbt.contains(nbtName)) {
+                toggleSettings.put(
+                        id,
+                        nbt.getBoolean(nbtName)
+                );
+            } else {
+                toggleSettings.put(id, ConfigHandler.getDefaultToggleSetting(id));
+            }
+
+        }
+        checkShouldRenderParticles();
     }
 
     @MagicConstant
@@ -694,6 +772,15 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
 
         nbt.putInt("decay_timer",this.decayTimer);
+
+        for (ToggleSyncPayload.ToggleButtonID id : ToggleSyncPayload.ToggleButtonID.values()) {
+            Boolean v = toggleSettings.get(id);
+            if(v != null) {
+                nbt.putBoolean("toggle_" + id.getSerialised(), v);
+            }
+        }
+        checkShouldRenderParticles();
+
         super.writeNbt(nbt,registryLookup);
     }
 
@@ -726,13 +813,20 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     }
 
     private boolean decayed = false;
+    private boolean shouldRenderParticles = false;
+    private void checkShouldRenderParticles(){
+        shouldRenderParticles = toggleSettings.getOrDefault(ToggleSyncPayload.ToggleButtonID.EffectsToggle, false)
+                &&
+                !toggleSettings.getOrDefault(ToggleSyncPayload.ToggleButtonID.CreativeToggle,false);
+    }
+
 
     public void serverTick(ServerWorld world, BlockPos pos, AbstractShopBlock.AbstractShopBlockState shopState) {
 
         if(decayTimer > -1) {
             if (decayTimer > hourInTicks) {
 
-                if (world.random.nextFloat() < 0.05f) {
+                if (shouldRenderParticles && world.random.nextFloat() < 0.05f) {
                     for (int i = 0; i < 3; i++) {
                         world.spawnParticles(ParticleTypes.ANGRY_VILLAGER, pos.getX() + .2 + world.random.nextFloat(), pos.getY() + world.random.nextFloat() + particleOffset, pos.getZ() + world.random.nextFloat(), 1, 0, 0, 0, 0);
                     }
@@ -756,6 +850,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         if(checkIntervalTimer<0){
             checkIntervalTimer=6000;
             //intervaled functionality check in case of bug and for startup.
+            checkShouldRenderParticles();
             if (isShopFunctional()) {
                 if(decayTimer<0){
                     decayTimer=0;
@@ -816,9 +911,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
                 InventoryDelegate inventoryDelegate = openTop?getOtherInventoryDelegate(player):getInventoryDelegate(player);
                 player_ID_Records_Delegate recordsDelegate = new player_ID_Records_Delegate(perms, player.getUuid());
+                settings_Delegate set_del = new settings_Delegate(perms, player);
 
                 if (perms.canViewShopScreen()) {
-                    return new ShopScreenHandlerOwner(syncId, playerInventory, inventoryDelegate, recordsDelegate, getScreenSettings());
+                    return new ShopScreenHandlerOwner(syncId, playerInventory, inventoryDelegate, recordsDelegate, set_del, getScreenSettings());
                 }
 
                 if (!isShopFunctional()) {
@@ -897,6 +993,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     protected int checkIntervalTimer = 200;//short initial check interval for server restarts
 
     protected int breakableTicks = -1;
+
+    protected final EnumMap<ToggleSyncPayload.ToggleButtonID, Boolean> toggleSettings = new EnumMap<>(ToggleSyncPayload.ToggleButtonID.class);
     //endregion
 
 
@@ -959,6 +1057,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             this.shopFunctional = isShopFunctional() && inventory.tradeFunctional();
 
             if(this.shopFunctional) {
+
                 this.paymentItem = inventory.getPaymentStack();
 
                 this.stockQuantity = Integer.toString(inventory.getVendingStack().getCount());
@@ -1121,6 +1220,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
         public int z() {
             return pos.getZ();
+        }
+
+        public boolean renderIcons() {
+            return shouldRenderParticles;
         }
     }
     //endregion

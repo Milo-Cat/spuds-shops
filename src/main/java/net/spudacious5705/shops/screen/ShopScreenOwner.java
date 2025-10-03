@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -12,20 +12,31 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.screenNetworking.SelfDemotePayload;
+import net.spudacious5705.shops.screenNetworking.ToggleSyncPayload;
 import org.intellij.lang.annotations.MagicConstant;
 
+import java.util.EnumMap;
 import java.util.List;
 
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
 
 public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
+
+    private static void playClickSound(){
+        assert MinecraftClient.getInstance().player != null;
+        MinecraftClient.getInstance().player.playSound(
+                SoundEvents.UI_BUTTON_CLICK.value(),
+                1.0F,
+                1.0F
+        );
+    }
     private final ScreenSettingsGroup SETTINGS;
 
     private Identifier TEXTURE;
@@ -45,6 +56,8 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         this.TEXTURE = SETTINGS.SELLER().textureID();
 
         handler.initiateWarn(this::openWarnPopup);
+        handler.settingsUpdater(this::updateToggleButtonFromPacket);
+        handler.setWidgetFunction(this::setWidgetsVisible);
     }
 
     private void closeWarnPopup(){
@@ -63,6 +76,9 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         ShopFrontTabButton.visible=state;
         WarningCancel.visible=!state;
         WarningProceed.visible=!state;
+        for (ToggleSyncPayload.ToggleButtonID value : ToggleSyncPayload.ToggleButtonID.values()) {
+            toggleButtons.get(value).visible=state;
+        }
     }
 
     private static final Identifier COG_ICON = SpudaciousShops.id("textures/gui/settings.png");
@@ -74,12 +90,16 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     private static final Identifier TAB_SELECTED = SpudaciousShops.id("textures/gui/tab_selected.png");
     private static final Identifier TAB_DESELECTED = SpudaciousShops.id("textures/gui/tab_deselected.png");
     private static final Identifier TAB_HOVER = SpudaciousShops.id("textures/gui/tab_hover.png");
+    private static final Identifier CREATIVE_ON = SpudaciousShops.id("textures/gui/creative_on.png");
+    private static final Identifier CREATIVE_OFF = SpudaciousShops.id("textures/gui/creative_off.png");
+    private static final Identifier EFFECTS_ON = SpudaciousShops.id("textures/gui/effects_on.png");
+    private static final Identifier EFFECTS_OFF = SpudaciousShops.id("textures/gui/effects_off.png");
 
     @Override
     protected void init() {
-        this.backgroundWidth = 256;
+        this.backgroundWidth = 228;
         this.backgroundHeight = 256;
-        this.x = (width - backgroundWidth)/2+15;
+        this.x = (width - backgroundWidth)/2;
         this.y = (height - backgroundHeight)/2;
         playerInventoryTitleX = 1000;
         titleX = 1000;
@@ -106,6 +126,30 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         posX += 113;
         WarningProceed = addDrawableChild(new ButtonWidget(posX, posY, Text.of("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329));
 
+        posX = SETTINGS.creativeButtonX()+x;
+        posY = SETTINGS.creativeButtonY()+y;
+        ToggleCreative = addDrawableChild(new ToggleWidget(posX, posY, ToggleSyncPayload.ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP));
+        posX = SETTINGS.toggleEffectsButtonX()+x;
+        posY = SETTINGS.toggleEffectsButtonY()+y;
+        ToggleIconsEffects = addDrawableChild(new ToggleWidget(posX, posY, ToggleSyncPayload.ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP));
+        posX = SETTINGS.shopStyleButtonX()+x;
+        posY = SETTINGS.shopStyleButtonY()+y;
+        ToggleShopStyle = addDrawableChild(new ToggleWidget(posX, posY, ToggleSyncPayload.ToggleButtonID.ShopStyleToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
+        posX = SETTINGS.ignoreNBTButtonX()+x;
+        posY = SETTINGS.ignoreNBTButtonY()+y;
+        ToggleIgnoreNBT = addDrawableChild(new ToggleWidget(posX, posY, ToggleSyncPayload.ToggleButtonID.IgnoreNBTToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
+
+        for (ToggleSyncPayload.ToggleButtonID value : ToggleSyncPayload.ToggleButtonID.values()) {
+            toggleButtons.put(value,
+                    switch (value){
+                        case CreativeToggle -> ToggleCreative;
+                        case ShopStyleToggle -> ToggleShopStyle;
+                        case IgnoreNBTToggle -> ToggleIgnoreNBT;
+                        case EffectsToggle -> ToggleIconsEffects;
+                    }
+            );
+        }
+
         addToolTipTexts();
         addWarnPopupTexts();
         addStorageTexts();
@@ -130,11 +174,13 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         TEXTURE = SETTINGS.SELLER().textureID();
         ShopFrontTabButton.unToggle();
         SettingsTabButton.unToggle();
+
     }
 
     private void switchToSettingsTab() {
         handler.updateTabSelectionClientside(SETTINGS_TAB);
         settingsGUI();
+
     }
     private void settingsGUI(){
         TEXTURE = SETTINGS.SETTINGS().textureID();
@@ -169,6 +215,11 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     TabWidget ShopFrontTabButton;
     ButtonWidget WarningCancel;
     ButtonWidget WarningProceed;
+    ToggleWidget ToggleCreative;
+    ToggleWidget ToggleIconsEffects;
+    ToggleWidget ToggleShopStyle;
+    ToggleWidget ToggleIgnoreNBT;
+    protected final EnumMap<ToggleSyncPayload.ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleSyncPayload.ToggleButtonID.class);
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
@@ -230,6 +281,8 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     private final String ALL = Text.translatable("gui.spudaciousshops.text_all").getString();
     private final String SUPERVISOR_AND_LOWER = Text.translatable("gui.spudaciousshops.text_supervisor_and_lower").getString();
     private final String NONE = Text.translatable("gui.spudaciousshops.text_none").getString();
+    private final String CREATIVE_TOGGLE_TOOLTIP = Text.translatable("gui.spudaciousshops.toggle_creative").getString();
+    private final String EFFECTS_TOGGLE_TOOLTIP = Text.translatable("gui.spudaciousshops.toggle_effects").getString();
 
 
     private void addToolTipTexts(){
@@ -334,23 +387,23 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     }
 
 
-    interface TabSwitcher{
-        void switchTo();
+    interface ClickEventHandler {
+        void execute();
     }
 
     private static class TabWidget extends ClickableWidget{
 
-        private final TabSwitcher thisTab;
+        private final ClickEventHandler thisTab;
 
         private final Identifier ICON_TEXTURE;
 
         private boolean toggle;
 
-        public TabWidget(int x, int y, Text message, TabSwitcher tab, boolean visible, Identifier texture) {
+        public TabWidget(int x, int y, Text message, ClickEventHandler tab, boolean visible, Identifier texture) {
             this(x,y, message,tab,visible,texture,false);
         }
 
-        public TabWidget(int x, int y, Text message, TabSwitcher tab, boolean visible, Identifier texture, boolean toggle) {
+        public TabWidget(int x, int y, Text message, ClickEventHandler tab, boolean visible, Identifier texture, boolean toggle) {
             super(x, y, 22, 22, message);
             this.thisTab = tab;
             this.visible = visible;
@@ -373,7 +426,8 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         }
 
         public void onClick(double mouseX, double mouseY) {
-            thisTab.switchTo();
+            playClickSound();
+            thisTab.execute();
             toggle();
         }
 
@@ -389,14 +443,81 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
     }
 
+    private class ToggleWidget extends ClickableWidget{
+
+        private final Identifier TEXTURE_ON;
+        private final Identifier TEXTURE_OFF;
+
+        private final ToggleSyncPayload.ToggleButtonID BUTTON_ID;
+        private final Text tooltip;
+
+        private boolean toggle;
+
+        public ToggleWidget(int x, int y, ToggleSyncPayload.ToggleButtonID buttonID, Identifier textureON, Identifier textureOFF, String tooltipText) {
+            super(x, y, 32, 16, Text.of(""));//TODO change width and height
+            this.BUTTON_ID = buttonID;
+            this.visible = false;
+            this.toggle = handler.getStateOfSetting(BUTTON_ID);
+            this.TEXTURE_ON = textureON;
+            this.TEXTURE_OFF = textureOFF;
+            this.tooltip = Text.of(tooltipText);
+        }
+
+        @Override
+        protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+            int x = this.getX();
+            int y = this.getY();
+
+            context.drawTexture(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
+
+            if(hovered){
+                   context.drawTooltip(textRenderer, tooltip,mouseX,mouseY);
+            }
+        }
+
+        public void onClick(double mouseX, double mouseY) {
+            playClickSound();
+            toggle = handler.handleToggleButtonInput(BUTTON_ID, !toggle);
+        }
+
+        void toggleOff(){
+            this.toggle = false;
+        }
+
+        void toggleOn(){
+            this.toggle = true;
+        }
+
+        @Override
+        protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+    }
+    protected void updateToggleButtonFromPacket(ToggleSyncPayload.ToggleButtonID button, boolean state) {
+        toggleButtons.get(button).toggle = state;
+    }
+    protected void setWidgetsVisible(boolean state){
+        //TODO implement the other features
+        //toggleButtons.values().forEach((w)-> {if(w != null){w.visible=state;}});
+
+        ToggleWidget w = toggleButtons.get(ToggleSyncPayload.ToggleButtonID.EffectsToggle);
+        if(w != null){
+            w.visible=state;
+        }
+
+        w = toggleButtons.get(ToggleSyncPayload.ToggleButtonID.CreativeToggle);
+        if(w != null){
+            w.visible=state&&handler.isPlayerCreative();
+        }
+
+    }
+
     private class ButtonWidget extends ClickableWidget{
 
-        private final TabSwitcher FUNCTION;
+        private final ClickEventHandler FUNCTION;
         private final Identifier TEXTURE;
-        private final Identifier TEXTURE_HOVERED;
+        final Identifier TEXTURE_HOVERED;
         private final Warn_popup_texts TEXT;
 
-        public ButtonWidget(int x, int y, Text message, TabSwitcher function, Identifier texture, Identifier textureHovered, MutableText text, int colour) {
+        public ButtonWidget(int x, int y, Text message, ClickEventHandler function, Identifier texture, Identifier textureHovered, MutableText text, int colour) {
             super(x, y, 64, 28, message);
             this.FUNCTION = function;
             this.visible = false;
@@ -430,7 +551,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
         @Override
         public void onClick(double mouseX, double mouseY) {
-            FUNCTION.switchTo();
+            FUNCTION.execute();
         }
 
         @Override

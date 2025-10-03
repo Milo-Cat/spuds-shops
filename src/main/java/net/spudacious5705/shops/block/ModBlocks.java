@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block;
 
-import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

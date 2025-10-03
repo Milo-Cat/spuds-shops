@@ -130,7 +130,7 @@
 
   "gui.spudaciousshops.delete_warn_title": "DELETE YOUR CONTRACT",
   "gui.spudaciousshops.delete_warn_message_line1": "You are about to delete your contract",
-  "gui.spudaciousshops.delete_warn_message_line2": "and remove all your permissions.",
+  "gui.spudaciousshops.delete_warn_message_line2": "and remove all your permissions!",
   "gui.spudaciousshops.cancel": "CANCEL",
   "gui.spudaciousshops.delete": "DELETE",
 
@@ -145,6 +145,9 @@
   "gui.spudaciousshops.text_all": "ALL",
   "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor and Lower",
   "gui.spudaciousshops.text_none": "NONE",
+
+  "gui.spudaciousshops.toggle_creative": "Toggle creative shop mode",
+  "gui.spudaciousshops.toggle_effects": "Toggle icons and particles",
 
 
   "block.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",

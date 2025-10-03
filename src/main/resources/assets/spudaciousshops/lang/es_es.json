@@ -146,6 +146,9 @@
   "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor y Empleado",
   "gui.spudaciousshops.text_none": "NINGUNO",
 
+  "gui.spudaciousshops.toggle_creative": "Activar o desactivar el modo de tienda creativa",
+  "gui.spudaciousshops.toggle_effects": "Alternar iconos y partículas",
+
 
   "block.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",
   "item.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",

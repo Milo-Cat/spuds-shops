@@ -14,6 +14,12 @@ public record ScreenSettingsGroup(
         int tab2ButtonX,  int tab2ButtonY,
         int tab3ButtonX,  int tab3ButtonY,
 
+        //settings button positions
+        int creativeButtonX,  int creativeButtonY,
+        int shopStyleButtonX,  int shopStyleButtonY,
+        int ignoreNBTButtonX,  int ignoreNBTButtonY,
+        int toggleEffectsButtonX,  int toggleEffectsButtonY,
+
         int SETTINGS_TEXT_COLOUR
 ) {
     /*BASIC(0,
@@ -91,6 +97,12 @@ public record ScreenSettingsGroup(
                 203,174,
                 203,199,
                 203,225,
+
+                127,42,
+                75,42,
+                25,42,
+                175,42,
+
                 colour);
     }
 }

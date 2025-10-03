@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity.RendererData;
 
@@ -20,7 +19,7 @@ public interface ShopRenderUtils {
     }
 
     static void renderShopWarns(float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, final RendererData data, BlockEntityRendererFactory.Context context, float yOffset, float scale) {
-        if(data.shopFunctional()) {
+        if(data.shopFunctional() && data.renderIcons()) {
             if (data.stockWarning || data.paymentWarning) {
 
                 if (data.updateIconRotation()) {

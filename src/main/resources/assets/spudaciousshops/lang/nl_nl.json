@@ -98,6 +98,9 @@
   "gui.spudaciousshops.text_supervisor_and_lower": "Toezichthouder en lager",
   "gui.spudaciousshops.text_none": "GEEN",
 
+  "gui.spudaciousshops.toggle_creative": "Creatieve winkelmodus in- of uitschakelen",
+  "gui.spudaciousshops.toggle_effects": "Pictogrammen en deeltjes in- of uitschakelen",
+
 
   "block.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
   "item.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
@@ -130,5 +133,37 @@
   "item.spudaciousshops.shelf_shop_warped": "Spookachtige houten Plank Winkel",
 
   "block.spudaciousshops.shelf_shop_jungle": "Oerwoudhouten Plank Winkel",
-  "item.spudaciousshops.shelf_shop_jungle": "Oerwoudhouten Plank Winkel"
+  "item.spudaciousshops.shelf_shop_jungle": "Oerwoudhouten Plank Winkel",
+
+  "block.spudaciousshops.rug_shop_white": "Tapijtwinkel Wit",
+  "item.spudaciousshops.rug_shop_white": "Tapijtwinkel Wit",
+  "block.spudaciousshops.rug_shop_orange": "Tapijtwinkel Oranje",
+  "item.spudaciousshops.rug_shop_orange": "Tapijtwinkel Oranje",
+  "block.spudaciousshops.rug_shop_magenta": "Tapijtwinkel Magenta",
+  "item.spudaciousshops.rug_shop_magenta": "Tapijtwinkel Magenta",
+  "block.spudaciousshops.rug_shop_light_blue": "Tapijtwinkel Lichtblauw",
+  "item.spudaciousshops.rug_shop_light_blue": "Tapijtwinkel Lichtblauw",
+  "block.spudaciousshops.rug_shop_yellow": "Tapijtwinkel Geel",
+  "item.spudaciousshops.rug_shop_yellow": "Tapijtwinkel Geel",
+  "block.spudaciousshops.rug_shop_lime": "Tapijtwinkel Limoengroen",
+  "item.spudaciousshops.rug_shop_lime": "Tapijtwinkel Limoengroen",
+  "block.spudaciousshops.rug_shop_pink": "Tapijtwinkel Roze",
+  "item.spudaciousshops.rug_shop_pink": "Tapijtwinkel Roze",
+  "block.spudaciousshops.rug_shop_gray": "Tapijtwinkel Grijs",
+  "item.spudaciousshops.rug_shop_gray": "Tapijtwinkel Grijs",
+  "block.spudaciousshops.rug_shop_light_gray": "Tapijtwinkel Lichtgrijs",
+  "item.spudaciousshops.rug_shop_light_gray": "Tapijtwinkel Lichtgrijs",
+  "block.spudaciousshops.rug_shop_cyan": "Tapijtwinkel Cyaan",
+  "item.spudaciousshops.rug_shop_cyan": "Tapijtwinkel Cyaan",
+  "block.spudaciousshops.rug_shop_purple": "Tapijtwinkel Paars",
+  "item.spudaciousshops.rug_shop_purple": "Tapijtwinkel Paars",
+  "block.spudaciousshops.rug_shop_blue": "Tapijtwinkel Blauw",
+  "item.spudaciousshops.rug_shop_blue": "Tapijtwinkel Blauw",
+  "block.spudaciousshops.rug_shop_brown": "Tapijtwinkel Bruin",
+  "item.spudaciousshops.rug_shop_brown": "Tapijtwinkel Bruin",
+  "block.spudaciousshops.rug_shop_green": "Tapijtwinkel Groen",
+  "item.spudaciousshops.rug_shop_green": "Tapijtwinkel Groen",
+  "block.spudaciousshops.rug_shop_black": "Tapijtwinkel Zwart",
+  "item.spudaciousshops.rug_shop_black": "Tapijtwinkel Zwart",
+  "gui.spudaciousshops.currency_type": "€"
 }

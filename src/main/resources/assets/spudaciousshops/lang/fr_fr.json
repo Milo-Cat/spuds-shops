@@ -98,6 +98,9 @@
   "gui.spudaciousshops.text_supervisor_and_lower": "Superviseur et subordonné",
   "gui.spudaciousshops.text_none": "RIEN",
 
+  "gui.spudaciousshops.toggle_creative": "Activer/désactiver le mode boutique créative",
+  "gui.spudaciousshops.toggle_effects": "Basculer les icônes et les particules",
+
 
   "block.spudaciousshops.shelf_shop_acacia": "Boutique en étagère d'acacia",
   "item.spudaciousshops.shelf_shop_acacia": "Boutique en étagère d'acacia",
@@ -130,5 +133,37 @@
   "item.spudaciousshops.shelf_shop_warped": "Boutique en étagère biscornue",
 
   "block.spudaciousshops.shelf_shop_jungle": "Boutique en étagère d'acajou",
-  "item.spudaciousshops.shelf_shop_jungle": "Boutique en étagère d'acajou"
+  "item.spudaciousshops.shelf_shop_jungle": "Boutique en étagère d'acajou",
+
+  "block.spudaciousshops.rug_shop_white": "Boutique de Tapis Blanche",
+  "item.spudaciousshops.rug_shop_white": "Boutique de Tapis Blanche",
+  "block.spudaciousshops.rug_shop_orange": "Boutique de Tapis Orange",
+  "item.spudaciousshops.rug_shop_orange": "Boutique de Tapis Orange",
+  "block.spudaciousshops.rug_shop_magenta": "Boutique de Tapis Magenta",
+  "item.spudaciousshops.rug_shop_magenta": "Boutique de Tapis Magenta",
+  "block.spudaciousshops.rug_shop_light_blue": "Boutique de Tapis Bleu Clair",
+  "item.spudaciousshops.rug_shop_light_blue": "Boutique de Tapis Bleu Clair",
+  "block.spudaciousshops.rug_shop_yellow": "Boutique de Tapis Jaune",
+  "item.spudaciousshops.rug_shop_yellow": "Boutique de Tapis Jaune",
+  "block.spudaciousshops.rug_shop_lime": "Boutique de Tapis Vert Citron",
+  "item.spudaciousshops.rug_shop_lime": "Boutique de Tapis Vert Citron",
+  "block.spudaciousshops.rug_shop_pink": "Boutique de Tapis Rose",
+  "item.spudaciousshops.rug_shop_pink": "Boutique de Tapis Rose",
+  "block.spudaciousshops.rug_shop_gray": "Boutique de Tapis Gris",
+  "item.spudaciousshops.rug_shop_gray": "Boutique de Tapis Gris",
+  "block.spudaciousshops.rug_shop_light_gray": "Boutique de Tapis Gris Clair",
+  "item.spudaciousshops.rug_shop_light_gray": "Boutique de Tapis Gris Clair",
+  "block.spudaciousshops.rug_shop_cyan": "Boutique de Tapis Cyan",
+  "item.spudaciousshops.rug_shop_cyan": "Boutique de Tapis Cyan",
+  "block.spudaciousshops.rug_shop_purple": "Boutique de Tapis Violet",
+  "item.spudaciousshops.rug_shop_purple": "Boutique de Tapis Violet",
+  "block.spudaciousshops.rug_shop_blue": "Boutique de Tapis Bleu",
+  "item.spudaciousshops.rug_shop_blue": "Boutique de Tapis Bleu",
+  "block.spudaciousshops.rug_shop_brown": "Boutique de Tapis Marron",
+  "item.spudaciousshops.rug_shop_brown": "Boutique de Tapis Marron",
+  "block.spudaciousshops.rug_shop_green": "Boutique de Tapis Vert",
+  "item.spudaciousshops.rug_shop_green": "Boutique de Tapis Vert",
+  "block.spudaciousshops.rug_shop_black": "Boutique de Tapis Noir",
+  "item.spudaciousshops.rug_shop_black": "Boutique de Tapis Noir",
+  "gui.spudaciousshops.currency_type": "€"
 }
