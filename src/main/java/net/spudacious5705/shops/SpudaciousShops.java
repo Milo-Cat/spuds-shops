@@ -22,14 +22,14 @@ import static net.spudacious5705.shops.block.ModBlocks.postRegistryTasks;
 
 //import net.spudacious5705.shops.command.DebugShopsStatesCommand;
 
-@Mod(SpudaciousShops.MOD_ID)
+@Mod("spudaciousshops")
 public class SpudaciousShops{
 	public static final String MOD_ID = "spudaciousshops";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public SpudaciousShops(FMLJavaModLoadingContext context) {
+	public SpudaciousShops() {
 
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ConfigHandler.initialise();
 
@@ -53,7 +53,7 @@ public class SpudaciousShops{
 	}
 
     public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID,path);
+        return new ResourceLocation(MOD_ID,path);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -76,7 +76,7 @@ public class SpudaciousShops{
     }
 
     public static ResourceLocation getResource(String path){
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        return new ResourceLocation(MOD_ID, path);
     }
 
 
