@@ -1,28 +1,27 @@
 package net.spudacious5705.shops.block.entity.renderer;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.RotationAxis;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.spudacious5705.shops.block.entity.HookShopEntity;
 
 public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntity>, ShopRenderUtils {
 
-    private final BlockEntityRendererFactory.Context context;
+    private final BlockEntityRendererProvider.Context context;
 
-    public HookShopEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public HookShopEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         this.context = ctx;
     }
 
     @Override
-    public void render(HookShopEntity shop, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        ModelTransformationMode mode;
+    public void render(HookShopEntity shop, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
+        ItemDisplayContext mode;
         final HookShopEntity.RendererData data = shop.rendererData();
+        Font font = this.context.getFont();
         if(data == null){
             return;
         }
@@ -32,78 +31,86 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
 
 
             //global rotation and translation
-            matrices.push();
+            matrices.pushPose();
             matrices.translate(0.5f, 0.5f, 0.5f);
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(
+            matrices.mulPose(Axis.YP.rotationDegrees(
                             switch (data.direction()) {
                                 case EAST -> 270f;
                                 case SOUTH -> 180f;
                                 case WEST -> 90f;
                                 default -> 0f;
-                            }),
-                    0f, 0f, 0f);
+                            }));//used to have centre 0,0,0
 
 
             //render item being sold
-            matrices.push();
+            matrices.pushPose();
 
 
             if (data.stockDisplayType()) {
                 matrices.translate(0f, -0.25f, 0f);
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f));
+                matrices.mulPose(Axis.YP.rotationDegrees(180.0f));
                 matrices.scale(0.5f, 0.5f, 0.5f);
-                mode = ModelTransformationMode.NONE;
+                mode = ItemDisplayContext.NONE;
             } else {
                 matrices.translate(0f, -0.5f, 0f);
                 matrices.scale(0.7f, 0.7f, 0.7f);
-                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(45.0f));
-                mode = ModelTransformationMode.GUI;
+                matrices.mulPose(Axis.ZP.rotationDegrees(45.0f));
+                mode = ItemDisplayContext.GUI;
             }
 
 
 
-            this.context.getItemRenderer().renderItem(data.displayItem(), mode, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, data.world(), 1);
-            matrices.pop();
+            this.context.getItemRenderer().render(data.displayItem(), mode,
+                    false,
+                    matrices,
+                    vertexConsumers,
+                    light,
+                    overlay,
+                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+            );
+            matrices.popPose();
 
-            matrices.push();
+            matrices.pushPose();
 
             //render price (count of currency)
             matrices.translate(0.05f, 0.18f, -0.03126f);
-            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
+            matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
 
-            matrices.push();
+            matrices.pushPose();
             matrices.scale(0.016f, 0.016f, -0.016f);
-            this.context.getTextRenderer().draw(
+            font.drawInBatch(
                     data.text(),
                     data.width(),
                     -4f,
                     0xffffff,
                     false,
-                    matrices.peek().getPositionMatrix(),
+                    matrices.last().pose(),
                     vertexConsumers,
-                    TextRenderer.TextLayerType.NORMAL,
+                    Font.DisplayMode.NORMAL,
                     0,
                     light
             );
-            matrices.pop();
+            matrices.popPose();
 
-            matrices.push();
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f),0.05f, 0f, 0.03126f);
+            matrices.pushPose();
+            matrices.translate(0.05f, 0f, 0.03126f);
+            matrices.mulPose(Axis.YP.rotationDegrees(180f));
+            matrices.translate(-0.05f, 0f, -0.03126f);
             matrices.scale(0.016f, 0.016f, -0.016f);
-            this.context.getTextRenderer().draw(
+            font.drawInBatch(
                     data.text(),
                     data.width(),
                     -4f,
                     0xffffff,
                     false,
-                    matrices.peek().getPositionMatrix(),
+                    matrices.last().pose(),
                     vertexConsumers,
-                    TextRenderer.TextLayerType.NORMAL,
+                    Font.DisplayMode.NORMAL,
                     0,
                     light
             );
-            matrices.pop();
-            matrices.pop();
+            matrices.popPose();
+            matrices.popPose();
 
 
             //render currency type
@@ -119,19 +126,34 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
                 r = -0.04f;
             }
             matrices.translate(-0.12f, 0.2f, r);
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f),0f, 0f, 0f);
-            matrices.push();
-            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f),-0.12f, 0f, r);
+            matrices.mulPose(Axis.YP.rotationDegrees(180f));//was rotated around 0,0,0
+            matrices.pushPose();
+            matrices.translate(-0.12f, 0f, r);
+            matrices.mulPose(Axis.YP.rotationDegrees(180f));
+            matrices.translate(0.12f, 0f, -r);
 
             matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-            this.context.getItemRenderer().renderItem(data.paymentType(), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-            matrices.pop();
-            matrices.push();
+            this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+                    false,
+                    matrices,
+                    vertexConsumers,
+                    light,
+                    overlay,
+                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+            );
+            matrices.popPose();
+            matrices.pushPose();
             matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-            this.context.getItemRenderer().renderItem(data.paymentType(), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-            matrices.pop();
+            this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,                    false,
+                    matrices,
+                    vertexConsumers,
+                    light,
+                    overlay,
+                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+            );
+            matrices.popPose();
 
-            matrices.pop();
+            matrices.popPose();
             ShopRenderUtils.renderShopWarns(tickDelta, matrices, vertexConsumers, light, overlay, data, context, -2.1f);
         }
     }

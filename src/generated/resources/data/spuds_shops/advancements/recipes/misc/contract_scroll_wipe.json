@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_contract_scroll": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "spudaciousshops:contract_scroll"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "spudaciousshops:contract_scroll_wipe"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_contract_scroll",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "spudaciousshops:contract_scroll_wipe"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -1,6 +1,7 @@
 package net.spudacious5705.shops.properties;
 
-import net.minecraft.state.property.BooleanProperty;
+
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class ModProperties {
     /**
@@ -9,7 +10,7 @@ public class ModProperties {
      */
 
 
-    public static final BooleanProperty BREAKABLE = BooleanProperty.of("breakable");
+    public static final BooleanProperty BREAKABLE = BooleanProperty.create("breakable");
 
     public static void registerModProperties(){}
 }

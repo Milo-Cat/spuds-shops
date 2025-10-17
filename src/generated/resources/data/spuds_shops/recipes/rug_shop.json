@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:chest"
+    },
+    "g": {
+      "item": "minecraft:gold_nugget"
+    },
+    "r": {
+      "item": "minecraft:red_carpet"
+    }
+  },
+  "pattern": [
+    "   ",
+    "grg",
+    "ccc"
+  ],
+  "result": {
+    "item": "spudaciousshops:rug_shop"
+  },
+  "show_notification": true
+}

@@ -1,56 +1,52 @@
 package net.spudacious5705.shops.block.custom;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.serialization.MapCodec;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.CrateShopEntity;
-import net.spudacious5705.shops.block.entity.ModBlockEntities;
-import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CrateShopBlock extends AbstractShopBlock{
 
-    public static final VoxelShape CULLING_SHAPE = Block.createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);
+    public static final VoxelShape CULLING_SHAPE = createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);
 
-    public static final VoxelShape SHAPE_NORTH = VoxelShapes.union(
-            Block.createCuboidShape(1.0, 0.0, 0.0, 15.0, 8.0, 8.0),
-            Block.createCuboidShape(1.0, 4.0, 4.0, 15.0, 12.0, 12.0),
-            Block.createCuboidShape(1.0, 8.0, 8.0, 15.0, 16.0, 16.0)
+    public static final VoxelShape SHAPE_NORTH = Shapes.or(
+            createCuboidShape(1.0, 0.0, 0.0, 15.0, 8.0, 8.0),
+            createCuboidShape(1.0, 4.0, 4.0, 15.0, 12.0, 12.0),
+            createCuboidShape(1.0, 8.0, 8.0, 15.0, 16.0, 16.0)
     );
-    public static final VoxelShape SHAPE_WEST = VoxelShapes.union(
-            Block.createCuboidShape(0.0, 0.0, 1.0, 8.0, 8.0, 15.0),
-            Block.createCuboidShape(4.0, 4.0, 1.0, 12.0, 12.0, 15.0),
-            Block.createCuboidShape(8.0, 8.0, 1.0, 16.0, 16.0, 15.0)
+    public static final VoxelShape SHAPE_WEST = Shapes.or(
+            createCuboidShape(0.0, 0.0, 1.0, 8.0, 8.0, 15.0),
+            createCuboidShape(4.0, 4.0, 1.0, 12.0, 12.0, 15.0),
+            createCuboidShape(8.0, 8.0, 1.0, 16.0, 16.0, 15.0)
     );
-    public static final VoxelShape SHAPE_SOUTH = VoxelShapes.union(
-            Block.createCuboidShape(1.0, 0.0, 8.0, 15.0, 8.0, 16.0),
-            Block.createCuboidShape(1.0, 4.0, 4.0, 15.0, 12.0, 12.0),
-            Block.createCuboidShape(1.0, 8.0, 0.0, 15.0, 16.0, 8.0)
+    public static final VoxelShape SHAPE_SOUTH = Shapes.or(
+            createCuboidShape(1.0, 0.0, 8.0, 15.0, 8.0, 16.0),
+            createCuboidShape(1.0, 4.0, 4.0, 15.0, 12.0, 12.0),
+            createCuboidShape(1.0, 8.0, 0.0, 15.0, 16.0, 8.0)
     );
-    public static final VoxelShape SHAPE_EAST = VoxelShapes.union(
-            Block.createCuboidShape(8.0, 0.0, 1.0, 16.0, 8.0, 15.0),
-            Block.createCuboidShape(4.0, 4.0, 1.0, 12.0, 12.0, 15.0),
-            Block.createCuboidShape(0.0, 8.0, 1.0, 8.0, 16.0, 15.0)
+    public static final VoxelShape SHAPE_EAST = Shapes.or(
+            createCuboidShape(8.0, 0.0, 1.0, 16.0, 8.0, 15.0),
+            createCuboidShape(4.0, 4.0, 1.0, 12.0, 12.0, 15.0),
+            createCuboidShape(0.0, 8.0, 1.0, 8.0, 16.0, 15.0)
     );
 
-    public CrateShopBlock(Settings settings) {
-        super(settings, CrateShopState::new);
+    public CrateShopBlock(BlockBehaviour.Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -59,65 +55,45 @@ public class CrateShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CrateShopEntity(pos,state);
     }
 
+
     @Override
-    protected boolean onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if(ModBlockEntities.CRATE_SHOP_ENTITY.get() == type) {
+            return level.isClientSide
+                    ? (lvl, pos, st, be) -> ((CrateShopEntity)be).renderTick()
+                    : (lvl, pos, st, be) -> ((CrateShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+
+        }
+        return null;
+    }
+
+
+    @Override
+    protected boolean isStateReplacedValid(BlockState newShopState) {
+        return newShopState.getBlock() instanceof CrateShopBlock;
+    }
+
+    @Override
+    protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         return false;
     }
 
-    private static BlockState importProperties(BlockState defaultState, BlockState originalState) {
-        return defaultState
-                .with(FACING, originalState.get(FACING))
-                .with(BREAKABLE, originalState.get(BREAKABLE));
+    @Override
+    public @NotNull VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return CULLING_SHAPE;
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return checkType(
-                type,
-                ModBlockEntities.CRATE_SHOP_ENTITY,
-                world.isClient() ?
-                        (world1, pos, state1, blockEntity) -> blockEntity.renderTick()
-                        :
-                        (world1, pos, shopState, blockEntity) -> blockEntity.serverTick((ServerWorld) world1, pos, (CrateShopState) shopState)
-        );
-    }
-
-    public static class CrateShopState extends AbstractShopBlockState {
-        public CrateShopState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
-        }
-
-        @Override
-        public VoxelShape getCullingShape(BlockView world, BlockPos pos) {
-            return getShape();
-        }
-
-        @Override
-        public VoxelShape getOutlineShape(BlockView world, BlockPos pos, ShapeContext context) {
-            return getShape();
-        }
-
-        @Override
-        public VoxelShape getCollisionShape(BlockView world, BlockPos pos) {
-            return getShape();
-        }
-
-        private VoxelShape getShape(){
-            return switch (this.get(FACING)) {
-                case EAST -> SHAPE_EAST;
-                case SOUTH -> SHAPE_SOUTH;
-                case WEST -> SHAPE_WEST;
-                default -> SHAPE_NORTH;
-            };
-        }
-
-        @Override
-        protected boolean isStateReplacedValid(BlockState newShopState) {
-            return newShopState instanceof CrateShopState;
-        }
+    protected VoxelShape getGenericShape(BlockState state){
+        return switch (state.getValue(FACING)) {
+            case EAST -> SHAPE_EAST;
+            case SOUTH -> SHAPE_SOUTH;
+            case WEST -> SHAPE_WEST;
+            default -> SHAPE_NORTH;
+        };
     }
 }

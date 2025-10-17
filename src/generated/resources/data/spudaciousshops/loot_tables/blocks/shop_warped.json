@@ -1,0 +1,266 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "red"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_red"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "white"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_white"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "blue"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_blue"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "purple"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_purple"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "green"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_green"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "lime"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_lime"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "orange"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_orange"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "gray"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_gray"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "black"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_black"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "light_gray"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_light_gray"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "brown"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_brown"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "yellow"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_yellow"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "light_blue"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_light_blue"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "cyan"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_cyan"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "magenta"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_magenta"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "pink"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_warped_pink"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

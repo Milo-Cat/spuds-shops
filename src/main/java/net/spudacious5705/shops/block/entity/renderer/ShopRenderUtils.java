@@ -1,25 +1,25 @@
 package net.spudacious5705.shops.block.entity.renderer;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
-import net.spudacious5705.shops.item.ModItems;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity.RendererData;
+
+import static java.lang.Math.atan2;
+import static net.spudacious5705.shops.block.entity.renderer.ShopIconModels.NO_STOCK;
+import static net.spudacious5705.shops.block.entity.renderer.ShopIconModels.REG_FULL;
 
 public interface ShopRenderUtils {
 
-    static void renderShopWarns(float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, final RendererData data, BlockEntityRendererFactory.Context context, float yOffset) {
+    static void renderShopWarns(float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay, final RendererData data, BlockEntityRendererProvider.Context context, float yOffset) {
         renderShopWarns(tickDelta, matrices, vertexConsumers, light, overlay, data, context, yOffset, 0.5f);
     }
 
-    static void renderShopWarns(float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, final RendererData data, BlockEntityRendererFactory.Context context, float yOffset, float scale) {
+    static void renderShopWarns(float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay, final RendererData data, BlockEntityRendererProvider.Context context, float yOffset, float scale) {
         if(data.shopFunctional() && data.renderIcons()) {
             if (data.stockWarning || data.paymentWarning) {
 
@@ -44,10 +44,10 @@ public interface ShopRenderUtils {
                     data.lastRotation += data.doublePi;
                 }
 
-                matrices.push();
+                matrices.pushPose();
                 matrices.translate(0.5f, 1.4f + yOffset, 0.5f);
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotation((float) data.lastRotation));
-                matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f));
+                matrices.mulPose(Axis.YP.rotation((float) data.lastRotation));
+                matrices.mulPose(Axis.YP.rotationDegrees(90.0f));
                 matrices.scale(scale, scale, scale);
 
                 if (data.stockWarning && data.paymentWarning) {
@@ -55,16 +55,44 @@ public interface ShopRenderUtils {
 
                     matrices.translate(0.5f, 0.0f, 0.0f);
 
-                    context.getItemRenderer().renderItem(new ItemStack(ModItems.STOCK_WARNING), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
+                    context.getItemRenderer().render(NO_STOCK, ItemDisplayContext.GUI,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(NO_STOCK, null, null, 0)
+                    );
                     matrices.translate(-1.0f, 0.0f, 0.0f);
-                    context.getItemRenderer().renderItem(new ItemStack(ModItems.PAYMENT_WARNING), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    context.getItemRenderer().render(REG_FULL, ItemDisplayContext.GUI,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(REG_FULL, null, null, 0)
+                    );
+                    matrices.popPose();
                 } else if (data.stockWarning) {
-                    context.getItemRenderer().renderItem(new ItemStack(ModItems.STOCK_WARNING), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    context.getItemRenderer().render(NO_STOCK, ItemDisplayContext.GUI,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(NO_STOCK, null, null, 0)
+                    );
+                    matrices.popPose();
                 } else {
-                    context.getItemRenderer().renderItem(new ItemStack(ModItems.PAYMENT_WARNING), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    context.getItemRenderer().render(REG_FULL, ItemDisplayContext.GUI,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(REG_FULL, null, null, 0)
+                    );
+                    matrices.popPose();
                 }
             }
         }
@@ -72,7 +100,7 @@ public interface ShopRenderUtils {
     }
 
     static double calcTargetRotation(RendererData data) {
-        PlayerEntity player1 = MinecraftClient.getInstance().player;
+        Player player1 = Minecraft.getInstance().player;
         if (player1 != null) {
             double px = player1.getX();
             double pz = player1.getZ();
@@ -80,7 +108,7 @@ public interface ShopRenderUtils {
             double dz = data.z();
             double x = px - (dx + 0.5f);
             double z = pz - (dz + 0.5f);
-            return -MathHelper.atan2(z, x);
+            return -atan2(z, x);
         }
         return data.targetRotation;
     }

@@ -1,43 +1,40 @@
 package net.spudacious5705.shops.block.entity.renderer;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.RotationAxis;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
 
 public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEntity>, ShopRenderUtils {
 
-    private final BlockEntityRendererFactory.Context context;
+    private final BlockEntityRendererProvider.Context context;
 
-    public ShelfShopEntityRenderer(BlockEntityRendererFactory.Context ctx) {
+    public ShelfShopEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         this.context = ctx;
     }
 
 
     @Override
-    public void render(ShelfShopEntity shop, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public void render(ShelfShopEntity shop, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
 
         final ShelfShopEntity.RendererData data1 = shop.rendererData();
         final ShelfShopEntity.RendererData data2 = shop.rendererDataTop();
 
         //global rotation and translation
-        matrices.push();
+        matrices.pushPose();
         matrices.translate(0.5f, 0.5f, 0.5f);
 
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(
+        matrices.mulPose(Axis.YP.rotationDegrees(
                         switch (shop.getCachedFacingDirection()) {
                             case EAST -> 270f;
                             case SOUTH -> 180f;
                             case WEST -> 90f;
                             default -> 0f;
-                        }),
-                0f, 0f, 0f);
+                        }));//was rotated around 0,0,0
 
         //render bottom
         renderShelf(data1, tickDelta, matrices, vertexConsumers, light, overlay, shop.furtherDataBottom());
@@ -46,7 +43,7 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
         matrices.translate(0f, 0.44f, 0f);
         renderShelf(data2, tickDelta, matrices, vertexConsumers, light, overlay, shop.furtherDataTop());
 
-        matrices.pop();
+        matrices.popPose();
 
         ShopRenderUtils.renderShopWarns(tickDelta, matrices, vertexConsumers, light, overlay, data1, context, -1.05f, 0.3f);
 
@@ -54,10 +51,11 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
 
     }
 
-    private void renderShelf(ShelfShopEntity.RendererData data, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, ShelfShopEntity.ShelfRenderData furtherData){
-        ModelTransformationMode mode;
+    private void renderShelf(ShelfShopEntity.RendererData data, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay, ShelfShopEntity.ShelfRenderData furtherData){
+        ItemDisplayContext mode;
         float itemTranslationFactor;
-        RotationAxis rotationAxis;
+        Font font = this.context.getFont();
+        Axis rotationAxis;
         int renderCount;
         if(data != null){
             data.frameAccumulator();
@@ -65,41 +63,55 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
 
 
                 //render item being sold
-                matrices.push();
+                matrices.pushPose();
                 matrices.translate(0f, -0.216f, 0.3f);
                 if (data.stockDisplayType()) {
-                    //matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f));
+                    //matrices.mulPose(Axis.YP.rotationDegrees(180.0f));
                     matrices.scale(0.2f, 0.2f, 0.2f);
-                    mode = ModelTransformationMode.NONE;
+                    mode = ItemDisplayContext.NONE;
                     itemTranslationFactor = 1.15f;
-                    rotationAxis = RotationAxis.POSITIVE_Y;
+                    rotationAxis = Axis.YP;
                     renderCount=1;
                 } else {
                     matrices.translate(0f, -0.08f, 0f);
-                    matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0f));
+                    matrices.mulPose(Axis.XP.rotationDegrees(90.0f));
                     matrices.scale(0.4f, 0.4f, 0.4f);
-                    mode = ModelTransformationMode.GUI;
+                    mode = ItemDisplayContext.GUI;
                     itemTranslationFactor = 0.5f;
-                    rotationAxis = RotationAxis.POSITIVE_Z;
+                    rotationAxis = Axis.ZP;
                     renderCount=3;
                 }
 
                 for(int y = 0; y<renderCount; y++) {
                     //left
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(-itemTranslationFactor, 0f, -y*0.05f);
-                    matrices.multiply(rotationAxis.rotationDegrees(furtherData.itemLrotation+(y+1)*55f));
-                    this.context.getItemRenderer().renderItem(data.displayItem(), mode, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    matrices.mulPose(rotationAxis.rotationDegrees(furtherData.itemLrotation+(y+1)*55f));
+                    this.context.getItemRenderer().render(data.displayItem(), mode,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    );
+                    matrices.popPose();
 
                     //right
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(itemTranslationFactor, 0f, -y*0.05f);
-                    matrices.multiply(rotationAxis.rotationDegrees(furtherData.itemRrotation+(y+1)*55f));
-                    this.context.getItemRenderer().renderItem(data.displayItem(), mode, light, OverlayTexture.DEFAULT_UV, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    matrices.mulPose(rotationAxis.rotationDegrees(furtherData.itemRrotation+(y+1)*55f));
+                    this.context.getItemRenderer().render(data.displayItem(), mode,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    );
+                    matrices.popPose();
                 }
-                matrices.pop();
+                matrices.popPose();
 
 
                 if (data.stockDisplayType()) {
@@ -107,125 +119,139 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     //render price (count of currency)
 
 
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(-0.02f, -0.3124f, 0.16f);
-                    matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f), 0f, 0f, 0f);
-                    matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90f), 0f, 0f, 0f);
+                    matrices.mulPose(Axis.ZP.rotationDegrees(180f));//was rotated around 0,0,0
+                    matrices.mulPose(Axis.XP.rotationDegrees(-90f));//was rotated around 0,0,0
                     matrices.scale(0.02f, 0.02f, -0.02f);
-                    this.context.getTextRenderer().draw(
+                    font.drawInBatch(
                             data.text(),
                             data.width(),
                             -4f,
                             0xffffff,
                             false,
-                            matrices.peek().getPositionMatrix(),
+                            matrices.last().pose(),
                             vertexConsumers,
-                            TextRenderer.TextLayerType.NORMAL,
+                            Font.DisplayMode.NORMAL,
                             0,
                             light
                     );
-                    matrices.pop();
+                    matrices.popPose();
 
                     //render amount being sold
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(-0.02f, -0.17f, 0.43749f);
-                    matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f), 0f, 0f, 0f);
+                    matrices.mulPose(Axis.ZP.rotationDegrees(180f));//was rotated around 0,0,0,
                     matrices.scale(0.022f, 0.022f, -0.022f);
-                    this.context.getTextRenderer().draw(
+                    font.drawInBatch(
                             data.stockQuantity,
                             data.qWidth(),
                             -4f,
                             0xffff00,
                             false,
-                            matrices.peek().getPositionMatrix(),
+                            matrices.last().pose(),
                             vertexConsumers,
-                            TextRenderer.TextLayerType.NORMAL,
+                            Font.DisplayMode.NORMAL,
                             0x000000,
                             light
                     );
-                    matrices.pop();
+                    matrices.popPose();
 
 
                     //render currency type
-                    matrices.push();
+                    matrices.pushPose();
                     float scaleFactor;
-                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f));
+                    matrices.mulPose(Axis.YP.rotationDegrees(180f));
                     if (data.currencyDisplayType()) {
                         //a block is being rendered
                         scaleFactor = 0.16f;
                         matrices.translate(0f, -0.265f, -0.35f);
-                        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-30f));
+                        matrices.mulPose(Axis.XP.rotationDegrees(-30f));
                     } else {
                         //an item is being rendered
                         scaleFactor = 0.35f;
                         matrices.translate(0f, -0.308f, -0.34f);
-                        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90f));
+                        matrices.mulPose(Axis.XP.rotationDegrees(-90f));
                     }
 
 
                     matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-                    this.context.getItemRenderer().renderItem(data.paymentType(), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            context.getItemRenderer().getModel(data.paymentType(), null, null, 0)
+                    );
+                    matrices.popPose();
                 } else {
                     //render price (count of currency)
 
 
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(-0.08f, -0.16f, 0.43749f);
-                    matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f), 0f, 0f, 0f);
+                    matrices.mulPose(Axis.ZP.rotationDegrees(180f));//was rotated around 0,0,0
                     matrices.scale(0.016f, 0.016f, -0.016f);
-                    this.context.getTextRenderer().draw(
+                    font.drawInBatch(
                             data.text(),
                             data.width(),
                             -4f,
                             0xffffff,
                             false,
-                            matrices.peek().getPositionMatrix(),
+                            matrices.last().pose(),
                             vertexConsumers,
-                            TextRenderer.TextLayerType.NORMAL,
+                            Font.DisplayMode.NORMAL,
                             0,
                             light
                     );
-                    matrices.pop();
+                    matrices.popPose();
 
                     //render amount being sold
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(0.2f, -0.16f, 0.43749f);
-                    matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f), 0f, 0f, 0f);
+                    matrices.mulPose(Axis.ZP.rotationDegrees(180f)); //was rotated around 0,0,0
                     matrices.scale(0.016f, 0.016f, -0.016f);
-                    this.context.getTextRenderer().draw(
+                    font.drawInBatch(
                             data.stockQuantity,
                             data.qWidth(),
                             -4f,
                             0xffff00,
                             false,
-                            matrices.peek().getPositionMatrix(),
+                            matrices.last().pose(),
                             vertexConsumers,
-                            TextRenderer.TextLayerType.NORMAL,
+                            Font.DisplayMode.NORMAL,
                             0x000000,
                             light
                     );
-                    matrices.pop();
+                    matrices.popPose();
 
 
                     //render currency type
-                    matrices.push();
+                    matrices.pushPose();
                     matrices.translate(-0.245f, -0.16f, 0.43f);
                     float scaleFactor;
                     if (data.currencyDisplayType()) {
                         //a block is being rendered
-                        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(20f));
+                        matrices.mulPose(Axis.XP.rotationDegrees(20f));
                         scaleFactor = 0.16f;
                     } else {
                         //an item is being rendered
                         scaleFactor = 0.22f;
                     }
 
-                    matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180f));
+                    matrices.mulPose(Axis.YP.rotationDegrees(180f));
 
                     matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-                    this.context.getItemRenderer().renderItem(data.paymentType(), ModelTransformationMode.GUI, light, overlay, matrices, vertexConsumers, data.world(), 1);
-                    matrices.pop();
+                    this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+                            false,
+                            matrices,
+                            vertexConsumers,
+                            light,
+                            overlay,
+                            this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    );
+                    matrices.popPose();
                 }
             }
         }

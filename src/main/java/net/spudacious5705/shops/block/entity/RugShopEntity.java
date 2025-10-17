@@ -1,33 +1,30 @@
 package net.spudacious5705.shops.block.entity;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.spudacious5705.shops.block.custom.AbstractShopBlock;
-import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.spudacious5705.shops.block.ModBlockEntities;
 
 public class RugShopEntity extends AbstractShopEntity {
 
     public long lastNanoTime;
 
     public RugShopEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.RUG_SHOP_ENTITY, pos, state, -0.3f);
+        super(ModBlockEntities.RUG_SHOP_ENTITY.get(), pos, state, -0.3f);
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected RugRenderData furtherData;
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public RugRenderData furtherData(){
         return furtherData;
     }
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static class RugRenderData {
         public float itemRotationY;
         public float itemRotationX;
@@ -48,10 +45,7 @@ public class RugShopEntity extends AbstractShopEntity {
         }
     }
 
-    @Override
-    public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
-    }
+
 
 
     @Override
@@ -60,17 +54,17 @@ public class RugShopEntity extends AbstractShopEntity {
     }
 
     @Override
-    public void serverTick(ServerWorld world, BlockPos pos, AbstractShopBlock.AbstractShopBlockState shopState) {
+    public void serverTick(ServerLevel world, BlockPos pos, BlockState shopState) {
         if(decayTimer<0){
             if (world.random.nextFloat() < 0.05f) {
-                world.spawnParticles(ParticleTypes.ENCHANT, pos.getX() + 0.325f + world.random.nextFloat()*0.35f, pos.getY() + 0.2f + world.random.nextFloat()*0.2f, pos.getZ() + 0.325f + world.random.nextFloat()*0.35f, 1, 0, 0, 0, -0.2);
+                world.sendParticles(ParticleTypes.ENCHANT, pos.getX() + 0.325f + world.random.nextFloat()*0.35f, pos.getY() + 0.2f + world.random.nextFloat()*0.2f, pos.getZ() + 0.325f + world.random.nextFloat()*0.35f, 1, 0, 0, 0, -0.2);
             }
         }
         super.serverTick(world, pos, shopState);
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void createRendererData(){
         this.rendererData = new RendererData(shopInventory);
         this.furtherData = new RugRenderData();

@@ -1,39 +1,37 @@
 package net.spudacious5705.shops.block.entity;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.spudacious5705.shops.SpudaciousShops;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.ShopRenderUtils;
 import net.spudacious5705.shops.config.ConfigHandler;
@@ -48,43 +46,47 @@ import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.UUID;
 
+import static net.spudacious5705.shops.block.custom.AbstractShopBlock.BREAKABLE;
 import static net.spudacious5705.shops.block.entity.ShopInventory.*;
 import static net.spudacious5705.shops.item.custom.ContractScroll.isSigned;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
 
-public abstract class AbstractShopEntity extends BlockEntity implements ExtendedScreenHandlerFactory{
+public abstract class AbstractShopEntity extends BlockEntity {
 
     //region INVENTORY
 
     protected final ShopInventory shopInventory = ShopInventory.create();
 
     @NotNull
-    public InventoryDelegate getInventoryDelegate(PlayerEntity player) {
+    public InventoryDelegate getInventoryDelegate(Player player) {
         return new InventoryDelegate(player, this.shopInventory);
     }
 
-    public void itemScatter(World world, BlockPos pos) {
-        ItemScatterer.spawn(world,pos,shopInventory.prepForItemScatterer());
+    public void itemScatter(Level world, BlockPos pos) {
+        ItemScatterer(world,pos, shopInventory.prepForItemScatterer());
         int contractsCount = identificationRecords.size()-1;
         if(contractsCount>0){
-            ItemScatterer.spawn(world,pos.getX(),pos.getY(),pos.getZ(),new ItemStack(ModItems.CONTRACT_SCROLL,contractsCount));
+            ItemScatterer(world,pos,new ItemStack(ModItems.CONTRACT_SCROLL.get(),contractsCount));
         }
     }
 
     public ScreenSettingsGroup getScreenSettings() {
-        return ((AbstractShopBlock) this.getCachedState().getBlock()).getScreenSettings();
+        return ((AbstractShopBlock) this.getBlockState().getBlock()).getScreenSettings();
     }
 
-    public final class InventoryDelegate implements Inventory{
+    public final class InventoryDelegate implements Container {
         private final ShopInventory inventory;
         private final PermissionLevel permissions;
         private final UUID reciever_UUID;
 
-        public InventoryDelegate(PlayerEntity player, ShopInventory items) {
+        public InventoryDelegate(Player player, ShopInventory items) {
             this.permissions = userSignIn(player);
-            this.reciever_UUID = player.getUuid();
+            this.reciever_UUID = player.getUUID();
             this.inventory = items;
         }
 
@@ -93,7 +95,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         @Override
-        public int size() {
+        public int getContainerSize() {
             return inventory.size();
         }
 
@@ -103,8 +105,22 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         @Override
-        public ItemStack getStack(int slot) {
-            if(slot>this.size()||slot<0) return ItemStack.EMPTY;
+        public ItemStack removeItemNoUpdate(int pSlot) {
+            return null;
+        }
+
+        @Override
+        public void setChanged() {
+            assert level != null;
+            level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),3);
+            isShopFunctional();
+            AbstractShopEntity.this.setChanged();
+        }
+
+
+        @Override
+        public @NotNull ItemStack getItem(int slot) {
+            if(slot>this.getContainerSize()||slot<0) return ItemStack.EMPTY;
 
             if(slot>PROFIT_END) {
                 return inventory.get(slot);
@@ -116,16 +132,16 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
 
-        public void trade(PlayerInventory playerInv){
-            DefaultedList<ItemStack> vendList;
+        public void trade(Inventory playerInv){
+            NonNullList<ItemStack> vendList;
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
             if(tradeCreative) {
-                vendList = DefaultedList.ofSize(STOCK_END);
+                vendList = NonNullList.withSize(1, ItemStack.EMPTY);
                 vendList.add(0, inventory.getVendingStack().copy());
             } else {
                 vendList = takeItems(inventory.getVendingStack(), inventory::get, 0, STOCK_END);
             }
-            DefaultedList<ItemStack> payList = takeItems(inventory.getPaymentStack(), playerInv::getStack,0,36);
+            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack(), playerInv::getItem,0,36);
 
             if(!tradeCreative) {
                 //place players payment into register
@@ -136,10 +152,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                 for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
                     storageStack = inventory.get(i);
                     if (canUseInTrade(storageStack, allowStack) || storageStack.isEmpty()) {
-                        while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxCount())) {
+                        while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxStackSize())) {
                             space = getAvalableSpace(storageStack);
                             if (storageStack.isEmpty()) {
-                                storageStack = payList.get(ptr).copyAndEmpty();
+                                storageStack = payList.get(ptr).copyAndClear();
                             } else {
                                 storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
                             }
@@ -155,15 +171,15 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             int ptr = 0;
             boolean success = true;
             while(success && ptr<(vendList.size())){
-                success = playerInv.insertStack(vendList.get(ptr));
+                success = playerInv.add(vendList.get(ptr));
             }
 
-            PlayerEntity player = playerInv.player;
-            ItemScatterer.spawn(player.getWorld(),player.getBlockPos(),vendList);
+            Player player = playerInv.player;
+            ItemScatterer(player.level(),player.getOnPos(),vendList);
 
         }
 
-        public boolean canTrade(PlayerEntity playerEntity) {
+        public boolean canTrade(Player playerEntity) {
             if(!toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false)) {
                 if (inventory.outOfStock()) {
                     errorMessage("Shop is out of stock", playerEntity);
@@ -182,19 +198,23 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
 
-        private void errorMessage(String message, PlayerEntity player){
-            if(player.getWorld().isClient()) {
-                player.sendMessage(Text.of(message), true);
+        private void errorMessage(String message, Player player){
+            if(player.level().isClientSide()) {
+                player.displayClientMessage(Component.literal(message), true);
             }
         }
 
+        @Override
+        public void clearContent() {
+
+        }
 
         private interface miniDelegate{
             ItemStack getStack(int index);
         }
 
-        private static DefaultedList<ItemStack> takeItems(ItemStack retrieveStack, miniDelegate inventory, int start, int end){
-            DefaultedList<ItemStack> list = DefaultedList.ofSize(end-start);
+        private static NonNullList<ItemStack> takeItems(ItemStack retrieveStack, miniDelegate inventory, int start, int end){
+            NonNullList<ItemStack> list = NonNullList.create();
             int moneyRequired = retrieveStack.getCount();
             for (int i = start; i <= end; i++) {
                 ItemStack stack = inventory.getStack(i);
@@ -210,32 +230,33 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             return list;
         }
 
-        private static void addToList(DefaultedList<ItemStack> list, ItemStack stack){
+        private static void addToList(NonNullList<ItemStack> list, ItemStack stack){
             if(list.isEmpty()){
-                list.add(stack.copyAndEmpty());
+                list.add(stack.copyAndClear());
                 return;
             }
             int end = list.size()-1;
             ItemStack listEnd = list.get(end);
             int space = getAvalableSpace(listEnd);
+            ItemStack split = stack.split(space);
             list.set(end,
-                    listEnd.copyWithCount(
+                    split.copyWithCount(
                             listEnd.getCount()+
-                                    stack.split(space).getCount()
+                                    split.getCount()
                     ));
-            if(!stack.isEmpty()){
-                list.add(stack.copyAndEmpty());
+            if(!split.isEmpty()){
+                list.add(stack.copyAndClear());
             }
         }
 
         private static int getAvalableSpace(ItemStack stack){
-            return Math.max(stack.getMaxCount()-stack.getCount(), 0);
+            return Math.max(stack.getMaxStackSize()-stack.getCount(), 0);
         }
 
         @Override
-        public ItemStack removeStack(int slot, int amount) {
+        public @NotNull ItemStack removeItem(int slot, int amount) {
 
-            if(slot>this.size()||slot<0) return ItemStack.EMPTY;
+            if(slot>this.getContainerSize()||slot<0) return ItemStack.EMPTY;
 
             if(slot<PAYMENT_SLOT){
                 if(permissions.canTakeItems()) return inventory.split(slot, amount);
@@ -247,12 +268,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         @Override
-        public ItemStack removeStack(int slot) {
-            return removeStack(slot,64);
-        }
-
-        @Override
-        public void setStack(int slot, ItemStack stack) {
+        public void setItem(int slot, ItemStack stack) {
             if(slot>=PAYMENT_SLOT){
                 if(this.permissions.canEditTrades()){
                     inventory.set(slot, stack);
@@ -263,22 +279,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         @Override
-        public void markDirty() {
-            assert world != null;
-            world.updateListeners(pos,getCachedState(),getCachedState(),3);
-            isShopFunctional();
-            AbstractShopEntity.this.markDirty();
+        public boolean stillValid(Player player) {
+            return player.getUUID().compareTo(reciever_UUID) == 0;
         }
 
-        @Override
-        public boolean canPlayerUse(PlayerEntity player) {
-            return player.getUuid().compareTo(reciever_UUID) == 0;
-        }
-
-
-        @Override
-        public void clear() {
-        }
 
         public Item getPaymentType() {
             return inventory.getPaymentType();
@@ -295,7 +299,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
     //FIXME: these 2 methods are a bit of a hack. Need to create an extension of ScreenHandlers
     @Nullable
-    public final InventoryDelegate getOtherInventoryDelegate(PlayerEntity player){
+    public final InventoryDelegate getOtherInventoryDelegate(Player player){
         ShopInventory inv = otherInventory();
 
         if(inv != null){
@@ -317,10 +321,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
     private final ArrayList<PlayerID> identificationRecords = new ArrayList<>(1);
     @Nullable
-    public final player_ID_Records_Delegate getRecordsDelegate(PlayerEntity player) {
+    public final player_ID_Records_Delegate getRecordsDelegate(Player player) {
         PermissionLevel perm = userSignIn(player);
         if(perm.canViewShopScreen()){
-            return new player_ID_Records_Delegate(perm,player.getUuid());
+            return new player_ID_Records_Delegate(perm,player.getUUID());
         }
         return null;
     }
@@ -330,11 +334,11 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         public static final PlayerID EMPTY = new PlayerID(new UUID(0,0),"##OWNER NAME NULL##",PermissionLevel.CUSTOMER);
 
         public static PlayerID fromContract(ItemStack contract, PermissionLevel permissionLevel) {
-            NbtCompound nbt = contract.getNbt();
+            CompoundTag nbt = contract.getTag();
             if(nbt != null) {
                 if (ContractScroll.isSigned(contract)) {//technically dont need this 2nd check
                     return new PlayerID(
-                            nbt.getUuid(ContractScroll.NBTuuid),
+                            nbt.getUUID(ContractScroll.NBTuuid),
                             nbt.getString(ContractScroll.NBTname),
                             permissionLevel
                     );
@@ -352,9 +356,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
     @MagicConstant
     private static final int contractsInvSize = 24;
-    private final DefaultedList<ItemStack> contracts = DefaultedList.ofSize(contractsInvSize, ItemStack.EMPTY);/// assign to using nbt read write
+    private final NonNullList<ItemStack> contracts = NonNullList.withSize(contractsInvSize, ItemStack.EMPTY);/// assign to using nbt read write
 
-    public final class player_ID_Records_Delegate implements Inventory{
+    public final class player_ID_Records_Delegate implements Container {
         private final PermissionLevel perms;
         private final UUID userUUID;
 
@@ -377,7 +381,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                                 if(contracts.get(index) == ItemStack.EMPTY){
                                     identificationRecords.add(id);
                                     contracts.set(index, contract);
-                                    markDirty();
+                                    this.setChanged();
                                     return ItemStack.EMPTY;
                                 }
                             }
@@ -394,7 +398,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
         public static boolean checkAction(ItemStack contract, int index){
             if(checkIndex(index)){
-                if(contract.getItem()==ModItems.CONTRACT_SCROLL){
+                if(contract.getItem()==ModItems.CONTRACT_SCROLL.get()){
                     return ContractScroll.isSigned(contract);
                 }
             }
@@ -405,7 +409,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             return index<contractsInvSize&&index>=0;
         }
 
-        private boolean canEditThat(int index) {
+        public boolean canEditThat(int index) {
             if(checkIndex(index)) {
                 if (perms.canEditPermissions()) {
                     PermissionLevel perm = permFromIndex(index);
@@ -414,14 +418,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                     } else if(perms == PermissionLevel.OWNER){
                         return true;
                     }
-                    return checkContract(fetchContract(index,false));
+                    return belongsToInteractor(fetchContract(index,false));
                 }
             }
             return false;
         }
 
         @Override
-        public int size() {
+        public int getContainerSize() {
             return contractsInvSize;
         }
 
@@ -450,14 +454,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
                         identificationRecords.removeIf(playerID -> playerID.uuid.compareTo(id.uuid)==0);
 
-                        if(world instanceof ServerWorld server){
-                            server.getPlayers().stream().filter(
-                                    player -> player.getUuid().compareTo(id.uuid) == 0
-                            ).findFirst().ifPresent(ServerPlayerEntity::closeHandledScreen);
+                        if(level instanceof ServerLevel server){
+                            server.players().stream().filter(
+                                    player -> player.getUUID().compareTo(id.uuid) == 0
+                            ).findFirst().ifPresent(Player::closeContainer);
                         }
 
                         contracts.set(index, ItemStack.EMPTY);
-                        markDirty();
+                        this.setChanged();
                     }
 
 
@@ -468,52 +472,53 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         @Override
-        public ItemStack getStack(int index) {
+        public @NotNull ItemStack getItem(int index) {
             return fetchContract(index,false);
         }
 
         @Override
-        public ItemStack removeStack(int index, int amount) {//stack is always size of 1
-            return removeStack(index);
+        public @NotNull ItemStack removeItem(int index, int amount) {//stack is always size of 1
+            return removeItem(index);
         }
 
         @Override
-        public ItemStack removeStack(int index) {
+        public ItemStack removeItemNoUpdate(int pSlot) {
+            return null;
+        }
+
+        public ItemStack removeItem(int index) {
             if(canEditThat(index)) {
                 ItemStack contract = fetchContract(index, true);
-                markDirty();
+                this.setChanged();
                 return contract;
             }
             return ItemStack.EMPTY;
         }
 
         @Override
-        public void setStack(int index, ItemStack contract) {
+        public void setItem(int index, @NotNull ItemStack contract) {
         }
 
         @Override
-        public void markDirty() {
-            if(world != null) {
-                world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        public void setChanged() {
+            if(level != null) {
+                level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
             }
             copyRecordsToContracts();
-            AbstractShopEntity.this.markDirty();
+            AbstractShopEntity.this.setChanged();
         }
 
 
         @Override
-        public boolean canPlayerUse(PlayerEntity player) {
+        public boolean stillValid(@NotNull Player player) {
             return perms.canEditPermissions();
         }
 
         /**
          * does nothing
          */
-        @Override
-        public void clear() {
-        }
 
-        public boolean checkContract(@Nullable ItemStack stack) {
+        public boolean belongsToInteractor(@Nullable ItemStack stack) {
             if(stack != null) {
                 UUID uuid = ContractScroll.getUUID(stack);
                 if (uuid != null) {
@@ -523,31 +528,36 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             return false;
         }
 
-        public void selfDemote(ServerPlayerEntity player) {
-            if(player.getUuid().compareTo(userUUID)==0){
+        public void selfDemote(Player player) {
+            if(player.getUUID().compareTo(userUUID)==0){
                 identificationRecords.removeIf(playerID -> playerID.uuid.compareTo(userUUID)==0);
-                markDirty();
+                this.setChanged();
             }
+        }
+
+        @Override
+        public void clearContent() {
+
         }
     }
 
     private static ItemStack RecordToContract(PlayerID id){
 
-        ItemStack stack = new ItemStack(ModItems.CONTRACT_SCROLL);
+        ItemStack stack = new ItemStack(ModItems.CONTRACT_SCROLL.get());
 
-        NbtCompound nbt = new NbtCompound();
+        CompoundTag nbt = new CompoundTag();
 
         nbt.putString("player_name", id.name);
-        nbt.putUuid("player_uuid", id.uuid);
+        nbt.putUUID("player_uuid", id.uuid);
 
-        stack.setNbt(nbt);
+        stack.setTag(nbt);
 
-        return stack.setCustomName(Text.of("Contract - "+id.name));
+        return stack.setHoverName(Component.literal("Contract - "+id.name));
     }
 
-    public PermissionLevel quickUserSignIn(@NotNull PlayerEntity player){
+    public PermissionLevel quickUserSignIn(@NotNull Player player){
 
-        UUID signIn = player.getUuid();
+        UUID signIn = player.getUUID();
 
         PlayerID id = identificationRecords.stream().filter(record -> record.uuid.compareTo(signIn)==0).findFirst().orElse(null);
 
@@ -559,7 +569,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         return PermissionLevel.CUSTOMER;
     }
 
-    public PermissionLevel userSignIn(PlayerEntity player) {
+    public PermissionLevel userSignIn(Player player) {
 
         if(toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false)){
             if(!player.isCreative()){
@@ -568,8 +578,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         if(identificationRecords.isEmpty()) {
-            identificationRecords.add(new PlayerID(player.getUuid(), player.getEntityName(), PermissionLevel.OWNER));
-            markDirty();
+            identificationRecords.add(new PlayerID(player.getUUID(), player.getName().getString(), PermissionLevel.OWNER));
+            this.setChanged();
             return PermissionLevel.OWNER;
         }
 
@@ -588,7 +598,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                                     new PlayerID(record.uuid,record.name,PermissionLevel.OWNER) :
                                     record
             );
-            markDirty();
+            this.setChanged();
         }
 
         return quickUserSignIn(player);
@@ -599,13 +609,13 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         private final boolean isCreative;
         private final boolean canEditSettings;
 
-        private settings_Delegate(PermissionLevel perms, PlayerEntity player){
+        private settings_Delegate(PermissionLevel perms, Player player){
             isCreative = player.isCreative();
             canEditSettings = perms.canEditTrades();
         }
 
         public boolean getState(@NotNull ToggleButtonID ID){
-            return toggleSettings.get(ID);
+            return toggleSettings.getOrDefault(ID, ConfigHandler.getDefaultToggleSetting(ID));
         }
 
         public boolean attemptSetState(@NotNull ToggleButtonID ID, @NotNull Boolean state){
@@ -619,7 +629,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                             )
             ){
                 toggleSettings.put(ID,state);
-                markDirty();
+                setChanged();
                 checkShouldRenderParticles();
                 return true;
             }
@@ -633,7 +643,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
     }
 
-    public settings_Delegate getSettingsDelegate(PlayerEntity player) {
+    public settings_Delegate getSettingsDelegate(Player player) {
         return new settings_Delegate(
                 quickUserSignIn(player),
                 player
@@ -647,11 +657,12 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     //region NBT
 
     @Override
-    public void markDirty() {
+    public void setChanged() {
         if(isClient) {
             forceUpdateRenderData();
         }
-        super.markDirty();
+        super.setChanged();
+
     }
 
     @MagicConstant
@@ -676,67 +687,70 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
     }
 
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    public void forceUpdateClient() {
+        if(level instanceof ServerLevel server) {
+            BlockPos pos = this.getBlockPos();
+            server.getChunkSource().blockChanged(pos);
+            Packet<ClientGamePacketListener> packet = getUpdatePacket();
+            if (packet != null) {
+                List<ServerPlayer> watchers = server.getChunkSource().chunkMap.getPlayers(server.getChunk(pos).getPos(), false);
+                for (ServerPlayer player : watchers) {
+                    player.connection.send(packet);
+                }
+            }
+
+        }
+    }
+
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        Inventories.readNbt(nbt, shopInventory);
+    public void load(@NotNull CompoundTag tag) {
+        super.load(tag);
+        ContainerHelper.loadAllItems(tag, shopInventory);
         identificationRecords.clear();
 
-        if(nbt.contains(CONTRACTS, NbtCompound.LIST_TYPE)){
-            NbtList contractList = nbt.getList(CONTRACTS, NbtElement.COMPOUND_TYPE);
+        if (tag.contains(CONTRACTS, Tag.TAG_LIST)) {
+            ListTag contractList = tag.getList(CONTRACTS, Tag.TAG_COMPOUND);
 
             for (int index = 0; index < contractList.size(); index++) {
-                NbtCompound contract = contractList.getCompound(index);
+                CompoundTag contract = contractList.getCompound(index);
 
                 String name = contract.getString(CONTRACT_NAME);
-                UUID uuid = contract.getUuid(CONTRACT_UUID);
+                UUID uuid = contract.getUUID(CONTRACT_UUID);
                 PermissionLevel perms = PermissionLevel.fromInt(contract.getInt(CONTRACT_LEVEL));
 
-                if(perms.asInt()>0){
-                    identificationRecords.add(
-                            new PlayerID(
-                                    uuid,
-                                    name,
-                                    perms
-                            )
-                    );
+                if (perms.asInt() > 0) {
+                    identificationRecords.add(new PlayerID(uuid, name, perms));
                 }
-
             }
         }
 
         copyRecordsToContracts();
 
-        if(nbt.containsUuid("owner_id")) {//convert legacy owner to updated system
-            UUID ownerID = nbt.getUuid("owner_id");
-            String name;
-            if(nbt.contains("owner_name")) {
-                name = nbt.getString("owner_name");
-            } else {
-                name = ownerID.toString();
-            }
-
+        if (tag.hasUUID("owner_id")) {
+            UUID ownerID = tag.getUUID("owner_id");
+            String name = tag.contains("owner_name") ? tag.getString("owner_name") : ownerID.toString();
             identificationRecords.add(new PlayerID(ownerID, name, PermissionLevel.OWNER));
-
         }
 
-
-        if(nbt.contains("decay_timer")) {
-            this.decayTimer = nbt.getInt("decay_timer");
+        if (tag.contains("decay_timer")) {
+            this.decayTimer = tag.getInt("decay_timer");
         }
 
         for (ToggleButtonID id : ToggleButtonID.values()) {
             String nbtName = "toggle_" + id.getSerialised();
-            if (nbt.contains(nbtName)) {
-                toggleSettings.put(
-                        id,
-                        nbt.getBoolean(nbtName)
-                );
+            if (tag.contains(nbtName)) {
+                toggleSettings.put(id, tag.getBoolean(nbtName));
             } else {
                 toggleSettings.put(id, ConfigHandler.getDefaultToggleSetting(id));
             }
-
         }
+
         checkShouldRenderParticles();
     }
 
@@ -750,44 +764,42 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     private static final String CONTRACTS = "contracts";
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        Inventories.writeNbt(nbt, shopInventory, false);
+    protected void saveAdditional(CompoundTag tag) {
+        ContainerHelper.saveAllItems(tag, shopInventory);
 
-        NbtList contractList = new NbtList();
+        ListTag contractList = new ListTag();
 
-        for(PlayerID id :identificationRecords){
-
-            NbtCompound contractNBT = new NbtCompound();
-
-            contractNBT.putString(CONTRACT_NAME,id.name);
-            contractNBT.putUuid(CONTRACT_UUID,id.uuid);
-            contractNBT.putInt(CONTRACT_LEVEL,id.permissionLevel.asInt());
-
+        for (PlayerID id : identificationRecords) {
+            CompoundTag contractNBT = new CompoundTag();
+            contractNBT.putString(CONTRACT_NAME, id.name);
+            contractNBT.putUUID(CONTRACT_UUID, id.uuid);
+            contractNBT.putInt(CONTRACT_LEVEL, id.permissionLevel.asInt());
             contractList.add(contractNBT);
         }
 
         if (!contractList.isEmpty()) {
-            nbt.put(CONTRACTS, contractList);
+            tag.put(CONTRACTS, contractList);
         }
 
-
-        nbt.putInt("decay_timer",this.decayTimer);
+        tag.putInt("decay_timer", this.decayTimer);
 
         for (ToggleButtonID id : ToggleButtonID.values()) {
             Boolean v = toggleSettings.get(id);
-            if(v != null) {
-                nbt.putBoolean("toggle_" + id.getSerialised(), v);
+            if (v != null) {
+                tag.putBoolean("toggle_" + id.getSerialised(), v);
             }
         }
-        checkShouldRenderParticles();
 
-        super.writeNbt(nbt);
+        checkShouldRenderParticles();
     }
+
+
 
     @Override
-    public final NbtCompound toInitialChunkDataNbt() {
-        return createNbt();
+    public @NotNull CompoundTag getUpdateTag() {
+        return saveWithoutMetadata();
     }
+
     //endregion
 
 
@@ -795,7 +807,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         super(type, pos, state);
         this.particleOffset = particleOffset;
 
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+        if (FMLEnvironment.dist == Dist.CLIENT) {
             createRendererData();
             isClient = true;
         } else {
@@ -805,7 +817,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
     private final boolean isClient;
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void createRendererData(){
         this.rendererData = new RendererData(shopInventory);
     }
@@ -818,24 +830,33 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                 !toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
     }
 
+    protected void editBreakability(ServerLevel level, BlockPos pos, BlockState state, boolean breakable) {
+        level.setBlock(pos, state.setValue(BREAKABLE, breakable), 3);
+    }
 
-    public void serverTick(ServerWorld world, BlockPos pos, AbstractShopBlock.AbstractShopBlockState shopState) {
+    public void serverTick(ServerLevel world, BlockPos pos, BlockState shopState) {
 
         if(decayTimer > -1) {
             if (decayTimer > hourInTicks) {
 
                 if (shouldRenderParticles && world.random.nextFloat() < 0.05f) {
                     for (int i = 0; i < 3; i++) {
-                        world.spawnParticles(ParticleTypes.ANGRY_VILLAGER, pos.getX() + .2 + world.random.nextFloat(), pos.getY() + world.random.nextFloat() + particleOffset, pos.getZ() + world.random.nextFloat(), 1, 0, 0, 0, 0);
+                        world.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.getX() + .2 + world.random.nextFloat(), pos.getY() + world.random.nextFloat() + particleOffset, pos.getZ() + world.random.nextFloat(), 1, 0, 0, 0, 0);
                     }
                 }
 
-                if (shopState.unbreakable()) {
+                boolean breakable = false;
+                if (shopState.getBlock() instanceof AbstractShopBlock) {
+                    breakable = shopState.getValue(BREAKABLE);
+                }
+
+                if (!breakable) {
 
                     decayed = true;
 
                     identificationRecords.clear();
-                    shopState.makeBreakable(world, pos);
+                    editBreakability(world, pos,shopState, true);
+                    shopState.trySetValue(BREAKABLE, true);
                     breakableTicks = 140;
 
                 }
@@ -859,7 +880,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                 decayed = false;
             }
         }
-        if(shopState.unbreakable())return;
+        if(!shopState.getValue(BREAKABLE))return;
 
         if (breakableTicks > 0) {
             if(!decayed) {
@@ -872,68 +893,45 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             // Shop has become breakable; start the countdown (140 ticks)
             breakableTicks = 140;
         } else {
-            shopState.makeUnbreakable(world, pos);
+            editBreakability(world, pos,shopState, false);
             breakableTicks = -1; // Reset
         }
     }
 
+    @NotNull
+    public MenuProvider createScreenHandlerFactory(boolean openTop) {
 
-    //region SCREEN
-    @Deprecated
-    @Override
-    public @Nullable final ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        return new MenuProvider() {
 
-        SpudaciousShops.LOGGER.debug("Attempted to directly retrieve ScreenHandler from shop");
-
-        return null;
-    }
-
-    public ExtendedScreenHandlerFactory createScreenHandlerFactory(boolean openTop) {
-
-        return new ExtendedScreenHandlerFactory() {
             @Override
-            public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-                buf.writeBlockPos(pos);
-                buf.writeBoolean(openTop);
+            public @NotNull Component getDisplayName() {
+                return Component.literal("");
             }
 
             @Override
-            public Text getDisplayName() {
-                return Text.literal("Shop");
-            }
-
-            @Override
-            public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+            public @Nullable AbstractContainerMenu createMenu(int syncId, @NotNull Inventory playerInventory, @NotNull Player player) {
                 PermissionLevel perms = userSignIn(player);
 
 
                 InventoryDelegate inventoryDelegate = openTop?getOtherInventoryDelegate(player):getInventoryDelegate(player);
-                player_ID_Records_Delegate recordsDelegate = new player_ID_Records_Delegate(perms, player.getUuid());
+                player_ID_Records_Delegate recordsDelegate = new player_ID_Records_Delegate(perms, player.getUUID());
                 settings_Delegate set_del = new settings_Delegate(perms, player);
 
+
                 if (perms.canViewShopScreen()) {
-                    return new ShopScreenHandlerOwner(syncId, playerInventory, inventoryDelegate, recordsDelegate, set_del);
+                    return new ShopScreenHandlerOwner(syncId, playerInventory, AbstractShopEntity.this, inventoryDelegate, recordsDelegate, set_del);
                 }
 
                 if (!isShopFunctional()) {
                     return null;
                 }
 
-                return new ShopScreenHandlerCustomer(syncId, playerInventory, inventoryDelegate);
+                return new ShopScreenHandlerCustomer(syncId, playerInventory, AbstractShopEntity.this, inventoryDelegate);
             }
         };
     }
 
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeBlockPos(this.pos);
-        buf.writeBoolean(false);
-    }
 
-    @Override
-    public Text getDisplayName() {
-        return Text.literal("Shop");
-    }
 
     public abstract int getTextureId();
 
@@ -941,17 +939,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     
 
     //region STATE LOGIC
+    
 
-    @Override
-    public BlockState getCachedState() {
-        return super.getCachedState();
-    }
-
-    @Nullable
-    @Override
-    public abstract Packet<ClientPlayPacketListener> toUpdatePacket();
-
-    public boolean canBreak(PlayerEntity player) {
+    public boolean canBreak(Player player) {
         if(player.isCreative()||decayed)return true;
         if(identificationRecords.isEmpty()){
             return userSignIn(player).canBreakBlock();
@@ -960,8 +950,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     }
 
 
-    public Text cantBreakMessage() {
-        return Text.of("Cannot break - Owned by " + ownerName);
+    public Component cantBreakMessage() {
+        return Component.literal("Cannot break - Owned by " + ownerName);
     }
 
     protected int decayTimer = -1;
@@ -981,7 +971,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     }
 
     public boolean managementFunctional(){
-        if(world != null) {
+        if(level != null) {
             return !identificationRecords.isEmpty();
         }
         return false;
@@ -1001,18 +991,18 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
 
 
     //region RENDERING
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void renderTick() {
         this.rendererData.onTick();
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected RendererData rendererData;
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public RendererData rendererData(){return  rendererData;}
     //Only call from the CLIENT
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void forceUpdateRenderData() {
         rendererData.update();
     }
@@ -1020,12 +1010,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
     final float particleOffset;
 
     public Direction getCachedFacingDirection(){
-        Direction direction = this.getCachedState().get(Properties.HORIZONTAL_FACING);
-        if(direction == null) return Direction.NORTH;
-        return direction;
+        return this.getBlockState().getValue(AbstractShopBlock.FACING);
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public class RendererData{
 
         protected final ShopInventory inventory;
@@ -1099,18 +1087,18 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                     this.qWidth = -2.5f;
                 }
 
-                MinecraftClient client = MinecraftClient.getInstance();
+                Minecraft mc = Minecraft.getInstance();
 
                 if(displayItem.getItem() instanceof BlockItem){
-                    BakedModel model = client.getItemRenderer().getModel(displayItem, null, null, 0);
-                    stockDisplayType = model.hasDepth();
+                    BakedModel model = mc.getItemRenderer().getModel(displayItem, null, null, 0);
+                    stockDisplayType = model.isGui3d();
                 } else {
                     stockDisplayType = false;
                 }
 
                 if(paymentItem.getItem() instanceof BlockItem){
-                    BakedModel model = client.getItemRenderer().getModel(paymentItem, null, null, 0);
-                    currencyDisplayType = model.hasDepth();
+                    BakedModel model = mc.getItemRenderer().getModel(paymentItem, null, null, 0);
+                    currencyDisplayType = model.isGui3d();
                 } else {
                     currencyDisplayType = false;
                 }
@@ -1173,8 +1161,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             return this.displayItem;
         }
 
-        public World world() {
-            return world;
+        public Level world() {
+            return level;
         }
 
         public Direction direction() {
@@ -1212,15 +1200,15 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         }
 
         public int x() {
-            return pos.getX();
+            return getBlockPos().getX();
         }
 
         public int y() {
-            return pos.getY();
+            return getBlockPos().getY();
         }
 
         public int z() {
-            return pos.getZ();
+            return getBlockPos().getZ();
         }
 
 

@@ -1,17 +1,21 @@
 package net.spudacious5705.shops.block.entity;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
 
-public class ShopInventory extends DefaultedList<ItemStack> {
+public class ShopInventory extends NonNullList<ItemStack> {
 
     protected static final int INV_SIZE = 78;
     public static final int PAYMENT_SLOT = 76;
@@ -50,23 +54,23 @@ public class ShopInventory extends DefaultedList<ItemStack> {
         for(int i = PROFIT_END; i > STOCK_END; i--) {
             paymentSlot = get(i);
             if(paymentSlot.isEmpty()){
-                space += paymentType.getMaxCount();
+                space += paymentType.getMaxStackSize();
             } else if(canUseInTrade(paymentSlot,paymentType)){
-                space += paymentSlot.getMaxCount() - paymentSlot.getCount();
+                space += paymentSlot.getMaxStackSize() - paymentSlot.getCount();
             }
             if(space >= price){return false;}
         }
         return true;
     }
 
-    boolean isPlayerPoor(PlayerEntity player) {
+    boolean isPlayerPoor(Player player) {
         Inventory inv = player.getInventory();
         ItemStack payment = getPaymentStack();
         int money = 0;
         for (int i = 0; i <= 36; i++) {
-            if(canUseInTrade(inv.getStack(i),payment)){
-                money += inv.getStack(i).getCount();
-                if(money >= payment.getCount()){return false;};
+            if(canUseInTrade(inv.getItem(i),payment)){
+                money += inv.getItem(i).getCount();
+                if(money >= payment.getCount()){return false;}
             }
         }
         return true;
@@ -116,5 +120,12 @@ public class ShopInventory extends DefaultedList<ItemStack> {
     public boolean tradeNonFunctional() {
         boolean bl = get(PAYMENT_SLOT).isEmpty()  ||  get(VENDING_SLOT).isEmpty();
         return bl;
+    }
+
+    public static void ItemScatterer(Level world, BlockPos pos, ItemStack itemStack){
+        Containers.dropItemStack(world,pos.getX(),pos.getY(),pos.getZ(),itemStack);
+    }
+    public static void ItemScatterer(Level world, BlockPos pos, NonNullList<ItemStack> inventory){
+        Containers.dropContents(world,pos,inventory);
     }
 }

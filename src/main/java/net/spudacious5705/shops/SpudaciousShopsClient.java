@@ -1,43 +1,69 @@
 package net.spudacious5705.shops;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.registries.RegistryObject;
+import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.block.ModBlocks;
-import net.spudacious5705.shops.block.entity.ModBlockEntities;
+import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.*;
-import net.spudacious5705.shops.screen.networking.NetworkHelper;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
+import net.spudacious5705.shops.screen.ShopScreenCustomer;
+import net.spudacious5705.shops.screen.ShopScreenOwner;
 import net.spudacious5705.shops.util.CushionModel;
 import net.spudacious5705.shops.util.CushionResources;
 import net.spudacious5705.shops.util.CushionTextures;
-import net.spudacious5705.shops.screen.*;
 
-public class SpudaciousShopsClient implements ClientModInitializer {
-    @Override
-    public void onInitializeClient() {
+import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
-        ModBlocks.getAllShops().forEach((Block shop) -> BlockRenderLayerMap.INSTANCE.putBlock(shop, RenderLayer.getCutout()));
+@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class SpudaciousShopsClient{
+
+    @SubscribeEvent
+    public static void onClientSetup(FMLClientSetupEvent event){
 
 
-        EntityModelLayerRegistry.registerModelLayer(CushionModel.LAYER_LOCATION, CushionModel::getTexturedModelData);
 
-        HandledScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER, ShopScreenOwner::new);
-        HandledScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER, ShopScreenCustomer::new);
+        event.enqueueWork(() -> {
+
+
+            MenuScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), ShopScreenOwner::new);
+            MenuScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), ShopScreenCustomer::new);
+
+
+            ModBlocks.getAllShops().forEach((RegistryObject<? extends AbstractShopBlock> shop) -> {
+                ItemBlockRenderTypes.setRenderLayer(shop.get(), RenderType.cutout());
+            });
+        });
+
 
         CushionTextures.initialiseCushionTextures();
         CushionResources.initialise();
 
-        BlockEntityRendererFactories.register(ModBlockEntities.ANGLED_SHOP_ENTITY, AngledShopBlockRenderer::new);
-        BlockEntityRendererFactories.register(ModBlockEntities.WINDOW_SHOP_ENTITY, WindowSillShopEntityRenderer::new);
-        BlockEntityRendererFactories.register(ModBlockEntities.HOOK_SHOP_ENTITY, HookShopEntityRenderer::new);
-        BlockEntityRendererFactories.register(ModBlockEntities.RUG_SHOP_ENTITY, RugShopEntityRenderer::new);
-        BlockEntityRendererFactories.register(ModBlockEntities.CRATE_SHOP_ENTITY, CrateShopEntityRenderer::new);
-        BlockEntityRendererFactories.register(ModBlockEntities.SHELF_SHOP_ENTITY, ShelfShopEntityRenderer::new);
+        
 
-        NetworkHelper.initialiseCLIENT();
+    }
+
+    @SubscribeEvent
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerBlockEntityRenderer(ModBlockEntities.ANGLED_SHOP_ENTITY.get(), AngledShopBlockRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.WINDOW_SHOP_ENTITY.get(), WindowSillShopEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.HOOK_SHOP_ENTITY.get(), HookShopEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.RUG_SHOP_ENTITY.get(), RugShopEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.CRATE_SHOP_ENTITY.get(), CrateShopEntityRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.SHELF_SHOP_ENTITY.get(), ShelfShopEntityRenderer::new);
+    }
+    
+
+    @SubscribeEvent
+    public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(CushionModel.LAYER_LOCATION, CushionModel::getTexturedModelData);
     }
 }

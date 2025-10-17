@@ -1,20 +1,19 @@
 package net.spudacious5705.shops.block.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.spudacious5705.shops.util.CushionTextures;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.properties.Colour;
+import net.spudacious5705.shops.util.CushionTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Properties;
 
 public class AngledShopEntity extends AbstractShopEntity{
 
@@ -25,12 +24,7 @@ public class AngledShopEntity extends AbstractShopEntity{
     private Colour cushionColour;
 
     public AngledShopEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ANGLED_SHOP_ENTITY, pos, state, 0.375f);
-    }
-
-    @Override
-    public @Nullable Packet<ClientPlayPacketListener> toUpdatePacket() {
-        return BlockEntityUpdateS2CPacket.create(this);
+        super(ModBlockEntities.ANGLED_SHOP_ENTITY.get(), pos, state, 0.375f);
     }
 
     private static final String COLOUR_NBT_TAG = "cushion_colour";
@@ -41,30 +35,35 @@ public class AngledShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    public void readNbt(NbtCompound nbt) {
-        super.readNbt(nbt);
-        if(nbt.contains(COLOUR_NBT_TAG)) {
-            this.cushionColour = Colour.fromId(nbt.getInt(COLOUR_NBT_TAG));
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void load(@NotNull CompoundTag tag) {
+        super.load(tag);
+        if(tag.contains(COLOUR_NBT_TAG)) {
+            this.cushionColour = Colour.fromId(tag.getInt(COLOUR_NBT_TAG));
         }else{
             this.cushionColour = Colour.RED;
         }
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        nbt.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
-        super.writeNbt(nbt);
+    protected void saveAdditional(CompoundTag tag) {
+        tag.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
+        super.saveAdditional(tag);
     }
 
     public Colour getCushionColour() {
-        return this.cushionColour == null ? Colour.RED : this.cushionColour;
+        return this.cushionColour == null ? Colour.ORANGE : this.cushionColour;
     }
 
     public void setCushionColour(@NotNull Colour colour){
         this.cushionColour = colour;
     }
 
-    public Identifier getCushionTextureID() {
+    public ResourceLocation getCushionTextureID() {
         return CushionTextures.TEXTURE_MAP.get(getCushionColour());
     }
 

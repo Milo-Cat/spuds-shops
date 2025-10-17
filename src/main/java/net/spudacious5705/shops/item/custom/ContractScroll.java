@@ -1,94 +1,91 @@
 package net.spudacious5705.shops.item.custom;
 
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Rarity;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
-import org.intellij.lang.annotations.MagicConstant;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
 public class ContractScroll extends Item {
-    public ContractScroll(Settings settings) {
-        super(settings.rarity(Rarity.UNCOMMON).maxCount(1));
+    public ContractScroll(Item.Properties properties) {
+        super(properties.rarity(Rarity.UNCOMMON).stacksTo(1));
     }
 
+
     @Override
-    public Rarity getRarity(ItemStack stack) {
+    public @NotNull Rarity getRarity(@NotNull ItemStack pStack) {
         return Rarity.UNCOMMON;
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack stack = user.getStackInHand(hand);
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player user, @NotNull InteractionHand hand) {
+
+        ItemStack stack = user.getItemInHand(hand);
 
         if (isSigned(stack)) {
-            return TypedActionResult.pass(stack);
+            return InteractionResultHolder.pass(stack);
         }
 
-        NbtCompound nbt = new NbtCompound();
+        CompoundTag nbt = new CompoundTag();
 
-        String name = user.getEntityName();
+        String name = user.getName().getString();
 
         nbt.putString(NBTname, name);
-        nbt.putUuid(NBTuuid, user.getUuid());
+        nbt.putUUID(NBTuuid, user.getUUID());
 
-        stack.setNbt(nbt);
+        stack.setTag(nbt);
 
-        stack.setCustomName(Text.of("Contract - "+name));
+        stack.setHoverName(Component.literal("Contract - "+name));
 
-        BlockPos pos = user.getBlockPos();
-        world.playSound(pos.getX(),pos.getY(),pos.getZ(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 1f,1f,true);
+        BlockPos pos = user.getOnPos();
+        world.playSound(user, pos.getX(),pos.getY(),pos.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1f,1f);
 
-        return TypedActionResult.success(stack);
+        return InteractionResultHolder.success(stack);
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(@NotNull ItemStack stack) {
         return isSigned(stack);
     }
 
-    @MagicConstant
     public static final String NBTuuid = "player_uuid";
-    @MagicConstant
     public static final String NBTname = "player_name";
 
-    public static boolean isSigned(ItemStack stack){
-        if (stack.hasNbt()) {
-            NbtCompound originalNBT = stack.getNbt();
-            if(originalNBT != null) {
-                boolean v = originalNBT.contains(NBTuuid);
-                return v;
-            }
+    public static boolean isSigned(ItemStack stack) {
+        if (stack.hasTag()) {
+            CompoundTag tag = stack.getTag();
+            return tag != null && tag.contains(NBTuuid);
         }
         return false;
     }
 
     @Nullable
-    public static UUID getUUID(ItemStack stack){
-        if(isSigned(stack)) {
-            assert stack.getNbt() != null;
-            return stack.getNbt().getUuid(NBTuuid);
+    public static UUID getUUID(ItemStack stack) {
+        if (isSigned(stack)) {
+            CompoundTag tag = stack.getTag();
+            return tag != null ? tag.getUUID(NBTuuid) : null;
         }
         return null;
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        if(isSigned(stack)){
-                tooltip.add(Text.of("Signed by - " + stack.getNbt().getString(NBTname)));//ignore warning
+    public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
+        if (isSigned(stack)) {
+            assert stack.getTag() != null;
+            tooltip.add(Component.literal("Signed by - " + stack.getTag().getString(NBTname)));
         }
     }
 }

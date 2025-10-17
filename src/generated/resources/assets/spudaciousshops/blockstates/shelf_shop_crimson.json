@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "facing=east,type=bottom": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_bottom",
+      "y": 90
+    },
+    "facing=east,type=double": {
+      "model": "spudaciousshops:block/shelf_shop_crimson",
+      "y": 90
+    },
+    "facing=east,type=top": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_top",
+      "y": 90
+    },
+    "facing=north,type=bottom": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_bottom",
+      "y": 0
+    },
+    "facing=north,type=double": {
+      "model": "spudaciousshops:block/shelf_shop_crimson",
+      "y": 0
+    },
+    "facing=north,type=top": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_top",
+      "y": 0
+    },
+    "facing=south,type=bottom": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_bottom",
+      "y": 180
+    },
+    "facing=south,type=double": {
+      "model": "spudaciousshops:block/shelf_shop_crimson",
+      "y": 180
+    },
+    "facing=south,type=top": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_top",
+      "y": 180
+    },
+    "facing=west,type=bottom": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_bottom",
+      "y": 270
+    },
+    "facing=west,type=double": {
+      "model": "spudaciousshops:block/shelf_shop_crimson",
+      "y": 270
+    },
+    "facing=west,type=top": {
+      "model": "spudaciousshops:block/shelf_shop_crimson_top",
+      "y": 270
+    }
+  }
+}

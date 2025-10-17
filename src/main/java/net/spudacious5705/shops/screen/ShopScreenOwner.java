@@ -1,147 +1,135 @@
 package net.spudacious5705.shops.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.spudacious5705.shops.SpudaciousShops;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.spudacious5705.shops.screen.networking.NetworkHelper;
+import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
 import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.EnumMap;
 import java.util.List;
 
+import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
-import static net.spudacious5705.shops.screen.networking.NetworkHelper.SHOP_SELF_DEMOTE;
 
-public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
-
-    private static void playClickSound(){
-        assert MinecraftClient.getInstance().player != null;
-        MinecraftClient.getInstance().player.playSound(
-                SoundEvents.UI_BUTTON_CLICK.value(),
-                1.0F,
-                1.0F
-        );
-    }
+public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
     
     private final ScreenSettingsGroup SETTINGS;
 
-    private Identifier TEXTURE;
+    private ResourceLocation TEXTURE;
 
-    private static final Identifier WARNING_TEXTURE = SpudaciousShops.id("textures/gui/warning_screen.png");
+    private static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
 
-    private static final Identifier RED_BUTTON = SpudaciousShops.id("textures/gui/red_button.png");
-    private static final Identifier RED_BUTTON_SELECTED = SpudaciousShops.id("textures/gui/red_button_selected.png");
-    private static final Identifier GREEN_BUTTON = SpudaciousShops.id("textures/gui/green_button.png");
-    private static final Identifier GREEN_BUTTON_SELECTED = SpudaciousShops.id("textures/gui/green_button_selected.png");
+    private static final ResourceLocation RED_BUTTON = getResource("textures/gui/red_button.png");
+    private static final ResourceLocation RED_BUTTON_SELECTED = getResource("textures/gui/red_button_selected.png");
+    private static final ResourceLocation GREEN_BUTTON = getResource("textures/gui/green_button.png");
+    private static final ResourceLocation GREEN_BUTTON_SELECTED = getResource("textures/gui/green_button_selected.png");
 
 
-    public ShopScreenOwner(ShopScreenHandlerOwner handler, PlayerInventory inventory, Text title) {
-        super(handler, inventory, title);
-        this.backgroundWidth = 228;
-        this.backgroundHeight = 256;
-        this.SETTINGS = handler.getSettings();
+    public ShopScreenOwner(ShopScreenHandlerOwner menu, Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title);
+        this.imageWidth = 228;
+        this.imageHeight = 256;
+        this.SETTINGS = menu.getSettings();
         this.TEXTURE = SETTINGS.SELLER().textureID();
-        this.x = (width - backgroundWidth)/2;
-        this.y = (height - backgroundHeight)/2;
+        this.leftPos = (width - imageWidth)/2;
+        this.topPos = (height - imageHeight)/2;
 
-        handler.initiateWarn(this::openWarnPopup);
-        handler.settingsUpdater(this::updateToggleButtonFromPacket);
-        handler.setWidgetFunction(this::setWidgetsVisible);
+        menu.initiateWarn(this::openWarnPopup);
+        menu.settingsUpdater(this::updateToggleButtonFromPacket);
+        menu.setWidgetFunction(this::setWidgetsVisible);
+        menu.updateTabSelection();
     }
 
     private void closeWarnPopup(){
-        setStateAllButtons(true);
+        WarningCancel.visible=false;
+        WarningProceed.visible=false;
+        SettingsTabButton.visible=true;
+        SellerTabButton.visible=true;
+        ShopFrontTabButton.visible=true;
         switchToSettingsTab();
     }
 
     private void WarnPopupContinue(){
-        PacketByteBuf buf = PacketByteBufs.create();
-        ClientPlayNetworking.send(SHOP_SELF_DEMOTE,buf);
-
+        NetworkHelper.CHANNEL.sendToServer(new ShopSelfDemotePkt());
+        menu.close();
     }
 
-    private void setStateAllButtons(boolean state){
-        SettingsTabButton.visible=state;
-        SellerTabButton.visible=state;
-        ShopFrontTabButton.visible=state;
-        WarningCancel.visible=!state;
-        WarningProceed.visible=!state;
-        for (ToggleButtonID value : ToggleButtonID.values()) {
-            toggleButtons.get(value).visible=state;
-        }
-    }
 
-    private static final Identifier COG_ICON = SpudaciousShops.id("textures/gui/settings.png");
-    private static final Identifier STORAGE_ICON = SpudaciousShops.id("textures/gui/storage.png");
-    private static final Identifier SHOPFRONT_ICON = CURRENCY_IMG_MAP.getOrDefault(
-            Text.translatable("gui.spudaciousshops.currency_type").getString().charAt(0),
-            SpudaciousShops.id("textures/gui/currency_textures/gbp.png")
+
+    private static final ResourceLocation COG_ICON = getResource("textures/gui/settings.png");
+    private static final ResourceLocation STORAGE_ICON = getResource("textures/gui/storage.png");
+    private static final ResourceLocation SHOPFRONT_ICON = CURRENCY_IMG_MAP.getOrDefault(
+            Component.translatable("gui.spudaciousshops.currency_type").getString().charAt(0),
+            getResource("textures/gui/currency_textures/gbp.png")
     );
-    private static final Identifier TAB_SELECTED = SpudaciousShops.id("textures/gui/tab_selected.png");
-    private static final Identifier TAB_DESELECTED = SpudaciousShops.id("textures/gui/tab_deselected.png");
-    private static final Identifier TAB_HOVER = SpudaciousShops.id("textures/gui/tab_hover.png");
-    private static final Identifier CREATIVE_ON = SpudaciousShops.id("textures/gui/creative_on.png");
-    private static final Identifier CREATIVE_OFF = SpudaciousShops.id("textures/gui/creative_off.png");
-    private static final Identifier EFFECTS_ON = SpudaciousShops.id("textures/gui/effects_on.png");
-    private static final Identifier EFFECTS_OFF = SpudaciousShops.id("textures/gui/effects_off.png");
+    private static final ResourceLocation TAB_SELECTED = getResource("textures/gui/tab_selected.png");
+    private static final ResourceLocation TAB_DESELECTED = getResource("textures/gui/tab_deselected.png");
+    private static final ResourceLocation TAB_HOVER = getResource("textures/gui/tab_hover.png");
+    private static final ResourceLocation CREATIVE_ON = getResource("textures/gui/creative_on.png");
+    private static final ResourceLocation CREATIVE_OFF = getResource("textures/gui/creative_off.png");
+    private static final ResourceLocation EFFECTS_ON = getResource("textures/gui/effects_on.png");
+    private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Do nothing — this prevents the title and inventory label from rendering
+        //TODO perhaps implement this in fabric
+    }
 
     @Override
     protected void init() {
         super.init();
-        playerInventoryTitleX = 1000;
-        titleX = 1000;
 
-        int posX = SETTINGS.tab1ButtonX()+x;
-        int posY = SETTINGS.tab1ButtonY()+y;
-        SellerTabButton = addDrawableChild(new TabWidget(posX, posY, Text.of(""), this::switchToSellerTab, true, STORAGE_ICON, true));
+        int posX = SETTINGS.tab1ButtonX()+leftPos;
+        int posY = SETTINGS.tab1ButtonY()+topPos;
+        SellerTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, true, STORAGE_ICON, true));
 
 
-        posX = SETTINGS.tab2ButtonX()+x;
-        posY = SETTINGS.tab2ButtonY()+y;
-        SettingsTabButton = addDrawableChild(new TabWidget(posX, posY, Text.of(""), this::switchToSettingsTab, true, COG_ICON));
+        posX = SETTINGS.tab2ButtonX()+leftPos;
+        posY = SETTINGS.tab2ButtonY()+topPos;
+        SettingsTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, true, COG_ICON));
 
 
-        posX = SETTINGS.tab3ButtonX()+x;
-        posY = SETTINGS.tab3ButtonY()+y;
-        ShopFrontTabButton = addDrawableChild(new TabWidget(posX, posY, Text.of(""), this::switchToCustomerTab, true, SHOPFRONT_ICON));
+        posX = SETTINGS.tab3ButtonX()+leftPos;
+        posY = SETTINGS.tab3ButtonY()+topPos;
+        ShopFrontTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, true, SHOPFRONT_ICON));
 
 
-        posX = 22+x;
-        posY = 128+y;
-        WarningCancel = addDrawableChild(new ButtonWidget(posX, posY, Text.of("CANCEL"), this::closeWarnPopup, GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840));
+        posX = 22+leftPos;
+        posY = 128+topPos;
+        WarningCancel = addRenderableWidget(new ButtonWidget(posX, posY, Component.literal("CANCEL"), this::closeWarnPopup, GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840));
 
         posX += 113;
-        WarningProceed = addDrawableChild(new ButtonWidget(posX, posY, Text.of("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329));
+        WarningProceed = addRenderableWidget(new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329));
 
-        posX = SETTINGS.creativeButtonX()+x;
-        posY = SETTINGS.creativeButtonY()+y;
-        ToggleCreative = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP));
-        posX = SETTINGS.toggleEffectsButtonX()+x;
-        posY = SETTINGS.toggleEffectsButtonY()+y;
-        ToggleIconsEffects = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP));
-        posX = SETTINGS.shopStyleButtonX()+x;
-        posY = SETTINGS.shopStyleButtonY()+y;
-        ToggleShopStyle = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.ShopStyleToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
-        posX = SETTINGS.ignoreNBTButtonX()+x;
-        posY = SETTINGS.ignoreNBTButtonY()+y;
-        ToggleIgnoreNBT = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
-
+        posX = SETTINGS.creativeButtonX()+leftPos;
+        posY = SETTINGS.creativeButtonY()+topPos;
+        ToggleCreative = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP));
+        posX = SETTINGS.toggleEffectsButtonX()+leftPos;
+        posY = SETTINGS.toggleEffectsButtonY()+topPos;
+        ToggleIconsEffects = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP));
+        /*
+        posX = SETTINGS.shopStyleButtonX()+leftPos;
+        posY = SETTINGS.shopStyleButtonY()+topPos;
+        ToggleShopStyle = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.ShopStyleToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
+        posX = SETTINGS.ignoreNBTButtonX()+leftPos;
+        posY = SETTINGS.ignoreNBTButtonY()+topPos;
+        ToggleIgnoreNBT = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
+        */
         for (ToggleButtonID value : ToggleButtonID.values()) {
             toggleButtons.put(value,
                     switch (value){
@@ -152,55 +140,87 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
                     }
             );
         }
+        switch (menu.getActiveTab()) {
+            case SETTINGS_TAB -> {
+                settingsGUI();
+            }
+            case CUSTOMER_TAB -> {
+                customerGUI();
+            }
+            case WARNING_TAB -> {
+                warnGUI();
+            }
+            default -> { //SELLER_TAB
+                sellerGUI();
+            }
+        }
 
-        addToolTipTexts();
-        addWarnPopupTexts();
-        addStorageTexts();
+        WARN_TEXTS = addWarnPopupTexts();
+        STORAGE_TEXTS = addStorageTexts();
+        TEXTS = addToolTipTexts();
     }
 
     private void switchToCustomerTab() {
-        handler.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
+        this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
         customerGUI();
     }
-    private void customerGUI(){
+    protected void customerGUI(){
         TEXTURE = SETTINGS.CUSTOMER().textureID();
+        ShopFrontTabButton.toggle();
         SellerTabButton.unToggle();
-        SettingsTabButton.unToggle();
+        SettingsTabButton.unToggle();this.setWidgetsVisible(false);
     }
 
     private void switchToSellerTab(){
-        handler.updateTabSelectionClientside(ShopScreenHandlerOwner.SELLER_TAB);
+        this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.SELLER_TAB);
         sellerGUI();
     }
 
-    private void sellerGUI(){
+    protected void sellerGUI(){
         TEXTURE = SETTINGS.SELLER().textureID();
+        SellerTabButton.toggle();
         ShopFrontTabButton.unToggle();
-        SettingsTabButton.unToggle();
+        SettingsTabButton.unToggle();this.setWidgetsVisible(false);
     }
 
     private void switchToSettingsTab() {
-        handler.updateTabSelectionClientside(SETTINGS_TAB);
+        this.menu.updateTabSelectionClientside(SETTINGS_TAB);
         settingsGUI();
     }
-    private void settingsGUI(){
+    protected void settingsGUI(){
         TEXTURE = SETTINGS.SETTINGS().textureID();
+        SettingsTabButton.toggle();this.setWidgetsVisible(true);
         ShopFrontTabButton.unToggle();
         SellerTabButton.unToggle();
     }
 
     void openWarnPopup(){
-        handler.updateTabSelectionClientside(WARNING_TAB);
+        this.menu.updateTabSelectionClientside(WARNING_TAB);
         warnGUI();
-    }
-    private void warnGUI(){
-        TEXTURE = WARNING_TEXTURE;
-        setStateAllButtons(false);
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player != null) {
+            Minecraft.getInstance().player.playSound(
+                    SoundEvents.NOTE_BLOCK_GUITAR.value(),
+                    3.0F,
+                    0.3F
+            );
+        }
     }
 
-    @Environment(EnvType.CLIENT)
+    protected void warnGUI(){
+        TEXTURE = WARNING_TEXTURE;
+        SettingsTabButton.visible=false;
+        SellerTabButton.visible=false;
+        ShopFrontTabButton.visible=false;
+        WarningCancel.visible=true;
+        WarningProceed.visible=true;
+
+        this.setWidgetsVisible(false);
+    }
+
+    @OnlyIn(Dist.CLIENT)
     public void updateTabSelectionResponse(int tab) {
-        if(handler.updateTabSelectionResponse(tab)) {
+        if(this.menu.updateTabSelectionResponse(tab)) {
             switch (tab) {
                 case WARNING_TAB -> warnGUI();
                 case ShopScreenHandlerOwner.CUSTOMER_TAB -> customerGUI();
@@ -224,166 +244,182 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        context.drawTexture(TEXTURE, x , y, 0, 0, backgroundWidth, backgroundHeight);
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
-    private static final MutableText OWNER = Text.translatable("gui.spudaciousshops.owner");
-    private static final MutableText MANAGER = Text.translatable("gui.spudaciousshops.manager");
-    private static final MutableText SUPERVISOR = Text.translatable("gui.spudaciousshops.supervisor");
-    private static final MutableText CLERK = Text.translatable("gui.spudaciousshops.clerk");
-    private static final MutableText WARN_TITLE = Text.translatable("gui.spudaciousshops.delete_warn_title");
-    private static final MutableText WARN_LINE_1 = Text.translatable("gui.spudaciousshops.delete_warn_message_line1");
-    private static final MutableText WARN_LINE_2 = Text.translatable("gui.spudaciousshops.delete_warn_message_line2");
-    private static final MutableText CANCEL = Text.translatable("gui.spudaciousshops.cancel");
-    private static final MutableText DELETE = Text.translatable("gui.spudaciousshops.delete");
+    private static final Component OWNER = Component.translatable("gui.spudaciousshops.owner");
+    private static final Component MANAGER = Component.translatable("gui.spudaciousshops.manager");
+    private static final Component SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
+    private static final Component CLERK = Component.translatable("gui.spudaciousshops.clerk");
+    private static final Component WARN_TITLE = Component.translatable("gui.spudaciousshops.delete_warn_title");
+    private static final Component WARN_LINE_1 = Component.translatable("gui.spudaciousshops.delete_warn_message_line1");
+    private static final Component WARN_LINE_2 = Component.translatable("gui.spudaciousshops.delete_warn_message_line2");
+    private static final Component CANCEL = Component.translatable("gui.spudaciousshops.cancel");
+    private static final Component DELETE = Component.translatable("gui.spudaciousshops.delete");
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float partialTick) {
         renderBackground(context);
-        super.render(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, partialTick);
+        Font font = Minecraft.getInstance().font;
 
-        int activeTab = this.handler.getActiveTab();
+
+        int activeTab = this.menu.getActiveTab();
+        
         if(activeTab == SETTINGS_TAB) {
-            if(client != null) {
-                TextRenderer textRenderer = client.textRenderer;
+
                 for(ToolTipText ttt : TEXTS){
-                    ttt.render(context,textRenderer,mouseX,mouseY);
+                    ttt.render(context,font,mouseX,mouseY);
                 }
-            }
+            
         }else if(activeTab == WARNING_TAB){
-            if(client != null) {
-                TextRenderer textRenderer = client.textRenderer;
+
                 for(Warn_popup_texts t : WARN_TEXTS){
-                    t.render(context,textRenderer);
+                    t.render(context,font);
                 }
-            }
+            
         }else if(activeTab == SELLER_TAB){
-            if(client != null) {
-                TextRenderer textRenderer = client.textRenderer;
+
                 for(Warn_popup_texts t : STORAGE_TEXTS){
-                    t.render(context,textRenderer);
+                    t.render(context,font);
                 }
-            }
+            
         }
-        drawMouseoverTooltip(context, mouseX, mouseY);
+        this.renderTooltip(context, mouseX, mouseY);
     }
 
-    private final String PERMISSIONS = Text.translatable("gui.spudaciousshops.text_permissions").getString();
-    private final String IMPORT_ITEMS = Text.translatable("gui.spudaciousshops.text_import_items").getString();
-    private final String TAKE_ITEMS = Text.translatable("gui.spudaciousshops.text_take_items").getString();
-    private final String EDIT_PERMS = Text.translatable("gui.spudaciousshops.text_edit_perms").getString();
-    private final String CHANGE_TRADE = Text.translatable("gui.spudaciousshops.text_change_trade").getString();
-    private final String BREAK_SHOP = Text.translatable("gui.spudaciousshops.text_break_shop").getString();
-    private final String YES = Text.translatable("gui.spudaciousshops.text_yes").getString();
-    private final String NO = Text.translatable("gui.spudaciousshops.text_no").getString();
-    private final String ALL = Text.translatable("gui.spudaciousshops.text_all").getString();
-    private final String SUPERVISOR_AND_LOWER = Text.translatable("gui.spudaciousshops.text_supervisor_and_lower").getString();
-    private final String NONE = Text.translatable("gui.spudaciousshops.text_none").getString();
-    private final String CREATIVE_TOGGLE_TOOLTIP = Text.translatable("gui.spudaciousshops.toggle_creative").getString();
-    private final String EFFECTS_TOGGLE_TOOLTIP = Text.translatable("gui.spudaciousshops.toggle_effects").getString();
+    private final String PERMISSIONS = Component.translatable("gui.spudaciousshops.text_permissions").getString();
+    private final String IMPORT_ITEMS = Component.translatable("gui.spudaciousshops.text_import_items").getString();
+    private final String TAKE_ITEMS = Component.translatable("gui.spudaciousshops.text_take_items").getString();
+    private final String EDIT_PERMS = Component.translatable("gui.spudaciousshops.text_edit_perms").getString();
+    private final String CHANGE_TRADE = Component.translatable("gui.spudaciousshops.text_change_trade").getString();
+    private final String BREAK_SHOP = Component.translatable("gui.spudaciousshops.text_break_shop").getString();
+    private final String YES = Component.translatable("gui.spudaciousshops.text_yes").getString();
+    private final String NO = Component.translatable("gui.spudaciousshops.text_no").getString();
+    private final String ALL = Component.translatable("gui.spudaciousshops.text_all").getString();
+    private final String SUPERVISOR_AND_LOWER = Component.translatable("gui.spudaciousshops.text_supervisor_and_lower").getString();
+    private final String NONE = Component.translatable("gui.spudaciousshops.text_none").getString();
+    private final String CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative").getString();
+    private final String EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects").getString();
 
 
 
-    private void addToolTipTexts(){
-        int textX = x+14;
-        int textY = y+72;
+    private ToolTipText[] addToolTipTexts(){
+        int textX = 14+leftPos;
+        int textY = 72+topPos;
         @MagicConstant
         int increment = 23;
-        int colour = handler.SCREEN_SETTINGS.SETTINGS_TEXT_COLOUR();//11141290;
+        int colour = this.menu.SCREEN_SETTINGS.SETTINGS_TEXT_COLOUR();//11141290;
 
-        Text permissions_title = Text.of("§l" + PERMISSIONS + ":");
-        TEXTS[0] = new ToolTipText(colour,OWNER, textX, textY,
+        ToolTipText[] texts = new ToolTipText[4];
+        MutableComponent permissions_title = Component.literal("§l" + PERMISSIONS + ":");
+        texts[0] = new ToolTipText(colour,OWNER, textX, textY,
                 List.of(
                         permissions_title,
-                        Text.of("§a + "+IMPORT_ITEMS+": "+YES),
-                        Text.of("§a + "+TAKE_ITEMS+": "+YES),
-                        Text.of("§a + "+EDIT_PERMS+": "+ALL),
-                        Text.of("§a + "+CHANGE_TRADE+": "+YES),
-                        Text.of("§a + "+BREAK_SHOP+": "+YES)
+                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
+                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
+                        Component.literal("§a + "+EDIT_PERMS+": "+ALL),
+                        Component.literal("§a + "+CHANGE_TRADE+": "+YES),
+                        Component.literal("§a + "+BREAK_SHOP+": "+YES)
         ));
         textY += increment;
-        TEXTS[1] = new ToolTipText(colour,MANAGER, textX, textY,
+        texts[1] = new ToolTipText(colour,MANAGER, textX, textY,
                 List.of(
                         permissions_title,
-                        Text.of("§a + "+IMPORT_ITEMS+": "+YES),
-                        Text.of("§a + "+TAKE_ITEMS+": "+YES),
-                        Text.of("§9 + "+EDIT_PERMS+": "+SUPERVISOR_AND_LOWER),
-                        Text.of("§c - "+CHANGE_TRADE+": "+NO),
-                        Text.of("§c - "+BREAK_SHOP+": "+NO)
+                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
+                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
+                        Component.literal("§9 + "+EDIT_PERMS+": "+SUPERVISOR_AND_LOWER),
+                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
+                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
                 ));
         textY += increment;
-        TEXTS[2] = new ToolTipText(colour,SUPERVISOR, textX, textY,
+        texts[2] = new ToolTipText(colour,SUPERVISOR, textX, textY,
                 List.of(
                         permissions_title,
-                        Text.of("§a + "+IMPORT_ITEMS+": "+YES),
-                        Text.of("§a + "+TAKE_ITEMS+": "+YES),
-                        Text.of("§c - "+EDIT_PERMS+": "+NONE),
-                        Text.of("§c - "+CHANGE_TRADE+": "+NO),
-                        Text.of("§c - "+BREAK_SHOP+": "+NO)
+                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
+                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
+                        Component.literal("§c - "+EDIT_PERMS+": "+NONE),
+                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
+                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
                 ));
         textY += increment;
-        TEXTS[3] = new ToolTipText(colour,CLERK, textX, textY,
+        texts[3] = new ToolTipText(colour,CLERK, textX, textY,
                 List.of(
                         permissions_title,
-                        Text.of("§a + "+IMPORT_ITEMS+": "+YES),
-                        Text.of("§c - "+TAKE_ITEMS+": "+NO),
-                        Text.of("§c - "+EDIT_PERMS+": "+NONE),
-                        Text.of("§c - "+CHANGE_TRADE+": "+NO),
-                        Text.of("§c - "+BREAK_SHOP+": "+NO)
+                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
+                        Component.literal("§c - "+TAKE_ITEMS+": "+NO),
+                        Component.literal("§c - "+EDIT_PERMS+": "+NONE),
+                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
+                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
                 ));
+        return texts;
     }
 
-    private void addWarnPopupTexts(){
-        int textX = x+110;
-        int textY = y+84;
-        WARN_TEXTS[0] = new Warn_popup_texts(textX,textY,WARN_TITLE,14745600, true);
+    private Warn_popup_texts[] addWarnPopupTexts(){
+        int textX = leftPos+110;
+        int textY = topPos+84;
+        Warn_popup_texts[] warn_texts = new Warn_popup_texts[3];
+        warn_texts[0] = new Warn_popup_texts(textX,textY,WARN_TITLE,14745600, true);
         textY += 20;
-        WARN_TEXTS[1] = new Warn_popup_texts(textX,textY,WARN_LINE_1,986895, false);
+        warn_texts[1] = new Warn_popup_texts(textX,textY,WARN_LINE_1,986895, false);
         textY += 10;
-        WARN_TEXTS[2] = new Warn_popup_texts(textX,textY,WARN_LINE_2,986895, false);
+        warn_texts[2] = new Warn_popup_texts(textX,textY,WARN_LINE_2,986895, false);
+        return warn_texts;
     }
 
-    private void addStorageTexts(){
-        STORAGE_TEXTS[0] = new Warn_popup_texts(x+90,y+5,(MutableText) Text.of("Stock"),2434341, false);
+    private Warn_popup_texts[] addStorageTexts(){
+        Warn_popup_texts[] storage_texts = new Warn_popup_texts[4];
+        storage_texts[0] = new Warn_popup_texts(leftPos+90,topPos+5, Component.literal("Stock"),2434341, false);
 
-        STORAGE_TEXTS[1] = new Warn_popup_texts(x+35,y+113,(MutableText) Text.of("Register"),2434341, false);//8282679
+        storage_texts[1] = new Warn_popup_texts(leftPos+35,topPos+113, Component.literal("Register"),2434341, false);//8282679
 
-        STORAGE_TEXTS[2] = new Warn_popup_texts(x+33,y+18,(MutableText) Text.of("Payment"),2434341, false);
+        storage_texts[2] = new Warn_popup_texts(leftPos+33,topPos+18, Component.literal("Payment"),2434341, false);
 
-        STORAGE_TEXTS[3] = new Warn_popup_texts(x+33,y+61, (MutableText) Text.of("Product"),2434341, false);
+        storage_texts[3] = new Warn_popup_texts(leftPos+33,topPos+61,  Component.literal("Product"),2434341, false);
+        return storage_texts;
     }
 
-    private final ToolTipText[] TEXTS = new ToolTipText[4];
+    private ToolTipText[] TEXTS = addToolTipTexts();
 
-    private static class ToolTipText{
-        private final MutableText TEXT;
+    private class ToolTipText{
+        private final Component TEXT;
         private final int X;
         private final int Y;
         private final int Xmax;
         private final int Ymax;
-        private final List<Text> TOOLTIP;
+        private final List<Component> TOOLTIP;
         private final int COLOUR;
 
 
-        private ToolTipText(int colour, MutableText text, int x, int y, List<Text> tooltip) {
+        private ToolTipText(int colour, Component text, int x, int y, List<Component> tooltip) {
             TEXT = text;
             X = x;
             Y = y;
-            Xmax = X+56;
-            Ymax = Y+8;
+            int tXmax = 0;
+            int tYmax = 0;
+            try {
+                tXmax = X + font.width(TEXT);
+                tYmax = Y + font.lineHeight;
+            } catch (Exception e) {
+            }
+            if(tXmax!=0&&tYmax!=0){
+
+            } else {
+                tXmax = X+25;
+                tYmax = Y+8;
+            }
+            Xmax = tXmax;
+            Ymax = tYmax;
             TOOLTIP = tooltip;
             COLOUR = colour;
         }
 
-        public void render(DrawContext context, TextRenderer textRenderer, int mouseX, int mouseY){
-            context.drawText(textRenderer, TEXT, X, Y, COLOUR, false);
+        public void render(GuiGraphics context, Font textRenderer, int mouseX, int mouseY){
+            context.drawString(textRenderer, TEXT, X, Y, COLOUR, false);
             if(mouseX >= X && mouseX<=Xmax){
                 if(mouseY >= Y && mouseY<=Ymax){
-                    context.drawTooltip(textRenderer, TOOLTIP,mouseX,mouseY);
+                    context.renderTooltip(textRenderer,TOOLTIP, java.util.Optional.empty(),mouseX,mouseY);
                 }
             }
         }
@@ -394,19 +430,19 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         void execute();
     }
 
-    private static class TabWidget extends ClickableWidget{
+    private static class TabWidget extends AbstractWidget {
 
         private final ClickEventHandler thisTab;
 
-        private final Identifier ICON_TEXTURE;
+        private final ResourceLocation ICON_TEXTURE;
 
         private boolean toggle;
 
-        public TabWidget(int x, int y, Text message, ClickEventHandler tab, boolean visible, Identifier texture) {
+        public TabWidget(int x, int y, Component message, ClickEventHandler tab, boolean visible, ResourceLocation texture) {
             this(x,y, message,tab,visible,texture,false);
         }
 
-        public TabWidget(int x, int y, Text message, ClickEventHandler tab, boolean visible, Identifier texture, boolean toggle) {
+        public TabWidget(int x, int y, Component message, ClickEventHandler tab, boolean visible, ResourceLocation texture, boolean toggle) {
             super(x, y, 22, 22, message);
             this.thisTab = tab;
             this.visible = visible;
@@ -415,24 +451,25 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         }
 
         @Override
-        protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX()-3;
             int y = this.getY()-6;
             if(toggle){
-                context.drawTexture(TAB_SELECTED,x,y,32,32,0f,0f,32,32,32,32);
-            }else if(hovered){
-                context.drawTexture(TAB_HOVER,x,y,32,32,0f,0f,32,32,32,32);
+                context.blit(TAB_SELECTED,x,y,32,32,0f,0f,32,32,32,32);
+            }else if(isHovered){
+                context.blit(TAB_HOVER,x,y,32,32,0f,0f,32,32,32,32);
             }else{
-                context.drawTexture(TAB_DESELECTED,x,y,32,32,0f,0f,32,32,32,32);
+                context.blit(TAB_DESELECTED,x,y,32,32,0f,0f,32,32,32,32);
             }
-            context.drawTexture(ICON_TEXTURE,x+6,y+9,16,16,0f,0f,16,16,16,16);
+            context.blit(ICON_TEXTURE,x+6,y+9,16,16,0f,0f,16,16,16,16);
         }
 
         public void onClick(double mouseX, double mouseY) {
-            playClickSound();
             thisTab.execute();
-            toggle();
         }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {}
 
         void unToggle(){
             this.toggle = false;
@@ -442,46 +479,49 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
             this.toggle = true;
         }
 
-        @Override
-        protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
     }
 
-    private class ToggleWidget extends ClickableWidget{
+    private class ToggleWidget extends AbstractWidget{
 
-        private final Identifier TEXTURE_ON;
-        private final Identifier TEXTURE_OFF;
+        private final ResourceLocation TEXTURE_ON;
+        private final ResourceLocation TEXTURE_OFF;
 
         private final ToggleButtonID BUTTON_ID;
-        private final Text tooltip;
+        private final Component tooltip;
 
         private boolean toggle;
 
-        public ToggleWidget(int x, int y, ToggleButtonID buttonID, Identifier textureON, Identifier textureOFF, String tooltipText) {
-            super(x, y, 32, 16, Text.of(""));//TODO change width and height
+        public ToggleWidget(int x, int y, ToggleButtonID buttonID, ResourceLocation textureON, ResourceLocation textureOFF, String tooltipText) {
+            super(x, y, 32, 16, Component.literal(""));
             this.BUTTON_ID = buttonID;
             this.visible = false;
-            this.toggle = handler.getStateOfSetting(BUTTON_ID);
+            this.toggle = menu.getStateOfSetting(BUTTON_ID);
             this.TEXTURE_ON = textureON;
             this.TEXTURE_OFF = textureOFF;
-            this.tooltip = Text.of(tooltipText);
+            this.tooltip = Component.literal(tooltipText);
         }
 
         @Override
-        protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY();
 
-            context.drawTexture(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
-            context.drawTexture(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
+            context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
+            context.blit(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
 
-            if(hovered){
-                context.drawTooltip(textRenderer, tooltip,mouseX,mouseY);
+            if(isHovered){
+                context.renderTooltip(Minecraft.getInstance().font, tooltip,mouseX,mouseY);
             }
         }
 
+
         public void onClick(double mouseX, double mouseY) {
-            playClickSound();
-            toggle = handler.handleToggleButtonInput(BUTTON_ID, !toggle);
+            toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
+        }
+
+        @Override
+        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+
         }
 
         void toggleOff(){
@@ -491,9 +531,6 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         void toggleOn(){
             this.toggle = true;
         }
-
-        @Override
-        protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
     }
     protected void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
         toggleButtons.get(button).toggle = state;
@@ -509,20 +546,20 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
         w = toggleButtons.get(ToggleButtonID.CreativeToggle);
         if(w != null){
-            w.visible=state&&handler.isPlayerCreative();
+            w.visible=state&&this.menu.isPlayerCreative();
         }
 
     }
 
 
-    private class ButtonWidget extends ClickableWidget{
+    private class ButtonWidget extends AbstractWidget{
 
         private final ClickEventHandler FUNCTION;
-        private final Identifier TEXTURE;
-        private final Identifier TEXTURE_HOVERED;
+        private final ResourceLocation TEXTURE;
+        private final ResourceLocation TEXTURE_HOVERED;
         private final Warn_popup_texts TEXT;
 
-        public ButtonWidget(int x, int y, Text message, ClickEventHandler function, Identifier texture, Identifier textureHovered, MutableText text, int colour) {
+        public ButtonWidget(int x, int y, Component message, ClickEventHandler function, ResourceLocation texture, ResourceLocation textureHovered, Component text, int colour) {
             super(x, y, 64, 28, message);
             this.FUNCTION = function;
             this.visible = false;
@@ -532,27 +569,28 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         }
 
         @Override
-        protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+        protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY()-16;
-            if(hovered){
-                context.drawTexture(TEXTURE_HOVERED,x,y,64,64,0f,0f,64,64,64,64);
+            if(isHovered){
+                context.blit(TEXTURE_HOVERED,x,y,64,64,0f,0f,64,64,64,64);
                 renderText(context,true);
             }else{
-                context.drawTexture(TEXTURE,x,y,64,64,0f,0f,64,64,64,64);
+                context.blit(TEXTURE,x,y,64,64,0f,0f,64,64,64,64);
                 renderText(context,false);
             }
         }
 
-        private void renderText(DrawContext context, boolean offset){
-            if(client != null) {
+        private void renderText(GuiGraphics context, boolean offset){
+            Font f = Minecraft.getInstance().font;
                 if(offset){
-                    TEXT.renderOffset(context,client.textRenderer);
+                    TEXT.renderOffset(context,f);
                 }else{
-                    TEXT.render(context,client.textRenderer);
+                    TEXT.render(context,f);
                 }
-            }
+
         }
+
 
         @Override
         public void onClick(double mouseX, double mouseY) {
@@ -560,20 +598,23 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         }
 
         @Override
-        protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
+        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+
+        }
+
     }
 
-    private final Warn_popup_texts[] WARN_TEXTS = new Warn_popup_texts[3];
+    private Warn_popup_texts[] WARN_TEXTS = addWarnPopupTexts();
 
-    private final Warn_popup_texts[] STORAGE_TEXTS = new Warn_popup_texts[4];
+    private Warn_popup_texts[] STORAGE_TEXTS = addStorageTexts();
 
-    private record Warn_popup_texts(int x, int y, MutableText text, int colour, boolean shadow){
+    private record Warn_popup_texts(int x, int y, Component text, int colour, boolean shadow){
 
-        void render(DrawContext context, TextRenderer textRenderer){
-            context.drawText(textRenderer, text, x - textRenderer.getWidth(text) / 2, y, colour, shadow);
+        void render(GuiGraphics context, Font f){
+            context.drawString(f, text, x - f.width(text) / 2, y, colour, shadow);
         }
-        void renderOffset(DrawContext context, TextRenderer textRenderer) {
-            context.drawText(textRenderer, text, 1+x - textRenderer.getWidth(text) / 2, y, colour, shadow);
+        void renderOffset(GuiGraphics context, Font textRenderer) {
+            context.drawString(textRenderer, text, 1+x - textRenderer.width(text) / 2, y, colour, shadow);
         }
     }
 }

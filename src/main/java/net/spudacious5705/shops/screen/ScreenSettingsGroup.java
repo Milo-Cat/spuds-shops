@@ -1,6 +1,7 @@
 package net.spudacious5705.shops.screen;
 
-import net.minecraft.util.Identifier;
+
+import net.minecraft.resources.ResourceLocation;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.VariantResources;
 
@@ -9,7 +10,7 @@ public record ScreenSettingsGroup(
         ScreenSettings CUSTOMER,
         ScreenSettings SELLER,
         ScreenSettings SETTINGS,
-        Identifier BUTTON_BACKGROUND,
+        ResourceLocation BUTTON_BACKGROUND,
 
         int tab1ButtonX,  int tab1ButtonY,
         int tab2ButtonX,  int tab2ButtonY,
@@ -47,33 +48,33 @@ public record ScreenSettingsGroup(
             201,221
     );*/
 
-    private static Identifier id(String texture){
+    private static ResourceLocation id(String texture){
         return SpudaciousShops.id("textures/gui/"+texture+".png");
     }
 
 
     public record ScreenSettings(
-            Identifier textureID,
+            ResourceLocation textureID,
             int backgroundWidth, int backgroundHeight,
             int playerInvX, int playerInvY,
             int shopInvX, int shopInvY,
             int tradeInvX, int tradeInvY) {
 
-        public static ScreenSettings createBasicCUSTOMER(Identifier textureID){
+        public static ScreenSettings createBasicCUSTOMER(ResourceLocation textureID){
             return new ScreenSettings(textureID,
                     176, 165,
                     8,84,
                     0,0,
                     80,11);
         }
-        public static ScreenSettings createBasicSELLER(Identifier textureID){
+        public static ScreenSettings createBasicSELLER(ResourceLocation textureID){
             return new ScreenSettings(textureID,
                     228, 254,
                     33,172,
                     60,10,
                     23,11);
         }
-        public static ScreenSettings createBasicSETTINGS(Identifier textureID){
+        public static ScreenSettings createBasicSETTINGS(ResourceLocation textureID){
             return new ScreenSettings(textureID,
                     228, 254,
                     33,172,
@@ -87,10 +88,10 @@ public record ScreenSettingsGroup(
     }
 
     public static ScreenSettingsGroup createBasic(
-            Identifier CUSTOMER,
-            Identifier SELLER,
-            Identifier SETTINGS,
-            Identifier BUTTON_BACKGROUND,
+            ResourceLocation CUSTOMER,
+            ResourceLocation SELLER,
+            ResourceLocation SETTINGS,
+            ResourceLocation BUTTON_BACKGROUND,
             int colour){
         return new ScreenSettingsGroup(
                 ScreenSettings.createBasicCUSTOMER(CUSTOMER),

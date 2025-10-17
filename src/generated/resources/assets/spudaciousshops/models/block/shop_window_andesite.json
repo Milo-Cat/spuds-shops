@@ -1,0 +1,7 @@
+{
+  "parent": "spudaciousshops:block/shop_window",
+  "textures": {
+    "particle": "spudaciousshops:block/window_sill/andesite",
+    "texture": "spudaciousshops:block/window_sill/andesite"
+  }
+}

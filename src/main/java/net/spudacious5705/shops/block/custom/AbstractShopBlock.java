@@ -1,131 +1,106 @@
 package net.spudacious5705.shops.block.custom;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.serialization.MapCodec;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.*;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.tick.TickPriority;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.ticks.TickPriority;
+import net.minecraftforge.network.NetworkHooks;
 import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
 
+public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
-public abstract class AbstractShopBlock extends BlockWithEntity implements BlockEntityProvider{
-
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.Plane.HORIZONTAL);
     public static final BooleanProperty BREAKABLE = ModProperties.BREAKABLE;
 
 
-    protected final StateManager<Block, BlockState> shopStateManager;
 
 
+    public AbstractShopBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        registerDefaultStateTemplate();
+    }
 
-    public AbstractShopBlock(Settings settings, StateManager.Factory<Block, BlockState> shopBlockStateFactory) {
-        super(settings);
-        StateManager.Builder<Block, BlockState> builder = new StateManager.Builder<>(this);
-        builder.add(BREAKABLE);
-        this.appendProperties(builder);
+    protected void registerDefaultStateTemplate(){
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(BREAKABLE, false));
+    }
 
-        this.shopStateManager = builder.build(Block::getDefaultState, shopBlockStateFactory);
 
-        this.setDefaultState(
-                defaultStateProperties(
-                        (AbstractShopBlockState) this.shopStateManager.getDefaultState()
-                        .with(BREAKABLE, false)
-                )
-        );
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, BREAKABLE);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState()
+                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
+                .setValue(BREAKABLE, false);
     }
 
-    /**
-     * made to add additional block state properties
-     * use default (YourShopBlockState) state.with(PROPERTY, VALUE);
-     * dont forget to include facing.(or call super)
-    */
-    protected AbstractShopBlockState defaultStateProperties(AbstractShopBlockState state){
-        return (AbstractShopBlockState) state.with(FACING, Direction.SOUTH);
-    }
 
     @Override
-    public final StateManager<Block, BlockState> getStateManager() {
-        return this.shopStateManager;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
-    @Override
-    protected final ImmutableMap<BlockState, VoxelShape> getShapesForStates(Function<BlockState, VoxelShape> stateToShape) {
-        return this.shopStateManager.getStates().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), stateToShape));
+    public static VoxelShape createCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2){
+        return Block.box(x1 , y1 , z1 , x2 , y2 , z2 );
     }
 
-    @Override
-    public final BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
-    }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        if(placer != null) {
-            if (placer instanceof PlayerEntity player) {
+    public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+      if(placer != null) {
+            if (placer instanceof Player player) {
                 BlockEntity blockEntity = world.getBlockEntity(pos);
                 if (blockEntity instanceof AbstractShopEntity shopEntity) {
                     shopEntity.userSignIn(player);
                 }
             }
         }
-        super.onPlaced(world, pos, state, placer, itemStack);
+        super.setPlacedBy(world, pos, state, placer, stack);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getPlacementState(ctx, this.getDefaultState()
-                .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite())
-                .with(BREAKABLE, false));
-    }
+    public abstract @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state);
 
-
-    protected BlockState getPlacementState(ItemPlacementContext ctx, BlockState state){
-        return state;
-    }
-
-    @Nullable
-    @Override
-    public abstract BlockEntity createBlockEntity(BlockPos pos, BlockState state);
-
-    protected static PermissionLevel userSignIn(World world, BlockPos pos, PlayerEntity player) {
+    protected static PermissionLevel userSignIn(Level world, BlockPos pos, Player player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof AbstractShopEntity shopEntity) {
             return shopEntity.userSignIn(player);
@@ -134,162 +109,165 @@ public abstract class AbstractShopBlock extends BlockWithEntity implements Block
     }
 
     public TagKey<Block> getPreferredTool() {
-        return BlockTags.AXE_MINEABLE;
+        return BlockTags.MINEABLE_WITH_AXE;
     }
 
-    public abstract static class AbstractShopBlockState extends BlockState {
+    @Override
+    public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        if (!(level.getBlockEntity(pos) instanceof AbstractShopEntity shop)) return;
 
-        public AbstractShopBlockState(Block block, ImmutableMap<Property<?>, Comparable<?>> immutableMap, MapCodec<BlockState> mapCodec) {
-            super(block, immutableMap, mapCodec);
+        if (!shop.canBreak(player)) {
+            level.setBlock(pos, state.setValue(BREAKABLE, false), 3);
+            if (level.isClientSide) {
+                player.displayClientMessage(shop.cantBreakMessage(), true);
+            }
+            return;
         }
 
-        @Override
-        public void onBlockBreakStart(World world, BlockPos pos, PlayerEntity player) {
-            if(this.getBlock() instanceof AbstractShopBlock) {
-                AbstractShopEntity shop = (AbstractShopEntity) world.getBlockEntity(pos);
-                if(shop != null){
-                if (!shop.canBreak(player)) {
-                    world.setBlockState(pos, this.withIfExists(BREAKABLE, false));
-                    if (world.isClient()) {
-                        player.sendMessage(shop.cantBreakMessage(), true);
-                    }
-                    return;
-                }
-                }
-                world.setBlockState(pos, this.withIfExists(BREAKABLE, true));
-                world.scheduleBlockTick(pos, this.owner, 140, TickPriority.EXTREMELY_HIGH);
+        level.setBlock(pos, state.setValue(BREAKABLE, true), 3);
+        level.scheduleTick(pos, this, 140, TickPriority.EXTREMELY_HIGH);
+
+        super.attack(state, level, pos, player);
+    }
+
+    @Override
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        return state.getValue(BREAKABLE)
+                ? super.getDestroyProgress(state, player, level, pos)
+                : 0.0F;
+    }
+
+    @Override
+    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
+        pLevel.setBlock(pPos, pState.setValue(BREAKABLE, false), 3);
+    }
+
+    @Override
+    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+      if (level.isClientSide()) return InteractionResult.SUCCESS;
+
+        ItemStack stack = player.getItemInHand(hand);
+        BlockEntity be = level.getBlockEntity(pos);
+
+        if (!(be instanceof AbstractShopEntity shop)) return InteractionResult.FAIL;
+
+        PermissionLevel perm = userSignIn(level, pos, player);
+
+        if (!stack.isEmpty() && perm.canEditTrades()) {
+            if (onUseWithItem(stack, state, level, pos, player)) return InteractionResult.SUCCESS;
+        }
+
+
+        if(player instanceof ServerPlayer serverPlayer) {
+            NetworkHooks.openScreen(serverPlayer, shop.createScreenHandlerFactory(false), buf -> {
+                buf.writeBlockPos(pos);//friendlyByteBuff formation here
+                buf.writeBoolean(false);//ignore this false value. its meant to be there
+            });
+        }
+
+
+
+        return InteractionResult.SUCCESS;
+    }
+
+    @SafeVarargs
+    protected final <T extends Comparable<T>> @NotNull BlockState copyValues(@NotNull BlockState subject, @NotNull BlockState source, @NotNull Property<?>... properties){
+        for (Property<?> prop : properties) {
+            Property<T> p = ((Property<T>) prop);
+            if (source.hasProperty(p)) {
+                subject = subject.setValue(p, source.getValue(p));
             }
         }
+        return subject;
+    }
 
-        @Override
-        public final float getHardness(BlockView world, BlockPos pos) {
-            if(this.get(BREAKABLE))return 2.0f;
-            return -1f;
+    protected boolean shouldOpenTop(BlockHitResult hit){
+        return false;
+    }
+
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (isStateReplacedValid(newState)){
+            return;
         }
 
-        @Override
-        public final void scheduledTick(ServerWorld world, BlockPos pos, Random random) {
-            world.setBlockState(pos,this.withIfExists(BREAKABLE,false));
-        }
-
-        @Override
-        public ActionResult onUse(World world, PlayerEntity player, Hand hand, BlockHitResult hit) {
-
-            if (world.isClient) return ActionResult.SUCCESS;
-
-            BlockPos pos = hit.getBlockPos();
-
-            ItemStack stack = player.getStackInHand(hand);
-
-            BlockEntity be = world.getBlockEntity(pos);
-
-            if(!(be instanceof AbstractShopEntity)) return ActionResult.FAIL;
-
-            PermissionLevel perm = userSignIn(world, pos, player);
-
-            if(!stack.isEmpty() && perm.canEditTrades()){
-                if(((AbstractShopBlock)getBlock()).onUseWithItem(stack,this.asBlockState(),world,pos,player)) return ActionResult.SUCCESS;
-            }
-
-            if(world.getBlockEntity(pos) instanceof AbstractShopEntity shop){
-                ExtendedScreenHandlerFactory screenHandlerFactory = shop.createScreenHandlerFactory(false);
-            if (screenHandlerFactory != null) {
-                player.openHandledScreen(screenHandlerFactory);
-            }}
-
-            return ActionResult.SUCCESS;
-        }
-
-
-
-        @Override
-        public abstract VoxelShape getCullingShape(BlockView world, BlockPos pos);
-
-        @Override
-        public abstract VoxelShape getOutlineShape(BlockView world, BlockPos pos, ShapeContext context);
-
-        @Override
-        public abstract VoxelShape getCollisionShape(BlockView world, BlockPos pos);
-
-        @Override
-        public BlockState rotate(BlockRotation rotation) {
-            return this.with(FACING, rotation.rotate(this.get(FACING)));
-        }
-
-        @Override
-        public BlockState mirror(BlockMirror mirror) {
-            return this.rotate(mirror.getRotation(this.get(FACING)));
-        }
-
-        @Override
-        public void onBlockAdded(World world, BlockPos pos, BlockState state, boolean notify) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity != null) {
-                if (blockEntity instanceof AbstractShopEntity shopEntity) {
-                    shopEntity.markDirty();
-                }
-            }
-            super.onBlockAdded(world, pos, state, notify);
-        }
-
-        @Override
-        public final void onStateReplaced(World world, BlockPos pos, BlockState newState, boolean moved) {
-            if(isStateReplacedValid(newState)){
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof AbstractShopEntity shopEntity) {
+            if (!state.getValue(BREAKABLE)) {
+                level.setBlock(pos, state, 3);
                 return;
             }
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity != null) {
-                if (blockEntity instanceof AbstractShopEntity shopEntity) {
-                    //final defence
-                    if(this.unbreakable()){
-                        world.setBlockState(pos,this);
-                        return;
-                    }
-                    shopEntity.itemScatter(world,pos);
-                    world.updateComparators(pos, this.getBlock());
-                }
-            }
-            world.removeBlockEntity(pos);
+            shopEntity.itemScatter(level, pos);
+            level.updateNeighbourForOutputSignal(pos, this);
         }
-
-        protected abstract boolean isStateReplacedValid(BlockState newState);
-
-        public final boolean unbreakable() {
-            return !this.get(BREAKABLE);
-        }
-
-        public final void makeBreakable(ServerWorld world, BlockPos pos) {
-            world.setBlockState(pos,this.withIfExists(BREAKABLE,true));
-        }
-
-        public final void makeUnbreakable(ServerWorld world, BlockPos pos) {
-            world.setBlockState(pos,this.withIfExists(BREAKABLE,false));
-        }
-    }//end of ShopBlockState
-
-    protected abstract boolean onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player);
+        level.removeBlockEntity(pos);
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
 
     @Override
-    public abstract<T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type);
+    public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
+        return state.setValue(FACING, direction.rotate(state.getValue(FACING)));
+    }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public BlockState mirror(BlockState pState, Mirror pMirror) {
+        return rotate(pState, pMirror.getRotation(pState.getValue(FACING)));
+    }
+
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){return getGenericShape(state);}
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context){return getGenericShape(state);}
+    @Override
+    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos){return getGenericShape(state);}
+
+    private static final VoxelShape TEST_SHAPE = Block.box(0, 0, 0, 16, 10, 16);
+
+    protected VoxelShape getGenericShape(BlockState state){return TEST_SHAPE;}
+
+
+    protected boolean unbreakable(BlockState state) {
+        return !state.getValue(BREAKABLE);
+    }
+
+    protected void makeBreakable(ServerLevel level, BlockPos pos, BlockState state) {
+        level.setBlock(pos, state.setValue(BREAKABLE, true), 3);
+    }
+
+    protected void makeUnbreakable(ServerLevel level, BlockPos pos, BlockState state) {
+        level.setBlock(pos, state.setValue(BREAKABLE, false), 3);
+    }
+
+
+    protected abstract boolean isStateReplacedValid(BlockState newState);
+
+    protected abstract boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player);
+
+
+    @Override
+    public abstract<T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type);
+
+    @Override
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         BlockEntity be = world.getBlockEntity(pos);
-        if(be instanceof AbstractShopEntity shop){
-            if(!shop.canBreak(player)){
-                if(world.isClient()) {
-                    player.sendMessage(shop.cantBreakMessage(), true);
+        if (be instanceof AbstractShopEntity shop) {
+            if (!shop.canBreak(player)) {
+                if (world.isClientSide) {
+                    player.displayClientMessage(shop.cantBreakMessage(), true);
                 }
-                return;
+                return false; // cancel destruction
             }
         }
-        if(player.isCreative()){
-            world.setBlockState(pos, state.with(BREAKABLE,true));
-            //allow creative players to break
+
+        if (player.isCreative()) {
+            world.setBlock(pos, state.setValue(BREAKABLE, true), 3); // allow creative break
         }
-        this.spawnBreakParticles(world, player, pos, state);
-        world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(player, state));
+
+        return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
+
 
     public ScreenSettingsGroup getScreenSettings(){
         return ScreenSettingsGroup.createBasicWood(VariantResources.wood_variant.OAK);

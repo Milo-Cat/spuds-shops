@@ -1,25 +1,34 @@
 package net.spudacious5705.shops.item;
 
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+
+import net.minecraft.world.item.Item;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.item.custom.ContractScroll;
 
+import java.util.function.Supplier;
+
+import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
+
 public class ModItems {
 
-    public static final Item STOCK_WARNING = register(new Item(new Item.Settings()), "stock_warning");
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
-    public static final Item PAYMENT_WARNING = register(new Item(new Item.Settings()), "payment_warning");
+    public static final RegistryObject<Item> STOCK_WARNING = register(() -> new Item(new Item.Properties()), "stock_warning");
 
-    public static final ContractScroll CONTRACT_SCROLL = register(new ContractScroll(new Item.Settings()), "contract_scroll");
+    public static final RegistryObject<Item> PAYMENT_WARNING = register(() ->  new Item(new Item.Properties()), "payment_warning");
 
-    private static <I extends Item> I register(I item, String id) {
-        return Registry.register(Registries.ITEM, Identifier.of(SpudaciousShops.MOD_ID, id), item);
+    public static final RegistryObject<ContractScroll> CONTRACT_SCROLL = register(() ->  new ContractScroll(new Item.Properties()), "contract_scroll");
+
+    private static <I extends Item> RegistryObject<I> register(Supplier<I> item, String name) {
+        return ITEMS.register(name,(item));
     }
-    public static void registerModItems() {
+    public static void registerModItems(IEventBus modEventBus) {
         SpudaciousShops.LOGGER.info("Registering mod items for " + SpudaciousShops.MOD_ID);
+        ITEMS.register(modEventBus);
     }
 }

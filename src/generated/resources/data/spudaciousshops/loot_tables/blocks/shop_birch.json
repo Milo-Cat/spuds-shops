@@ -1,0 +1,266 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "red"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_red"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "white"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_white"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "blue"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_blue"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "purple"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_purple"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "green"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_green"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "lime"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_lime"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "orange"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_orange"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "gray"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_gray"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "black"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_black"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "light_gray"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_light_gray"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "brown"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_brown"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "yellow"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_yellow"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "light_blue"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_light_blue"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "cyan"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_cyan"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "magenta"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_magenta"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "spudaciousshops:matches_colour",
+          "expected_colour": "pink"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "spudaciousshops:shop_birch_pink"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

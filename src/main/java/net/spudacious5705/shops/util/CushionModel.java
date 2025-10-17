@@ -4,38 +4,48 @@
 
 package net.spudacious5705.shops.util;
 
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.spudacious5705.shops.SpudaciousShops;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public class CushionModel extends Model {
-	public static final EntityModelLayer LAYER_LOCATION = new EntityModelLayer(SpudaciousShops.id("main"), "cushion_model");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
+            new ResourceLocation("spudaciousshops", "cushion_model"), "main");
+
 
 	private final ModelPart main;
 
 	public CushionModel(ModelPart root) {
-        super(RenderLayer::getEntitySolid);
+        super(RenderType::entityCutoutNoCull);
         this.main = root.getChild("main");
 	}
 
-	public static TexturedModelData getTexturedModelData() {
-		ModelData modelData = new ModelData();
-		ModelPartData modelPartData = modelData.getRoot();
-		ModelPartData main = modelPartData.addChild("main", ModelPartBuilder.create(), ModelTransform.of(8.0F, -5.0F, 12.0F, 0.0F, 3.1416F, 0.0F));
-		main.addChild("cussion_r1", ModelPartBuilder.create().uv(0, 0).cuboid(-13.0F, 4.0F, -10.0F, 10.0F, 1.0F, 7.0F, new Dilation(0.0F)), ModelTransform.of(8.0F, 13.0F, 8.0F, 0.3927F, 0.0F, 0.0F));
+	public static LayerDefinition getTexturedModelData() {
+		MeshDefinition modelData = new MeshDefinition();
+		PartDefinition modelPartData = modelData.getRoot();
+        PartDefinition main = modelPartData.addOrReplaceChild("main", CubeListBuilder.create(), PartPose.offsetAndRotation(8.0F, -5.0F, 12.0F, 0.0F, 3.1416F, 0.0F));
+		main.addOrReplaceChild("cussion_r1", CubeListBuilder.create().addBox(-13.0F, 4.0F, -10.0F, 10.0F, 1.0F, 7.0F), PartPose.offsetAndRotation(8.0F, 13.0F, 8.0F, 0.3927F, 0.0F, 0.0F));
 
-		return TexturedModelData.of(modelData, 32, 32);
+		return LayerDefinition.create(modelData, 32, 32);
 	}
 
-	@Override
-	public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-		main.render(matrices, vertices, light, overlay);
+
+	public void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
+        renderToBuffer(matrices, vertices, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay) {
-		render(matrices, vertices, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
-	}
+    @Override
+    public void renderToBuffer(@NotNull PoseStack matrices, @NotNull VertexConsumer vertices, int light, int overlay, float pRed, float pGreen, float pBlue, float pAlpha) {
+        main.render(matrices, vertices, light, overlay);
+    }
 }

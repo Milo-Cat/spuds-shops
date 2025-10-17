@@ -1,0 +1,7 @@
+{
+  "parent": "spudaciousshops:block/shelf/shelf_shop_bottom",
+  "textures": {
+    "all": "spudaciousshops:block/shelf/shelf_oak",
+    "particle": "minecraft:block/oak_planks"
+  }
+}
