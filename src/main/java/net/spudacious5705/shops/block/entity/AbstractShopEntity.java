@@ -136,7 +136,7 @@ public abstract class AbstractShopEntity extends BlockEntity {
             NonNullList<ItemStack> vendList;
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
             if(tradeCreative) {
-                vendList = NonNullList.withSize(1, ItemStack.EMPTY);
+                vendList = NonNullList.create();
                 vendList.add(0, inventory.getVendingStack().copy());
             } else {
                 vendList = takeItems(inventory.getVendingStack(), inventory::get, 0, STOCK_END);
