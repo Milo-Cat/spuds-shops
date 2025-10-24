@@ -70,10 +70,11 @@ public class ShelfShopEntity extends AbstractShopEntity{
         this.rendererData = new RendererData(shopInventory);
         this.furtherDataTop = new ShelfRenderData();
         this.furtherDataBottom = new ShelfRenderData();
+        this.rendererDataTop = new RendererData(shopInventoryTop);
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected RendererData rendererDataTop = new RendererData(shopInventoryTop);
+    protected RendererData rendererDataTop;
 
 
     @OnlyIn(Dist.CLIENT)
