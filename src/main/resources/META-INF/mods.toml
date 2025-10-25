@@ -19,6 +19,9 @@ license="MIT"
 [[mods]] #mandatory
 # The modid of the mod
 modId="spudaciousshops" #mandatory
+# logo stuff
+logoFile = "shops_logo.png"
+logoBlur = false
 # The version number of the mod
 version="${mod_version}" #mandatory
 # A display name for the mod
