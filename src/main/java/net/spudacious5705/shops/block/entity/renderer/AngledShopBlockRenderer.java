@@ -195,14 +195,14 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
             poseStack.scale(0.18f, 0.18f, 0.18f);
-            this.context.getItemRenderer().render(data.paymentType(),
+            this.context.getItemRenderer().render(data.paymentItem(),
                     ItemDisplayContext.GUI,
                     false,
                     poseStack,
                     bufferSource,
                     light,
                     overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0));
+                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0));
             poseStack.popPose();
 
             ShopRenderUtils.renderShopWarns(tickDelta,poseStack,bufferSource,light,overlay,data,context,0.375f);

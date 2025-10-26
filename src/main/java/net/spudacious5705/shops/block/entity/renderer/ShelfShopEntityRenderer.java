@@ -176,13 +176,13 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
 
 
                     matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-                    this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+                    this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,
                             false,
                             matrices,
                             vertexConsumers,
                             light,
                             overlay,
-                            context.getItemRenderer().getModel(data.paymentType(), null, null, 0)
+                            context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
                     );
                     matrices.popPose();
                 } else {
@@ -243,13 +243,13 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     matrices.mulPose(Axis.YP.rotationDegrees(180f));
 
                     matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-                    this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+                    this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,
                             false,
                             matrices,
                             vertexConsumers,
                             light,
                             overlay,
-                            this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                            this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
                     );
                     matrices.popPose();
                 }

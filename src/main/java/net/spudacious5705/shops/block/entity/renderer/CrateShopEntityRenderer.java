@@ -187,14 +187,14 @@ public class CrateShopEntityRenderer implements BlockEntityRenderer<CrateShopEnt
 
             matrices.scale(0.18f, 0.18f, 0.18f);
             
-            this.context.getItemRenderer().render(data.paymentType(),
+            this.context.getItemRenderer().render(data.paymentItem(),
                     ItemDisplayContext.GUI,
                     false,
                     matrices,
                     vertexConsumers,
                     light,
                     overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
             );
             matrices.popPose();
             matrices.popPose();

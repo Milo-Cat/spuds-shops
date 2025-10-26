@@ -133,23 +133,23 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             matrices.translate(0.12f, 0f, -r);
 
             matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-            this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+            this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,
                     false,
                     matrices,
                     vertexConsumers,
                     light,
                     overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
             );
             matrices.popPose();
             matrices.pushPose();
             matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-            this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,                    false,
+            this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,                    false,
                     matrices,
                     vertexConsumers,
                     light,
                     overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
             );
             matrices.popPose();
 

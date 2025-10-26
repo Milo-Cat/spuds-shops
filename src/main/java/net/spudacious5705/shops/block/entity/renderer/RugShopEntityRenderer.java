@@ -225,13 +225,13 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             }
             matrices.scale(scale, scale, scale);
 
-            this.context.getItemRenderer().render(data.paymentType(), mode,
+            this.context.getItemRenderer().render(data.paymentItem(), mode,
                     false,
                     matrices,
                     vertexConsumers,
                     light,
                     overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
             );
             matrices.popPose();
 
@@ -247,13 +247,13 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             }
             matrices.scale(scale, scale, scale);
 
-            this.context.getItemRenderer().render(data.paymentType(), mode,
+            this.context.getItemRenderer().render(data.paymentItem(), mode,
                     false,
                     matrices,
                     vertexConsumers,
                     light,
                     overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
             );
             matrices.popPose();
             matrices.popPose();

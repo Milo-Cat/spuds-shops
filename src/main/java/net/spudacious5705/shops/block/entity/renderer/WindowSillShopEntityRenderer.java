@@ -161,13 +161,13 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
 
             matrices.scale(0.18f, 0.18f, 0.18f);
             
-            this.context.getItemRenderer().render(data.paymentType(), ItemDisplayContext.GUI,
+            this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,
                     false,
                     matrices,
                     vertexConsumers,
                     light,
                     overlay,
-                    context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
+                    context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
             );
             matrices.popPose();
 

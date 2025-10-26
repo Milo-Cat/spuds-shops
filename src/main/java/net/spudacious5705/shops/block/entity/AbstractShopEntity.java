@@ -1181,7 +1181,7 @@ public abstract class AbstractShopEntity extends BlockEntity {
             return this.qWidth;
         }
 
-        public ItemStack paymentType() {
+        public ItemStack paymentItem() {
             return this.paymentItem;
         }
 
