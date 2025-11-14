@@ -239,9 +239,10 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
 
         if(player instanceof ServerPlayer serverPlayer) {
-            NetworkHooks.openScreen(serverPlayer, shop.createScreenHandlerFactory(false), buf -> {
+            boolean openTop = hit.getLocation().y - pos.getY() > 0.5;
+            NetworkHooks.openScreen(serverPlayer, shop.createScreenHandlerFactory(openTop), buf -> {
                 buf.writeBlockPos(pos);
-                buf.writeBoolean(hit.getLocation().y - pos.getY() > 0.5);
+                buf.writeBoolean(openTop);
             });
         }
 

@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,12 +63,13 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
     public ShelfShopEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SHELF_SHOP_ENTITY.get(), pos, state, -0.3f);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            createRendererDataForShelf();
+        }
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
-    protected void createRendererData() {
-        this.rendererData = new RendererData(shopInventory);
+    protected void createRendererDataForShelf() {
         this.furtherDataTop = new ShelfRenderData();
         this.furtherDataBottom = new ShelfRenderData();
         this.rendererDataTop = new RendererData(shopInventoryTop);
