@@ -501,7 +501,6 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
     }
 
     class shop_trade_slot extends TogglableSlot {
-
         public shop_trade_slot(AbstractShopEntity.InventoryDelegate inventory, int index, int x, int y) {
             super(inventory, index, x, y);
             tabSellerSlots.add(this);
@@ -521,13 +520,18 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
                 this.setStack(ItemStack.EMPTY);
                 return false;
             }
+            if (ModItems.isValidPaymentItem(stack)) {
+                return false;
+            }
             return true;
         }
 
         @Override
         public ItemStack insertStack(ItemStack stack, int count) {
+            if (ModItems.isValidPaymentItem(stack)) {
+                return stack;
+            }
             ItemStack oldStack = this.getStack();
-
             if(stack.getItem() == oldStack.getItem()){
                 count += oldStack.getCount();
                 if(count>64)count=64;
