@@ -404,38 +404,42 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final ClickEventHandler FUNCTION;
         private final ResourceLocation TEXTURE;
         private final ResourceLocation TEXTURE_HOVERED;
-        private final Warn_popup_texts TEXT;
+        private final MutableComponent TEXT;
+        private final int textX;
+        private final int textY;
+        private final int textColour;
 
-        public ButtonWidget(int x, int y, Component message, ClickEventHandler function, ResourceLocation texture, ResourceLocation textureHovered, Component text, int colour) {
+        public ButtonWidget(int x, int y, Component message, ClickEventHandler function, ResourceLocation texture, ResourceLocation textureHovered, MutableComponent text, int colour) {
             super(x, y, 64, 28, message);
             this.FUNCTION = function;
             this.visible = false;
             this.TEXTURE = texture;
             this.TEXTURE_HOVERED = textureHovered;
-            this.TEXT = new Warn_popup_texts(x+32,y+13,text,colour, false);
+            this.textX = 32+x;
+            this.textY = 13+y;
+            this.TEXT = text;
+            this.textColour = colour;
         }
 
         @Override
         protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY()-16;
+            int tx = textX;
+
             if(isHovered){
+
                 context.blit(TEXTURE_HOVERED,x,y,64,64,0f,0f,64,64,64,64);
-                renderText(context,true);
+
+                tx++;
+
             }else{
+
                 context.blit(TEXTURE,x,y,64,64,0f,0f,64,64,64,64);
-                renderText(context,false);
+
             }
-        }
 
-        private void renderText(GuiGraphics context, boolean offset){
-            Font f = Minecraft.getInstance().font;
-                if(offset){
-                    TEXT.renderOffset(context,f);
-                }else{
-                    TEXT.render(context,f);
-                }
-
+            renderCentredText(context, font, TEXT, tx,textY,textColour, false);
         }
 
 
@@ -449,15 +453,5 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         }
 
-    }
-
-    private record Warn_popup_texts(int x, int y, Component text, int colour, boolean shadow){
-
-        void render(GuiGraphics context, Font f){
-            context.drawString(f, text, x - f.width(text) / 2, y, colour, shadow);
-        }
-        void renderOffset(GuiGraphics context, Font textRenderer) {
-            context.drawString(textRenderer, text, 1+x - textRenderer.width(text) / 2, y, colour, shadow);
-        }
     }
 }
