@@ -149,6 +149,11 @@
   "gui.spudaciousshops.toggle_creative": "Toggle creative shop mode",
   "gui.spudaciousshops.toggle_effects": "Toggle icons and particles",
 
+  "gui.spudaciousshops.stock": "Stock",
+  "gui.spudaciousshops.register": "Register",
+  "gui.spudaciousshops.payment": "Payment",
+  "gui.spudaciousshops.product": "Product",
+
 
   "block.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
   "item.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",

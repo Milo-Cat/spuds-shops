@@ -15,7 +15,6 @@ public class ScreenResources {
 
     static final int DEFAULT_TEXT_COLOUR = 11141290;
 
-    static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
     static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
     static final MutableComponent SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
     static final MutableComponent CLERK = Component.translatable("gui.spudaciousshops.clerk");
@@ -38,6 +37,11 @@ public class ScreenResources {
     static final MutableComponent NONE = Component.translatable("gui.spudaciousshops.text_none");
     static final MutableComponent CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative");
     static final MutableComponent EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects");
+
+    static final MutableComponent STOCK = Component.translatable("gui.spudaciousshops.stock");
+    static final MutableComponent REGISTER = Component.translatable("gui.spudaciousshops.register");
+    static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
+    static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
 
     static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = addToolTipTexts();
 
