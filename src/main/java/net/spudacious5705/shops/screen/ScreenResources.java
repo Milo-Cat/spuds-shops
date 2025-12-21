@@ -15,6 +15,7 @@ public class ScreenResources {
 
     static final int DEFAULT_TEXT_COLOUR = 11141290;
 
+    static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
     static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
     static final MutableComponent SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
     static final MutableComponent CLERK = Component.translatable("gui.spudaciousshops.clerk");
@@ -43,10 +44,9 @@ public class ScreenResources {
     static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
     static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
 
-    static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = addToolTipTexts();
+    static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = initSettingsHoverInfoTexts();
 
-
-    static ToolTipText[] addToolTipTexts(){
+    static ToolTipText[] initSettingsHoverInfoTexts(){
         int textX = 14;
         int textY = 72;
         @MagicConstant
@@ -96,28 +96,35 @@ public class ScreenResources {
         return texts;
     }
 
-    static Warn_popup_texts[] addWarnPopupTexts(){
-        int textX = leftPos+110;
-        int textY = topPos+84;
-        ShopScreenOwner.Warn_popup_texts[] warn_texts = new ShopScreenOwner.Warn_popup_texts[3];
-        warn_texts[0] = new ShopScreenOwner.Warn_popup_texts(textX,textY,WARN_TITLE,14745600, true);
+    static void renderWarnPopupTextBody(GuiGraphics context, Font font, int screenX, int screenY){
+
+        int textX = screenX+110;
+        int textY = screenY+84;
+        renderCentredText(context, font, WARN_TITLE, textX,textY,14745600, true);
         textY += 20;
-        warn_texts[1] = new ShopScreenOwner.Warn_popup_texts(textX,textY,WARN_LINE_1,986895, false);
+        renderCentredText(context, font, WARN_LINE_1, textX,textY,986895, false);
         textY += 10;
-        warn_texts[2] = new ShopScreenOwner.Warn_popup_texts(textX,textY,WARN_LINE_2,986895, false);
-        return warn_texts;
+        renderCentredText(context, font, WARN_LINE_2, textX,textY,986895, false);
     }
 
-    static Warn_popup_texts[] addStorageTexts(){
-        ShopScreenOwner.Warn_popup_texts[] storage_texts = new ShopScreenOwner.Warn_popup_texts[4];
-        storage_texts[0] = new ShopScreenOwner.Warn_popup_texts(leftPos+90,topPos+5, Component.literal("Stock"),2434341, false);
+    static void renderStorageHeaders(GuiGraphics context, Font font, int screenX, int screenY){
 
-        storage_texts[1] = new ShopScreenOwner.Warn_popup_texts(leftPos+35,topPos+113, Component.literal("Register"),2434341, false);//8282679
+        renderCentredText(context, font, STOCK,screenX+90,screenY+5,2434341, false);
 
-        storage_texts[2] = new ShopScreenOwner.Warn_popup_texts(leftPos+33,topPos+18, Component.literal("Payment"),2434341, false);
+        renderCentredText(context, font, REGISTER,screenX+35,screenY+113,2434341, false);
 
-        storage_texts[3] = new ShopScreenOwner.Warn_popup_texts(leftPos+33,topPos+61,  Component.literal("Product"),2434341, false);
-        return storage_texts;
+        renderCentredText(context, font, PAYMENT,screenX+33,screenY+18,2434341, false);
+
+        renderCentredText(context, font, PRODUCT,screenX+33,screenY+61,2434341, false);
+
+    }
+
+    private static void renderCentredText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
+        context.drawString(font, text, x - font.width(text) / 2, y, colour, shadow);
+    }
+
+    private static void renderText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
+        context.drawString(font, text, x, y, colour, shadow);
     }
 
     static class ToolTipText{
@@ -166,6 +173,5 @@ public class ScreenResources {
             }
         }
     }
-
 
 }
