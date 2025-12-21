@@ -109,13 +109,13 @@ public class ScreenResources {
 
     static void renderStorageHeaders(GuiGraphics context, Font font, int screenX, int screenY){
 
-        renderCentredText(context, font, STOCK,screenX+90,screenY+5,2434341, false);
+        renderText(context, font, STOCK,screenX+77,screenY+5,2434341, false);
 
-        renderCentredText(context, font, REGISTER,screenX+35,screenY+113,2434341, false);
+        renderText(context, font, REGISTER,screenX+14,screenY+113,2434341, false);
 
-        renderCentredText(context, font, PAYMENT,screenX+33,screenY+18,2434341, false);
+        renderText(context, font, PAYMENT,screenX+13,screenY+18,2434341, false);
 
-        renderCentredText(context, font, PRODUCT,screenX+33,screenY+61,2434341, false);
+        renderText(context, font, PRODUCT,screenX+13,screenY+61,2434341, false);
 
     }
 
