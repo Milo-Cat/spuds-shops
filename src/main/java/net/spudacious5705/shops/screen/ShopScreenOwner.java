@@ -16,13 +16,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
-import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.EnumMap;
 import java.util.List;
 
 import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
+import static net.spudacious5705.shops.screen.ScreenResources.*;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
 
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
@@ -154,10 +154,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 sellerGUI();
             }
         }
-
-        WARN_TEXTS = addWarnPopupTexts();
-        STORAGE_TEXTS = addStorageTexts();
-        TEXTS = addToolTipTexts();
     }
 
     private void switchToCustomerTab() {
@@ -248,16 +244,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
-    private static final Component OWNER = Component.translatable("gui.spudaciousshops.owner");
-    private static final Component MANAGER = Component.translatable("gui.spudaciousshops.manager");
-    private static final Component SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
-    private static final Component CLERK = Component.translatable("gui.spudaciousshops.clerk");
-    private static final Component WARN_TITLE = Component.translatable("gui.spudaciousshops.delete_warn_title");
-    private static final Component WARN_LINE_1 = Component.translatable("gui.spudaciousshops.delete_warn_message_line1");
-    private static final Component WARN_LINE_2 = Component.translatable("gui.spudaciousshops.delete_warn_message_line2");
-    private static final Component CANCEL = Component.translatable("gui.spudaciousshops.cancel");
-    private static final Component DELETE = Component.translatable("gui.spudaciousshops.delete");
-
     @Override
     public void render(GuiGraphics context, int mouseX, int mouseY, float partialTick) {
         renderBackground(context);
@@ -269,160 +255,21 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         
         if(activeTab == SETTINGS_TAB) {
 
-                for(ToolTipText ttt : TEXTS){
-                    ttt.render(context,font,mouseX,mouseY);
+                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
+                    ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
                 }
             
         }else if(activeTab == WARNING_TAB){
 
-                for(Warn_popup_texts t : WARN_TEXTS){
-                    t.render(context,font);
-                }
+            renderWarnPopupTextBody(context,font,leftPos,topPos);
+
             
         }else if(activeTab == SELLER_TAB){
 
-                for(Warn_popup_texts t : STORAGE_TEXTS){
-                    t.render(context,font);
-                }
+            renderStorageHeaders(context,font,leftPos,topPos);
             
         }
         this.renderTooltip(context, mouseX, mouseY);
-    }
-
-    private final String PERMISSIONS = Component.translatable("gui.spudaciousshops.text_permissions").getString();
-    private final String IMPORT_ITEMS = Component.translatable("gui.spudaciousshops.text_import_items").getString();
-    private final String TAKE_ITEMS = Component.translatable("gui.spudaciousshops.text_take_items").getString();
-    private final String EDIT_PERMS = Component.translatable("gui.spudaciousshops.text_edit_perms").getString();
-    private final String CHANGE_TRADE = Component.translatable("gui.spudaciousshops.text_change_trade").getString();
-    private final String BREAK_SHOP = Component.translatable("gui.spudaciousshops.text_break_shop").getString();
-    private final String YES = Component.translatable("gui.spudaciousshops.text_yes").getString();
-    private final String NO = Component.translatable("gui.spudaciousshops.text_no").getString();
-    private final String ALL = Component.translatable("gui.spudaciousshops.text_all").getString();
-    private final String SUPERVISOR_AND_LOWER = Component.translatable("gui.spudaciousshops.text_supervisor_and_lower").getString();
-    private final String NONE = Component.translatable("gui.spudaciousshops.text_none").getString();
-    private final String CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative").getString();
-    private final String EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects").getString();
-
-
-
-    private ToolTipText[] addToolTipTexts(){
-        int textX = 14+leftPos;
-        int textY = 72+topPos;
-        @MagicConstant
-        int increment = 23;
-        int colour = this.menu.SCREEN_SETTINGS.SETTINGS_TEXT_COLOUR();//11141290;
-
-        ToolTipText[] texts = new ToolTipText[4];
-        MutableComponent permissions_title = Component.literal("§l" + PERMISSIONS + ":");
-        texts[0] = new ToolTipText(colour,OWNER, textX, textY,
-                List.of(
-                        permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
-                        Component.literal("§a + "+EDIT_PERMS+": "+ALL),
-                        Component.literal("§a + "+CHANGE_TRADE+": "+YES),
-                        Component.literal("§a + "+BREAK_SHOP+": "+YES)
-        ));
-        textY += increment;
-        texts[1] = new ToolTipText(colour,MANAGER, textX, textY,
-                List.of(
-                        permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
-                        Component.literal("§9 + "+EDIT_PERMS+": "+SUPERVISOR_AND_LOWER),
-                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
-                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
-                ));
-        textY += increment;
-        texts[2] = new ToolTipText(colour,SUPERVISOR, textX, textY,
-                List.of(
-                        permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
-                        Component.literal("§c - "+EDIT_PERMS+": "+NONE),
-                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
-                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
-                ));
-        textY += increment;
-        texts[3] = new ToolTipText(colour,CLERK, textX, textY,
-                List.of(
-                        permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§c - "+TAKE_ITEMS+": "+NO),
-                        Component.literal("§c - "+EDIT_PERMS+": "+NONE),
-                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
-                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
-                ));
-        return texts;
-    }
-
-    private Warn_popup_texts[] addWarnPopupTexts(){
-        int textX = leftPos+110;
-        int textY = topPos+84;
-        Warn_popup_texts[] warn_texts = new Warn_popup_texts[3];
-        warn_texts[0] = new Warn_popup_texts(textX,textY,WARN_TITLE,14745600, true);
-        textY += 20;
-        warn_texts[1] = new Warn_popup_texts(textX,textY,WARN_LINE_1,986895, false);
-        textY += 10;
-        warn_texts[2] = new Warn_popup_texts(textX,textY,WARN_LINE_2,986895, false);
-        return warn_texts;
-    }
-
-    private Warn_popup_texts[] addStorageTexts(){
-        Warn_popup_texts[] storage_texts = new Warn_popup_texts[4];
-        storage_texts[0] = new Warn_popup_texts(leftPos+90,topPos+5, Component.literal("Stock"),2434341, false);
-
-        storage_texts[1] = new Warn_popup_texts(leftPos+35,topPos+113, Component.literal("Register"),2434341, false);//8282679
-
-        storage_texts[2] = new Warn_popup_texts(leftPos+33,topPos+18, Component.literal("Payment"),2434341, false);
-
-        storage_texts[3] = new Warn_popup_texts(leftPos+33,topPos+61,  Component.literal("Product"),2434341, false);
-        return storage_texts;
-    }
-
-    private ToolTipText[] TEXTS = addToolTipTexts();
-
-    private class ToolTipText{
-        private final Component TEXT;
-        private final int X;
-        private final int Y;
-        private final int Xmax;
-        private final int Ymax;
-        private final List<Component> TOOLTIP;
-        private final int COLOUR;
-
-
-        private ToolTipText(int colour, Component text, int x, int y, List<Component> tooltip) {
-            TEXT = text;
-            X = x;
-            Y = y;
-            int tXmax = 0;
-            int tYmax = 0;
-            try {
-                tXmax = X + font.width(TEXT);
-                tYmax = Y + font.lineHeight;
-            } catch (Exception e) {
-            }
-            if(tXmax!=0&&tYmax!=0){
-
-            } else {
-                tXmax = X+25;
-                tYmax = Y+8;
-            }
-            Xmax = tXmax;
-            Ymax = tYmax;
-            TOOLTIP = tooltip;
-            COLOUR = colour;
-        }
-
-        public void render(GuiGraphics context, Font textRenderer, int mouseX, int mouseY){
-            context.drawString(textRenderer, TEXT, X, Y, COLOUR, false);
-            if(mouseX >= X && mouseX<=Xmax){
-                if(mouseY >= Y && mouseY<=Ymax){
-                    context.renderTooltip(textRenderer,TOOLTIP, java.util.Optional.empty(),mouseX,mouseY);
-                }
-            }
-        }
     }
 
 
@@ -491,14 +338,14 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         private boolean toggle;
 
-        public ToggleWidget(int x, int y, ToggleButtonID buttonID, ResourceLocation textureON, ResourceLocation textureOFF, String tooltipText) {
+        public ToggleWidget(int x, int y, ToggleButtonID buttonID, ResourceLocation textureON, ResourceLocation textureOFF, MutableComponent tooltipText) {
             super(x, y, 32, 16, Component.literal(""));
             this.BUTTON_ID = buttonID;
             this.visible = false;
             this.toggle = menu.getStateOfSetting(BUTTON_ID);
             this.TEXTURE_ON = textureON;
             this.TEXTURE_OFF = textureOFF;
-            this.tooltip = Component.literal(tooltipText);
+            this.tooltip = tooltipText;
         }
 
         @Override
@@ -603,10 +450,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
     }
-
-    private Warn_popup_texts[] WARN_TEXTS = addWarnPopupTexts();
-
-    private Warn_popup_texts[] STORAGE_TEXTS = addStorageTexts();
 
     private record Warn_popup_texts(int x, int y, Component text, int colour, boolean shadow){
 
