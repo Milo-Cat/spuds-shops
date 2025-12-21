@@ -119,11 +119,11 @@ public class ScreenResources {
 
     }
 
-    private static void renderCentredText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
+    static void renderCentredText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
         context.drawString(font, text, x - font.width(text) / 2, y, colour, shadow);
     }
 
-    private static void renderText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
+    static void renderText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
         context.drawString(font, text, x, y, colour, shadow);
     }
 
