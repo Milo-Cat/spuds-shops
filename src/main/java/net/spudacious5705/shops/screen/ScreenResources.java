@@ -39,14 +39,14 @@ public class ScreenResources {
     static final MutableComponent CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative");
     static final MutableComponent EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects");
 
+    static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = addToolTipTexts();
 
 
-    static ShopScreenOwner.ToolTipText[] addToolTipTexts(){
+    static ToolTipText[] addToolTipTexts(){
         int textX = 14;
         int textY = 72;
         @MagicConstant
         int increment = 23;
-        int colour = this.menu.SCREEN_SETTINGS.SETTINGS_TEXT_COLOUR();//11141290;
 
         ToolTipText[] texts = new ToolTipText[4];
         MutableComponent permissions_title = Component.literal("§l" + PERMISSIONS + ":");
@@ -92,7 +92,7 @@ public class ScreenResources {
         return texts;
     }
 
-    static ShopScreenOwner.Warn_popup_texts[] addWarnPopupTexts(){
+    static Warn_popup_texts[] addWarnPopupTexts(){
         int textX = leftPos+110;
         int textY = topPos+84;
         ShopScreenOwner.Warn_popup_texts[] warn_texts = new ShopScreenOwner.Warn_popup_texts[3];
@@ -104,7 +104,7 @@ public class ScreenResources {
         return warn_texts;
     }
 
-    static ShopScreenOwner.Warn_popup_texts[] addStorageTexts(){
+    static Warn_popup_texts[] addStorageTexts(){
         ShopScreenOwner.Warn_popup_texts[] storage_texts = new ShopScreenOwner.Warn_popup_texts[4];
         storage_texts[0] = new ShopScreenOwner.Warn_popup_texts(leftPos+90,topPos+5, Component.literal("Stock"),2434341, false);
 
@@ -115,8 +115,6 @@ public class ScreenResources {
         storage_texts[3] = new ShopScreenOwner.Warn_popup_texts(leftPos+33,topPos+61,  Component.literal("Product"),2434341, false);
         return storage_texts;
     }
-
-    static ShopScreenOwner.ToolTipText[] TEXTS = addToolTipTexts();
 
     static class ToolTipText{
         private final Component TEXT;
