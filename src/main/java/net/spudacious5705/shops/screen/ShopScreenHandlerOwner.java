@@ -13,6 +13,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
@@ -31,6 +32,8 @@ import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
 import static net.spudacious5705.shops.screen.networking.NetworkHelper.*;
 
 public class ShopScreenHandlerOwner extends ScreenHandler {
+
+    private static final Identifier WARNING_TEXTURE = SpudaciousShops.id("textures/gui/warning_screen.png");
 
     private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
 
@@ -51,6 +54,16 @@ public class ShopScreenHandlerOwner extends ScreenHandler {
 
     public boolean isPlayerCreative() {
         return SETTINGS_DELEGATE.isPlayerCreative();
+    }
+
+
+    public Identifier getBackgroundTexture() {
+        return switch (activeTab){
+            case SETTINGS_TAB -> SCREEN_SETTINGS.SETTINGS().textureID();
+            case CUSTOMER_TAB -> SCREEN_SETTINGS.CUSTOMER().textureID();
+            case WARNING_TAB -> WARNING_TEXTURE;
+            default -> SCREEN_SETTINGS.SELLER().textureID(); //SELLER or ERROR
+        };
     }
 
     interface WarningActivator{

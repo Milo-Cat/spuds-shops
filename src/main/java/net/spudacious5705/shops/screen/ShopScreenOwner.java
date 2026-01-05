@@ -23,6 +23,7 @@ import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
@@ -41,10 +42,6 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     
     private final ScreenSettingsGroup SETTINGS;
 
-    private Identifier TEXTURE;
-
-    private static final Identifier WARNING_TEXTURE = SpudaciousShops.id("textures/gui/warning_screen.png");
-
     private static final Identifier RED_BUTTON = SpudaciousShops.id("textures/gui/red_button.png");
     private static final Identifier RED_BUTTON_SELECTED = SpudaciousShops.id("textures/gui/red_button_selected.png");
     private static final Identifier GREEN_BUTTON = SpudaciousShops.id("textures/gui/green_button.png");
@@ -56,7 +53,6 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         this.backgroundWidth = 228;
         this.backgroundHeight = 256;
         this.SETTINGS = handler.getSettings();
-        this.TEXTURE = SETTINGS.SELLER().textureID();
         this.x = (width - backgroundWidth)/2;
         this.y = (height - backgroundHeight)/2;
 
@@ -131,10 +127,10 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
         posX = SETTINGS.creativeButtonX()+x;
         posY = SETTINGS.creativeButtonY()+y;
-        ToggleCreative = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP));
+        ToggleCreative = new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP);
         posX = SETTINGS.toggleEffectsButtonX()+x;
         posY = SETTINGS.toggleEffectsButtonY()+y;
-        ToggleIconsEffects = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP));
+        ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
         posX = SETTINGS.shopStyleButtonX()+x;
         posY = SETTINGS.shopStyleButtonY()+y;
         ToggleShopStyle = addDrawableChild(new ToggleWidget(posX, posY, ToggleButtonID.ShopStyleToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
@@ -159,22 +155,20 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     }
 
     private void switchToCustomerTab() {
-        handler.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
+        handler.updateTabSelectionClientside(CUSTOMER_TAB);
         customerGUI();
     }
     private void customerGUI(){
-        TEXTURE = SETTINGS.CUSTOMER().textureID();
         SellerTabButton.unToggle();
         SettingsTabButton.unToggle();
     }
 
     private void switchToSellerTab(){
-        handler.updateTabSelectionClientside(ShopScreenHandlerOwner.SELLER_TAB);
+        handler.updateTabSelectionClientside(SELLER_TAB);
         sellerGUI();
     }
 
     private void sellerGUI(){
-        TEXTURE = SETTINGS.SELLER().textureID();
         ShopFrontTabButton.unToggle();
         SettingsTabButton.unToggle();
     }
@@ -184,7 +178,6 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         settingsGUI();
     }
     private void settingsGUI(){
-        TEXTURE = SETTINGS.SETTINGS().textureID();
         ShopFrontTabButton.unToggle();
         SellerTabButton.unToggle();
     }
@@ -194,7 +187,6 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         warnGUI();
     }
     private void warnGUI(){
-        TEXTURE = WARNING_TEXTURE;
         setStateAllButtons(false);
     }
 
@@ -203,7 +195,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         if(handler.updateTabSelectionResponse(tab)) {
             switch (tab) {
                 case WARNING_TAB -> warnGUI();
-                case ShopScreenHandlerOwner.CUSTOMER_TAB -> customerGUI();
+                case CUSTOMER_TAB -> customerGUI();
                 case SETTINGS_TAB -> settingsGUI();
                 default -> sellerGUI();
             }
@@ -227,6 +219,7 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        Identifier TEXTURE = handler.getBackgroundTexture();
         RenderSystem.setShaderTexture(0, TEXTURE);
         context.drawTexture(TEXTURE, x , y, 0, 0, backgroundWidth, backgroundHeight);
     }
@@ -246,29 +239,37 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
         renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
 
-        int activeTab = this.handler.getActiveTab();
-        if(activeTab == SETTINGS_TAB) {
-            if(client != null) {
-                TextRenderer textRenderer = client.textRenderer;
-                for(ToolTipText ttt : TEXTS){
-                    ttt.render(context,textRenderer,mouseX,mouseY);
-                }
-            }
-        }else if(activeTab == WARNING_TAB){
-            if(client != null) {
-                TextRenderer textRenderer = client.textRenderer;
-                for(Warn_popup_texts t : WARN_TEXTS){
-                    t.render(context,textRenderer);
-                }
-            }
-        }else if(activeTab == SELLER_TAB){
-            if(client != null) {
-                TextRenderer textRenderer = client.textRenderer;
+        if(client == null) return;
+
+        TextRenderer textRenderer = client.textRenderer;
+
+        switch (handler.getActiveTab()){
+            case SELLER_TAB -> {
                 for(Warn_popup_texts t : STORAGE_TEXTS){
                     t.render(context,textRenderer);
                 }
             }
+            case SETTINGS_TAB -> {
+                ToggleCreative.render(context,mouseX,mouseY,delta);
+
+                for(ToolTipText ttt : TEXTS){
+                    ttt.render(context,textRenderer,mouseX,mouseY);
+                }
+
+            }
+            case CUSTOMER_TAB -> {
+
+            }
+            case WARNING_TAB -> {
+
+                for(Warn_popup_texts t : WARN_TEXTS){
+                    t.render(context,textRenderer);
+                }
+
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + handler.getActiveTab());
         }
+
         drawMouseoverTooltip(context, mouseX, mouseY);
     }
 
@@ -514,6 +515,11 @@ public class ShopScreenOwner extends HandledScreen<ShopScreenHandlerOwner> {
 
     }
 
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
 
     private class ButtonWidget extends ClickableWidget{
 
