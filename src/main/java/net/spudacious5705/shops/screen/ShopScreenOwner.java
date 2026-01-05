@@ -18,7 +18,6 @@ import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
 
 import java.util.EnumMap;
-import java.util.List;
 
 import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
@@ -28,10 +27,6 @@ import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
     
     private final ScreenSettingsGroup SETTINGS;
-
-    private ResourceLocation TEXTURE;
-
-    private static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
 
     private static final ResourceLocation RED_BUTTON = getResource("textures/gui/red_button.png");
     private static final ResourceLocation RED_BUTTON_SELECTED = getResource("textures/gui/red_button_selected.png");
@@ -44,7 +39,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.imageWidth = 228;
         this.imageHeight = 256;
         this.SETTINGS = menu.getSettings();
-        this.TEXTURE = SETTINGS.SELLER().textureID();
         this.leftPos = (width - imageWidth)/2;
         this.topPos = (height - imageHeight)/2;
 
@@ -161,7 +155,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         customerGUI();
     }
     protected void customerGUI(){
-        TEXTURE = SETTINGS.CUSTOMER().textureID();
         ShopFrontTabButton.toggle();
         SellerTabButton.unToggle();
         SettingsTabButton.unToggle();this.setWidgetsVisible(false);
@@ -173,7 +166,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     protected void sellerGUI(){
-        TEXTURE = SETTINGS.SELLER().textureID();
         SellerTabButton.toggle();
         ShopFrontTabButton.unToggle();
         SettingsTabButton.unToggle();this.setWidgetsVisible(false);
@@ -184,7 +176,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         settingsGUI();
     }
     protected void settingsGUI(){
-        TEXTURE = SETTINGS.SETTINGS().textureID();
         SettingsTabButton.toggle();this.setWidgetsVisible(true);
         ShopFrontTabButton.unToggle();
         SellerTabButton.unToggle();
@@ -204,7 +195,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     protected void warnGUI(){
-        TEXTURE = WARNING_TEXTURE;
         SettingsTabButton.visible=false;
         SellerTabButton.visible=false;
         ShopFrontTabButton.visible=false;
@@ -241,7 +231,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override

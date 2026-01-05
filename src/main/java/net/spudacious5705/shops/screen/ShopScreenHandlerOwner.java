@@ -3,6 +3,7 @@ package net.spudacious5705.shops.screen;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.block.entity.AbstractShopEntity.player_ID_Records_Delegate.checkAction;
 import static net.spudacious5705.shops.block.entity.ShopInventory.PAYMENT_SLOT;
 import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
@@ -55,6 +57,16 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         return SETTINGS_DELEGATE.isPlayerCreative();
     }
 
+    private static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
+
+    public ResourceLocation getBackgroundTexture() {
+        return switch (activeTab){
+            case SETTINGS_TAB -> SCREEN_SETTINGS.SETTINGS().textureID();
+            case CUSTOMER_TAB -> SCREEN_SETTINGS.CUSTOMER().textureID();
+            case WARNING_TAB -> WARNING_TEXTURE;
+            default -> SCREEN_SETTINGS.SELLER().textureID(); //SELLER or ERROR
+        };
+    }
 
 
     @Override
