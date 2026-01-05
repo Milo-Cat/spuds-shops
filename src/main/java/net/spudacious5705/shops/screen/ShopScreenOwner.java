@@ -112,10 +112,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         posX = SETTINGS.creativeButtonX()+leftPos;
         posY = SETTINGS.creativeButtonY()+topPos;
-        ToggleCreative = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP));
+        ToggleCreative = new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP);
         posX = SETTINGS.toggleEffectsButtonX()+leftPos;
         posY = SETTINGS.toggleEffectsButtonY()+topPos;
-        ToggleIconsEffects = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP));
+        ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
         /*
         posX = SETTINGS.shopStyleButtonX()+leftPos;
         posY = SETTINGS.shopStyleButtonY()+topPos;
@@ -241,24 +241,32 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         Font font = Minecraft.getInstance().font;
 
 
-        int activeTab = this.menu.getActiveTab();
-        
-        if(activeTab == SETTINGS_TAB) {
+        switch (menu.getActiveTab()){
+            case SELLER_TAB -> {
+                renderStorageHeaders(context,font,leftPos,topPos);
+            }
+            case SETTINGS_TAB -> {
+                ToggleCreative.render(context,mouseX,mouseY,partialTick);
+
+                ToggleIconsEffects.render(context,mouseX,mouseY,partialTick);
+
 
                 for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
                     ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
                 }
-            
-        }else if(activeTab == WARNING_TAB){
 
-            renderWarnPopupTextBody(context,font,leftPos,topPos);
+            }
+            case CUSTOMER_TAB -> {
 
-            
-        }else if(activeTab == SELLER_TAB){
+            }
+            case WARNING_TAB -> {
 
-            renderStorageHeaders(context,font,leftPos,topPos);
-            
+                renderWarnPopupTextBody(context,font,leftPos,topPos);
+
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + menu.getActiveTab());
         }
+
         this.renderTooltip(context, mouseX, mouseY);
     }
 
