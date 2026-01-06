@@ -16,6 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 
@@ -79,7 +80,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void renderLabels(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // Do nothing — this prevents the title and inventory label from rendering
     }
 
@@ -89,17 +90,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         int posX = SETTINGS.tab1ButtonX()+leftPos;
         int posY = SETTINGS.tab1ButtonY()+topPos;
-        SellerTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, true, STORAGE_ICON, true));
+        SellerTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, true, STORAGE_ICON, true);
 
 
         posX = SETTINGS.tab2ButtonX()+leftPos;
         posY = SETTINGS.tab2ButtonY()+topPos;
-        SettingsTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, true, COG_ICON));
+        SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, true, COG_ICON);
 
 
         posX = SETTINGS.tab3ButtonX()+leftPos;
         posY = SETTINGS.tab3ButtonY()+topPos;
-        ShopFrontTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, true, SHOPFRONT_ICON));
+        ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, true, SHOPFRONT_ICON);
 
 
         posX = 22+leftPos;
@@ -225,7 +226,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     ToggleWidget ToggleIconsEffects;
     ToggleWidget ToggleShopStyle;
     ToggleWidget ToggleIgnoreNBT;
-    protected final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
+    private final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -259,7 +260,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, partialTick);
         Font font = Minecraft.getInstance().font;
@@ -268,6 +269,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         switch (menu.getActiveTab()){
             case SELLER_TAB -> {
                 renderStorageHeaders(context,font,leftPos,topPos);
+
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
             }
             case SETTINGS_TAB -> {
                 ToggleCreative.render(context,mouseX,mouseY,partialTick);
@@ -279,9 +282,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
                 }
 
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
             }
             case CUSTOMER_TAB -> {
 
+
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
             }
             case WARNING_TAB -> {
                 WarningCancel.render(context,mouseX,mouseY,partialTick);
@@ -294,6 +300,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         this.renderTooltip(context, mouseX, mouseY);
+    }
+
+    private void renderScreenGenerics(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+        SellerTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        SettingsTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        ShopFrontTabButton.renderWidget(context,mouseX,mouseY,partialTick);
     }
 
 
