@@ -220,9 +220,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 renderScreenGenerics(context,mouseX,mouseY,partialTick);
             }
             case SETTINGS_TAB -> {
-                ToggleCreative.render(context,mouseX,mouseY,partialTick);
+                ToggleCreative.renderWidget(context,mouseX,mouseY,partialTick);
 
-                ToggleIconsEffects.render(context,mouseX,mouseY,partialTick);
+                ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
 
 
                 for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
@@ -237,8 +237,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 renderScreenGenerics(context,mouseX,mouseY,partialTick);
             }
             case WARNING_TAB -> {
-                WarningCancel.render(context,mouseX,mouseY,partialTick);
-                WarningProceed.render(context,mouseX,mouseY,partialTick);
+                WarningCancel.renderWidget(context,mouseX,mouseY,partialTick);
+                WarningProceed.renderWidget(context,mouseX,mouseY,partialTick);
 
                 renderWarnPopupTextBody(context,font,leftPos,topPos);
 
