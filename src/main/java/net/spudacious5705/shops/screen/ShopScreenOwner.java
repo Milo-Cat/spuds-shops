@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.TabButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -245,7 +244,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 default -> tryClickWidgets(mouseX,mouseY,
                         SettingsTabButton, SellerTabButton, ShopFrontTabButton
                 );
-            }) return true;
+            }){
+                var player = Minecraft.getInstance().player;
+                if(player != null){
+                    player.playSound(
+                            SoundEvents.UI_BUTTON_CLICK.value(),
+                            3.0F,
+                            0.3F
+                    );
+                }
+                return true;
+            }
         }
 
 
