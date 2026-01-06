@@ -314,10 +314,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             super(pX, pY, pWidth, pHeight, pMessage);
         }
 
-        public void attemptClick(double X, double Y){
+        public boolean attemptClick(double X, double Y){
             if( isHovered(X,Y) ){
                 onClick(X,Y);
+                return true;
             }
+            return false;
         }
 
         public boolean isHovered(double X, double Y){
