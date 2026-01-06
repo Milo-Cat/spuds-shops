@@ -105,10 +105,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         posX = 22+leftPos;
         posY = 128+topPos;
-        WarningCancel = addRenderableWidget(new ButtonWidget(posX, posY, Component.literal("CANCEL"), this::closeWarnPopup, GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840));
+        WarningCancel = new ButtonWidget(posX, posY, Component.literal("CANCEL"), this::closeWarnPopup, GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840);
 
         posX += 113;
-        WarningProceed = addRenderableWidget(new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329));
+        WarningProceed = new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329);
 
         posX = SETTINGS.creativeButtonX()+leftPos;
         posY = SETTINGS.creativeButtonY()+topPos;
@@ -260,6 +260,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
             }
             case WARNING_TAB -> {
+                WarningCancel.render(context,mouseX,mouseY,partialTick);
+                WarningProceed.render(context,mouseX,mouseY,partialTick);
 
                 renderWarnPopupTextBody(context,font,leftPos,topPos);
 
