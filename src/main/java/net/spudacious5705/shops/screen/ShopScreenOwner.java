@@ -155,9 +155,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         customerGUI();
     }
     protected void customerGUI(){
-        ShopFrontTabButton.toggle();
-        SellerTabButton.unToggle();
-        SettingsTabButton.unToggle();this.setWidgetsVisible(false);
+        this.setWidgetsVisible(false);
     }
 
     private void switchToSellerTab(){
@@ -166,9 +164,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     protected void sellerGUI(){
-        SellerTabButton.toggle();
-        ShopFrontTabButton.unToggle();
-        SettingsTabButton.unToggle();this.setWidgetsVisible(false);
+        ;this.setWidgetsVisible(false);
     }
 
     private void switchToSettingsTab() {
@@ -176,9 +172,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         settingsGUI();
     }
     protected void settingsGUI(){
-        SettingsTabButton.toggle();this.setWidgetsVisible(true);
-        ShopFrontTabButton.unToggle();
-        SellerTabButton.unToggle();
+        this.setWidgetsVisible(true);
+
     }
 
     void openWarnPopup(){
