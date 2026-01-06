@@ -230,17 +230,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
-        /*for(GuiEventListener guieventlistener : this.children()) {
-            if (guieventlistener.mouseClicked(pMouseX, pMouseY, pButton)) {
-                this.setFocused(guieventlistener);
-                if (pButton == 0) {
-                    this.setDragging(true);
-                }
-
-                return true;
-            }
-        }*/
-
         switch (menu.getActiveTab()){
             case SELLER_TAB -> {
 
