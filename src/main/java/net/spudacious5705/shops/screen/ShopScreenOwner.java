@@ -50,11 +50,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     private void closeWarnPopup(){
-        WarningCancel.visible=false;
-        WarningProceed.visible=false;
-        SettingsTabButton.visible=true;
-        SellerTabButton.visible=true;
-        ShopFrontTabButton.visible=true;
         switchToSettingsTab();
     }
 
@@ -152,33 +147,19 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     private void switchToCustomerTab() {
         this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
-        customerGUI();
-    }
-    protected void customerGUI(){
-        this.setWidgetsVisible(false);
     }
 
     private void switchToSellerTab(){
         this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.SELLER_TAB);
-        sellerGUI();
     }
 
-    protected void sellerGUI(){
-        ;this.setWidgetsVisible(false);
-    }
 
     private void switchToSettingsTab() {
         this.menu.updateTabSelectionClientside(SETTINGS_TAB);
-        settingsGUI();
-    }
-    protected void settingsGUI(){
-        this.setWidgetsVisible(true);
-
     }
 
     void openWarnPopup(){
         this.menu.updateTabSelectionClientside(WARNING_TAB);
-        warnGUI();
         LocalPlayer player = Minecraft.getInstance().player;
         if(player != null) {
             Minecraft.getInstance().player.playSound(
@@ -187,16 +168,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     0.3F
             );
         }
-    }
-
-    protected void warnGUI(){
-        SettingsTabButton.visible=false;
-        SellerTabButton.visible=false;
-        ShopFrontTabButton.visible=false;
-        WarningCancel.visible=true;
-        WarningProceed.visible=true;
-
-        this.setWidgetsVisible(false);
     }
 
     @OnlyIn(Dist.CLIENT)
