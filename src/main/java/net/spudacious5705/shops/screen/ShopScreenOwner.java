@@ -81,7 +81,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     @Override
     protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // Do nothing — this prevents the title and inventory label from rendering
-        //TODO perhaps implement this in fabric
     }
 
     @Override
