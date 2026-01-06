@@ -90,17 +90,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         int posX = SETTINGS.tab1ButtonX()+leftPos;
         int posY = SETTINGS.tab1ButtonY()+topPos;
-        SellerTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, true, STORAGE_ICON, true);
+        SellerTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, STORAGE_ICON, SELLER_TAB);
 
 
         posX = SETTINGS.tab2ButtonX()+leftPos;
         posY = SETTINGS.tab2ButtonY()+topPos;
-        SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, true, COG_ICON);
+        SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, COG_ICON, SETTINGS_TAB);
 
 
         posX = SETTINGS.tab3ButtonX()+leftPos;
         posY = SETTINGS.tab3ButtonY()+topPos;
-        ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, true, SHOPFRONT_ICON);
+        ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, SHOPFRONT_ICON, CUSTOMER_TAB);
 
 
         posX = 22+leftPos;
