@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.TabButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -223,30 +224,40 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     ToggleWidget ToggleIgnoreNBT;
     private final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
 
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
-        switch (menu.getActiveTab()){
-            case SELLER_TAB -> {
+        if (true) {//todo checkButton
 
-            }
-            case SETTINGS_TAB -> {
-                ToggleCreative.attemptClick(mouseX, mouseY);
-                ToggleIconsEffects.attemptClick(mouseX, mouseY);
-                //ToggleIgnoreNBT.attemptClick(mouseX, mouseY);
-                //ToggleShopStyle.attemptClick(mouseX, mouseY);
-            }
-            case WARNING_TAB -> {
+            if(switch (menu.getActiveTab()) {
+                case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,
+                        ToggleCreative,
+                        ToggleIconsEffects,
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
+                        );
 
-            }
-            default -> {//CUSTOMER_TAB
+                case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,
+                        WarningCancel,
+                        WarningProceed
+                );
 
-            }
-        };
+                default -> tryClickWidgets(mouseX,mouseY,
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
+                );
+            }) return true;
+        }
 
 
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private boolean tryClickWidgets(double mouseX, double mouseY, CustomClickableWidget... widgets) {
+        for(CustomClickableWidget widget : widgets){
+            if(widget.attemptClick(mouseX,mouseY))return true;
+        }
+        return false;
     }
 
     @Override
