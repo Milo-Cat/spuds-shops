@@ -320,14 +320,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         public void attemptClick(double X, double Y){
-            X -= this.getX();
-            Y -= this.getY();
-            if( X >= 0 && X < this.width
-                    &&
-                    Y >= 0 && Y < this.height
-            ){
+            if( isHovered(X,Y) ){
                 onClick(X,Y);
             }
+        }
+
+        public boolean isHovered(double X, double Y){
+            X -= this.getX();
+            Y -= this.getY();
+            return X >= 0 && X < this.width
+                    &&
+                    Y >= 0 && Y < this.height;
         }
 
     }
