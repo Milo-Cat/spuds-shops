@@ -90,17 +90,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         int posX = SETTINGS.tab1ButtonX()+leftPos;
         int posY = SETTINGS.tab1ButtonY()+topPos;
-        SellerTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, STORAGE_ICON, SELLER_TAB);
+        SellerTabButton = new TabWidget(posX, posY, Component.literal(""), STORAGE_ICON, SELLER_TAB);
 
 
         posX = SETTINGS.tab2ButtonX()+leftPos;
         posY = SETTINGS.tab2ButtonY()+topPos;
-        SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, COG_ICON, SETTINGS_TAB);
+        SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), COG_ICON, SETTINGS_TAB);
 
 
         posX = SETTINGS.tab3ButtonX()+leftPos;
         posY = SETTINGS.tab3ButtonY()+topPos;
-        ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, SHOPFRONT_ICON, CUSTOMER_TAB);
+        ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), SHOPFRONT_ICON, CUSTOMER_TAB);
 
 
         posX = 22+leftPos;
@@ -352,15 +352,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     private class TabWidget extends CustomClickableWidget {
 
-        private final ClickEventHandler thisTab;
-
         private final ResourceLocation ICON_TEXTURE;
 
         private final int relatedState;
 
-        public TabWidget(int x, int y, Component message, ClickEventHandler tab, ResourceLocation texture, int relatedState) {
+        public TabWidget(int x, int y, Component message, ResourceLocation texture, int relatedState) {
             super(x, y, 22, 22, message);
-            this.thisTab = tab;
             this.relatedState = relatedState;
             this.ICON_TEXTURE = texture;
         }
@@ -380,7 +377,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         public void onClick(double mouseX, double mouseY) {
-            thisTab.execute();
+            menu.updateTabSelectionClientside(relatedState);
         }
 
         @Override
