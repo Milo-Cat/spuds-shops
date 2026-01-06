@@ -50,7 +50,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
 
     public AbstractShopBlock(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties.forceSolidOn());
         registerDefaultStateTemplate();
     }
 
