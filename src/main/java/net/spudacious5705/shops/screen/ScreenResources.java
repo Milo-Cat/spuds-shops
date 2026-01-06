@@ -53,45 +53,52 @@ public class ScreenResources {
         int increment = 23;
 
         ToolTipText[] texts = new ToolTipText[4];
-        MutableComponent permissions_title = Component.literal("§l" + PERMISSIONS + ":");
+        MutableComponent permissions_title = Component.literal("§l").append(PERMISSIONS).append(":");
+
+        MutableComponent CAN = Component.literal("§a + ");
+        MutableComponent CANT = Component.literal("§c - ");
+        MutableComponent CONDITIONAL = Component.literal("§9 + ");
+        MutableComponent COLON = Component.literal(": ");
+
+
         texts[0] = new ToolTipText(OWNER, textX, textY,
                 List.of(
                         permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
-                        Component.literal("§a + "+EDIT_PERMS+": "+ALL),
-                        Component.literal("§a + "+CHANGE_TRADE+": "+YES),
-                        Component.literal("§a + "+BREAK_SHOP+": "+YES)
+                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CAN.append(TAKE_ITEMS).append(COLON).append(YES),
+                        CAN.append(EDIT_PERMS).append(COLON).append(ALL),
+                        CAN.append(CHANGE_TRADE).append(COLON).append(YES),
+                        CAN.append(BREAK_SHOP).append(COLON).append(YES)
                 ));
         textY += increment;
         texts[1] = new ToolTipText(MANAGER, textX, textY,
                 List.of(
                         permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
-                        Component.literal("§9 + "+EDIT_PERMS+": "+SUPERVISOR_AND_LOWER),
-                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
-                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
+                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CAN.append(TAKE_ITEMS).append(COLON).append(YES),
+                        CONDITIONAL.append(EDIT_PERMS).append(COLON).append(SUPERVISOR_AND_LOWER),
+                        CANT.append(CHANGE_TRADE).append(COLON).append(NO),
+                        CANT.append(BREAK_SHOP).append(COLON).append(NO)
                 ));
         textY += increment;
         texts[2] = new ToolTipText(SUPERVISOR, textX, textY,
                 List.of(
                         permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§a + "+TAKE_ITEMS+": "+YES),
-                        Component.literal("§c - "+EDIT_PERMS+": "+NONE),
-                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
-                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
+                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CAN.append(TAKE_ITEMS).append(COLON).append(YES),
+                        CANT.append(EDIT_PERMS).append(COLON).append(NONE),
+                        CANT.append(CHANGE_TRADE).append(COLON).append(NO),
+                        CANT.append(BREAK_SHOP).append(COLON).append(NO)
                 ));
         textY += increment;
         texts[3] = new ToolTipText(CLERK, textX, textY,
                 List.of(
                         permissions_title,
-                        Component.literal("§a + "+IMPORT_ITEMS+": "+YES),
-                        Component.literal("§c - "+TAKE_ITEMS+": "+NO),
-                        Component.literal("§c - "+EDIT_PERMS+": "+NONE),
-                        Component.literal("§c - "+CHANGE_TRADE+": "+NO),
-                        Component.literal("§c - "+BREAK_SHOP+": "+NO)
+                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CANT.append(TAKE_ITEMS).append(COLON).append(NO),
+                        CANT.append(EDIT_PERMS).append(COLON).append(NONE),
+                        CANT.append(CHANGE_TRADE).append(COLON).append(NO),
+                        CANT.append(BREAK_SHOP).append(COLON).append(NO)
                 ));
         return texts;
     }
@@ -128,7 +135,7 @@ public class ScreenResources {
     }
 
     static class ToolTipText{
-        private final Component TEXT;
+        private final MutableComponent TEXT;
         private final int X;
         private final int Y;
         private final int Xmax;
@@ -136,7 +143,7 @@ public class ScreenResources {
         private final List<Component> TOOLTIP;
 
 
-        private ToolTipText(Component text, int x, int y, List<Component> tooltip) {
+        private ToolTipText(MutableComponent text, int x, int y, List<Component> tooltip) {
             TEXT = text;
             X = x;
             Y = y;
@@ -163,11 +170,12 @@ public class ScreenResources {
         }
 
         public void render(GuiGraphics context, Font textRenderer, int mouseX, int mouseY, int screenX, int screenY, int colour){
-            context.drawString(textRenderer, TEXT, X, Y, colour, false);
-            mouseX -= screenX;
-            mouseY -= screenY;
-            if(mouseX >= X && mouseX<=Xmax){
-                if(mouseY >= Y && mouseY<=Ymax){
+            context.drawString(textRenderer, TEXT, X+screenX, Y+screenY, colour, false);
+            int mX = mouseX - screenX;
+            int mY = mouseY - screenY;
+            int max = textRenderer.width(TEXT) + X;
+            if(mX >= X && mX<=max){
+                if(mY >= Y && mY<=Ymax){
                     context.renderTooltip(textRenderer,TOOLTIP, java.util.Optional.empty(),mouseX,mouseY);
                 }
             }
