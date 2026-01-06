@@ -361,6 +361,13 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             }
         }
 
+        public boolean validateClick(int X, int Y){//todo add to all other widget classes
+            X =- this.getX();
+            Y =- this.getY();
+            return X >= 0 && X < this.width
+                    &&
+                    Y >= 0 && Y < this.height;
+        }
 
         public void onClick(double mouseX, double mouseY) {
             toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
