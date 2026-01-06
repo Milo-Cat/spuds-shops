@@ -45,7 +45,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         menu.initiateWarn(this::openWarnPopup);
         menu.settingsUpdater(this::updateToggleButtonFromPacket);
-        menu.setWidgetFunction(this::setWidgetsVisible);
         menu.updateTabSelection();
     }
 
@@ -129,7 +128,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     void openWarnPopup(){
-        this.menu.updateTabSelectionClientside(WARNING_TAB);
         LocalPlayer player = Minecraft.getInstance().player;
         if(player != null) {
             Minecraft.getInstance().player.playSound(
@@ -360,21 +358,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
     protected void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
         toggleButtons.get(button).toggle = state;
-    }
-    protected void setWidgetsVisible(boolean state){
-        //TODO implement the other features
-        //toggleButtons.values().forEach((w)-> {if(w != null){w.visible=state;}});
-
-        ToggleWidget w = toggleButtons.get(ToggleButtonID.EffectsToggle);
-        if(w != null){
-            w.visible=state;
-        }
-
-        w = toggleButtons.get(ToggleButtonID.CreativeToggle);
-        if(w != null){
-            w.visible=state&&this.menu.isPlayerCreative();
-        }
-
     }
 
 

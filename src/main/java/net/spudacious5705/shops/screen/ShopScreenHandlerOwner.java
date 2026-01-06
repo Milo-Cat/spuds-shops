@@ -1,9 +1,12 @@
 package net.spudacious5705.shops.screen;
 
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -40,6 +43,14 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     void initiateWarn(WarningActivator function) {
         warningActivator = function;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if(player != null) {
+            Minecraft.getInstance().player.playSound(
+                    SoundEvents.NOTE_BLOCK_GUITAR.value(),
+                    3.0F,
+                    0.3F
+            );
+        }
     }
 
 
@@ -103,15 +114,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     private final List<TogglableSlot> tabSellerSlots = new ArrayList<>();
     final List<TogglableSlot> tabSettingsSlots = new ArrayList<>();
     private final List<TogglableSlot> tabCustomerSlots = new ArrayList<>();
-    private widgetCollection widgets;
-
-    interface widgetCollection{
-        void setToVal(boolean value);
-    }
-
-    void setWidgetFunction(widgetCollection c){
-        widgets = c;
-    }
 
     private static final int profit_itemStacks_start = 54;
 
@@ -264,7 +266,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     public void updateTabSelection(){
         switch (activeTab) {
             case SETTINGS_TAB -> {
-                tabSettingsSlots.forEach(TogglableSlot::enable);widgets.setToVal(true);
+                tabSettingsSlots.forEach(TogglableSlot::enable);
                 playerInvSlots.forEach(TogglableSlot::enable);
 
                 tabSellerSlots.forEach(TogglableSlot::disable);
@@ -274,11 +276,11 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
                 playerInvSlots.forEach(TogglableSlot::enable);
                 tabCustomerSlots.forEach(TogglableSlot::enable);
 
-                tabSettingsSlots.forEach(TogglableSlot::disable);widgets.setToVal(false);
+                tabSettingsSlots.forEach(TogglableSlot::disable);
                 tabSellerSlots.forEach(TogglableSlot::disable);
             }
             case WARNING_TAB -> {
-                tabSettingsSlots.forEach(TogglableSlot::disable);widgets.setToVal(false);
+                tabSettingsSlots.forEach(TogglableSlot::disable);
                 tabSellerSlots.forEach(TogglableSlot::disable);
                 playerInvSlots.forEach(TogglableSlot::disable);
                 tabCustomerSlots.forEach(TogglableSlot::disable);
@@ -287,7 +289,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
                 tabSellerSlots.forEach(TogglableSlot::enable);
                 playerInvSlots.forEach(TogglableSlot::enable);
 
-                tabSettingsSlots.forEach(TogglableSlot::disable);widgets.setToVal(false);
+                tabSettingsSlots.forEach(TogglableSlot::disable);
                 tabCustomerSlots.forEach(TogglableSlot::disable);
             }
         }
