@@ -227,6 +227,42 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     ToggleWidget ToggleIgnoreNBT;
     protected final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
 
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+        /*for(GuiEventListener guieventlistener : this.children()) {
+            if (guieventlistener.mouseClicked(pMouseX, pMouseY, pButton)) {
+                this.setFocused(guieventlistener);
+                if (pButton == 0) {
+                    this.setDragging(true);
+                }
+
+                return true;
+            }
+        }*/
+
+        switch (menu.getActiveTab()){
+            case SELLER_TAB -> {
+
+            }
+            case SETTINGS_TAB -> {
+                ToggleCreative.attemptClick(mouseX, mouseY);
+                ToggleIconsEffects.attemptClick(mouseX, mouseY);
+                //ToggleIgnoreNBT.attemptClick(mouseX, mouseY);
+                //ToggleShopStyle.attemptClick(mouseX, mouseY);
+            }
+            case WARNING_TAB -> {
+
+            }
+            default -> {//CUSTOMER_TAB
+
+            }
+        };
+
+
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
@@ -360,16 +396,15 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             }
         }
 
-        public boolean validateClick(int X, int Y){//todo add to all other widget classes
+        public void attemptClick(double X, double Y){//todo add to all other widget classes
             X =- this.getX();
             Y =- this.getY();
-            return X >= 0 && X < this.width
+            if( X >= 0 && X < this.width
                     &&
-                    Y >= 0 && Y < this.height;
-        }
-
-        public void onClick(double mouseX, double mouseY) {
-            toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
+                    Y >= 0 && Y < this.height
+            ){
+                toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
+            }
         }
 
         @Override
