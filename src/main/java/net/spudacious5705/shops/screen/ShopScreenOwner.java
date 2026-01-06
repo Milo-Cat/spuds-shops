@@ -248,9 +248,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 var player = Minecraft.getInstance().player;
                 if(player != null){
                     player.playSound(
-                            SoundEvents.UI_BUTTON_CLICK.value(),
-                            3.0F,
-                            0.3F
+                            SoundEvents.UI_BUTTON_CLICK.value()
                     );
                 }
                 return true;
