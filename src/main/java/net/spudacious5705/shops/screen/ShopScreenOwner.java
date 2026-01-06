@@ -129,20 +129,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     }
             );
         }
-        switch (menu.getActiveTab()) {
-            case SETTINGS_TAB -> {
-                settingsGUI();
-            }
-            case CUSTOMER_TAB -> {
-                customerGUI();
-            }
-            case WARNING_TAB -> {
-                warnGUI();
-            }
-            default -> { //SELLER_TAB
-                sellerGUI();
-            }
-        }
+
     }
 
     private void switchToCustomerTab() {
@@ -172,14 +159,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     @OnlyIn(Dist.CLIENT)
     public void updateTabSelectionResponse(int tab) {
-        if(this.menu.updateTabSelectionResponse(tab)) {
-            switch (tab) {
-                case WARNING_TAB -> warnGUI();
-                case ShopScreenHandlerOwner.CUSTOMER_TAB -> customerGUI();
-                case SETTINGS_TAB -> settingsGUI();
-                default -> sellerGUI();
-            }
-        }
+        this.menu.updateTabSelectionResponse(tab);
     }
 
 
