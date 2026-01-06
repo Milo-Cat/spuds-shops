@@ -410,7 +410,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             int y = this.getY()-16;
             int tx = textX;
 
-            if(isHovered){
+            if(isHovered(pMouseX,pMouseY)){
 
                 context.blit(TEXTURE_HOVERED,x,y,64,64,0f,0f,64,64,64,64);
 
