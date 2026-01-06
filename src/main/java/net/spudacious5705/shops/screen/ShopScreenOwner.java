@@ -301,7 +301,26 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         void execute();
     }
 
-    private static class TabWidget extends AbstractWidget {
+    private abstract static class CustomClickableWidget extends AbstractWidget {
+
+        public CustomClickableWidget(int pX, int pY, int pWidth, int pHeight, Component pMessage) {
+            super(pX, pY, pWidth, pHeight, pMessage);
+        }
+
+        public void attemptClick(double X, double Y){
+            X -= this.getX();
+            Y -= this.getY();
+            if( X >= 0 && X < this.width
+                    &&
+                    Y >= 0 && Y < this.height
+            ){
+                onClick(X,Y);
+            }
+        }
+
+    }
+
+    private static class TabWidget extends CustomClickableWidget {
 
         private final ClickEventHandler thisTab;
 
@@ -352,7 +371,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-    private class ToggleWidget extends AbstractWidget{
+    private class ToggleWidget extends CustomClickableWidget{
 
         private final ResourceLocation TEXTURE_ON;
         private final ResourceLocation TEXTURE_OFF;
@@ -385,15 +404,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             }
         }
 
-        public void attemptClick(double X, double Y){//todo add to all other widget classes
-            X -= this.getX();
-            Y -= this.getY();
-            if( X >= 0 && X < this.width
-                    &&
-                    Y >= 0 && Y < this.height
-            ){
-                toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
-            }
+        @Override
+        public void onClick(double pMouseX, double pMouseY) {
+            toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
         }
 
         @Override
@@ -429,7 +442,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
 
-    private class ButtonWidget extends AbstractWidget{
+    private class ButtonWidget extends CustomClickableWidget{
 
         private final ClickEventHandler FUNCTION;
         private final ResourceLocation TEXTURE;
