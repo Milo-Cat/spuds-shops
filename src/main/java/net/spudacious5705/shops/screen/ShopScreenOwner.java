@@ -255,11 +255,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         ShopFrontTabButton.renderWidget(context,mouseX,mouseY,partialTick);
     }
 
-
-    interface ClickEventHandler {
-        void execute();
-    }
-
     private abstract static class CustomClickableWidget extends AbstractWidget {
 
         public CustomClickableWidget(int pX, int pY, int pWidth, int pHeight, Component pMessage) {
@@ -385,7 +380,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     private class ButtonWidget extends CustomClickableWidget{
 
-        private final ClickEventHandler FUNCTION;
+        private final Runnable FUNCTION;
         private final ResourceLocation TEXTURE;
         private final ResourceLocation TEXTURE_HOVERED;
         private final MutableComponent TEXT;
@@ -393,7 +388,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final int textY;
         private final int textColour;
 
-        public ButtonWidget(int x, int y, Component message, ClickEventHandler function, ResourceLocation texture, ResourceLocation textureHovered, MutableComponent text, int colour) {
+        public ButtonWidget(int x, int y, Component message, Runnable function, ResourceLocation texture, ResourceLocation textureHovered, MutableComponent text, int colour) {
             super(x, y, 64, 28, message);
             this.FUNCTION = function;
             this.TEXTURE = texture;
@@ -428,7 +423,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         @Override
         public void onClick(double mouseX, double mouseY) {
-            FUNCTION.execute();
+            FUNCTION.run();
         }
 
         @Override
