@@ -335,33 +335,28 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-    private static class TabWidget extends CustomClickableWidget {
+    private class TabWidget extends CustomClickableWidget {
 
         private final ClickEventHandler thisTab;
 
         private final ResourceLocation ICON_TEXTURE;
 
-        private boolean toggle;
+        private final int relatedState;
 
-        public TabWidget(int x, int y, Component message, ClickEventHandler tab, boolean visible, ResourceLocation texture) {
-            this(x,y, message,tab,visible,texture,false);
-        }
-
-        public TabWidget(int x, int y, Component message, ClickEventHandler tab, boolean visible, ResourceLocation texture, boolean toggle) {
+        public TabWidget(int x, int y, Component message, ClickEventHandler tab, ResourceLocation texture, int relatedState) {
             super(x, y, 22, 22, message);
             this.thisTab = tab;
-            this.visible = visible;
-            this.toggle = toggle;
+            this.relatedState = relatedState;
             this.ICON_TEXTURE = texture;
         }
 
         @Override
-        protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
+        protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX()-3;
             int y = this.getY()-6;
-            if(toggle){
+            if(menu.getStateId() == relatedState){
                 context.blit(TAB_SELECTED,x,y,32,32,0f,0f,32,32,32,32);
-            }else if(isHovered){
+            }else if(isHovered(pMouseX,pMouseY)){
                 context.blit(TAB_HOVER,x,y,32,32,0f,0f,32,32,32,32);
             }else{
                 context.blit(TAB_DESELECTED,x,y,32,32,0f,0f,32,32,32,32);
@@ -374,15 +369,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {}
-
-        void unToggle(){
-            this.toggle = false;
-        }
-
-        void toggle(){
-            this.toggle = true;
-        }
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {}
 
     }
 
