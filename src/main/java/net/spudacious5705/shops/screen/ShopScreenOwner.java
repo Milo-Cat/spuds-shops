@@ -362,7 +362,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX()-3;
             int y = this.getY()-6;
-            if(menu.getStateId() == relatedState){
+            if(menu.getActiveTab() == relatedState){
                 context.blit(TAB_SELECTED,x,y,32,32,0f,0f,32,32,32,32);
             }else if(isHovered(pMouseX,pMouseY)){
                 context.blit(TAB_HOVER,x,y,32,32,0f,0f,32,32,32,32);
