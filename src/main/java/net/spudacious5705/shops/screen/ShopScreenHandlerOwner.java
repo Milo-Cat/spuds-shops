@@ -21,6 +21,7 @@ import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopTabSyncPkt;
+import net.spudacious5705.shops.screen.networking.ShopTabSyncResponsePkt;
 import net.spudacious5705.shops.screen.networking.ToggleSyncPkt;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -38,20 +39,6 @@ import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
 public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
-
-
-
-    void initiateWarn(WarningActivator function) {
-        warningActivator = function;
-        LocalPlayer player = Minecraft.getInstance().player;
-        if(player != null) {
-            Minecraft.getInstance().player.playSound(
-                    SoundEvents.NOTE_BLOCK_GUITAR.value(),
-                    3.0F,
-                    0.3F
-            );
-        }
-    }
 
 
     public void selfDemotePlayer(Player player) {
@@ -89,15 +76,11 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         playerInventory.player.closeContainer();
     }
 
-    interface WarningActivator{
-        void openWarnScreen();
-    }
     private SettingsUpdater SETTINGS_UPDATER = null;
     interface SettingsUpdater{
         void updateSettings(ToggleButtonID id, boolean state);
     }
 
-    private WarningActivator warningActivator;
 
     final AbstractShopEntity.InventoryDelegate shopInventory;
     //private final PropertyDelegate propertyDelegate;
@@ -448,6 +431,19 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     }
 
+    private void openWarnScreen(@NotNull Player player){//called when player removes their own contract
+        if(player.level().isClientSide) {
+            player.playSound(
+                    SoundEvents.NOTE_BLOCK_GUITAR.value(),
+                    3.0F,
+                    0.3F
+            );
+            NetworkHelper.CHANNEL.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
+        } else {
+            activeTab = WARNING_TAB;
+        }
+    }
+
 
     class contract_slot extends TogglableSlot {
 
@@ -489,11 +485,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         @Override
         public @NotNull ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
             if(contract_delegate.belongsToInteractor(this.getItem())){
-                if(warningActivator!=null) {
-                    warningActivator.openWarnScreen();
-                } else {
-                    throw new IllegalStateException("[Spud's Shops] Warning activator not initialised");
-                }
+                openWarnScreen(pPlayer);
                 return ItemStack.EMPTY;
             }
             return container.removeItem(this.getSlotIndex(), 1);
@@ -502,11 +494,8 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
             if(contract_delegate.belongsToInteractor(this.getItem())){
-                if(warningActivator!=null) {
-                    warningActivator.openWarnScreen();
-                } else {
-                    throw new IllegalStateException("[Spud's Shops] Warning activator not initialised");
-                }
+                openWarnScreen(pPlayer);
+
                 return Optional.empty();
             }
             return Optional.of(container.removeItem(this.getSlotIndex(), 1));
