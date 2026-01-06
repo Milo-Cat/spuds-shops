@@ -64,41 +64,41 @@ public class ScreenResources {
         texts[0] = new ToolTipText(OWNER, textX, textY,
                 List.of(
                         permissions_title,
-                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
-                        CAN.append(TAKE_ITEMS).append(COLON).append(YES),
-                        CAN.append(EDIT_PERMS).append(COLON).append(ALL),
-                        CAN.append(CHANGE_TRADE).append(COLON).append(YES),
-                        CAN.append(BREAK_SHOP).append(COLON).append(YES)
+                        CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CAN.copy().append(TAKE_ITEMS).append(COLON).append(YES),
+                        CAN.copy().append(EDIT_PERMS).append(COLON).append(ALL),
+                        CAN.copy().append(CHANGE_TRADE).append(COLON).append(YES),
+                        CAN.copy().append(BREAK_SHOP).append(COLON).append(YES)
                 ));
         textY += increment;
         texts[1] = new ToolTipText(MANAGER, textX, textY,
                 List.of(
                         permissions_title,
-                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
-                        CAN.append(TAKE_ITEMS).append(COLON).append(YES),
-                        CONDITIONAL.append(EDIT_PERMS).append(COLON).append(SUPERVISOR_AND_LOWER),
-                        CANT.append(CHANGE_TRADE).append(COLON).append(NO),
-                        CANT.append(BREAK_SHOP).append(COLON).append(NO)
+                        CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CAN.copy().append(TAKE_ITEMS).append(COLON).append(YES),
+                        CONDITIONAL.copy().append(EDIT_PERMS).append(COLON).append(SUPERVISOR_AND_LOWER),
+                        CANT.copy().append(CHANGE_TRADE).append(COLON).append(NO),
+                        CANT.copy().append(BREAK_SHOP).append(COLON).append(NO)
                 ));
         textY += increment;
         texts[2] = new ToolTipText(SUPERVISOR, textX, textY,
                 List.of(
                         permissions_title,
-                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
-                        CAN.append(TAKE_ITEMS).append(COLON).append(YES),
-                        CANT.append(EDIT_PERMS).append(COLON).append(NONE),
-                        CANT.append(CHANGE_TRADE).append(COLON).append(NO),
-                        CANT.append(BREAK_SHOP).append(COLON).append(NO)
+                        CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CAN.copy().append(TAKE_ITEMS).append(COLON).append(YES),
+                        CANT.copy().append(EDIT_PERMS).append(COLON).append(NONE),
+                        CANT.copy().append(CHANGE_TRADE).append(COLON).append(NO),
+                        CANT.copy().append(BREAK_SHOP).append(COLON).append(NO)
                 ));
         textY += increment;
         texts[3] = new ToolTipText(CLERK, textX, textY,
                 List.of(
                         permissions_title,
-                        CAN.append(IMPORT_ITEMS).append(COLON).append(YES),
-                        CANT.append(TAKE_ITEMS).append(COLON).append(NO),
-                        CANT.append(EDIT_PERMS).append(COLON).append(NONE),
-                        CANT.append(CHANGE_TRADE).append(COLON).append(NO),
-                        CANT.append(BREAK_SHOP).append(COLON).append(NO)
+                        CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
+                        CANT.copy().append(TAKE_ITEMS).append(COLON).append(NO),
+                        CANT.copy().append(EDIT_PERMS).append(COLON).append(NONE),
+                        CANT.copy().append(CHANGE_TRADE).append(COLON).append(NO),
+                        CANT.copy().append(BREAK_SHOP).append(COLON).append(NO)
                 ));
         return texts;
     }
