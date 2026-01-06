@@ -396,7 +396,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         public ButtonWidget(int x, int y, Component message, ClickEventHandler function, ResourceLocation texture, ResourceLocation textureHovered, MutableComponent text, int colour) {
             super(x, y, 64, 28, message);
             this.FUNCTION = function;
-            this.visible = false;
             this.TEXTURE = texture;
             this.TEXTURE_HOVERED = textureHovered;
             this.textX = 32+x;
