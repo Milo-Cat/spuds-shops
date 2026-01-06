@@ -431,13 +431,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         }
 
-        void toggleOff(){
-            this.toggle = false;
-        }
-
-        void toggleOn(){
-            this.toggle = true;
-        }
     }
     protected void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
         toggleButtons.get(button).toggle = state;
