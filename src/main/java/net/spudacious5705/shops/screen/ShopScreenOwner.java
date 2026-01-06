@@ -49,10 +49,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         menu.updateTabSelection();
     }
 
-    private void closeWarnPopup(){
-        switchToSettingsTab();
-    }
-
     private void WarnPopupContinue(){
         NetworkHelper.CHANNEL.sendToServer(new ShopSelfDemotePkt());
         menu.close();
@@ -100,7 +96,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         posX = 22+leftPos;
         posY = 128+topPos;
-        WarningCancel = new ButtonWidget(posX, posY, Component.literal("CANCEL"), this::closeWarnPopup, GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840);
+        WarningCancel = new ButtonWidget(posX, posY, Component.literal("CANCEL"), () -> this.menu.updateTabSelectionClientside(SETTINGS_TAB), GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840);
 
         posX += 113;
         WarningProceed = new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329);
@@ -130,19 +126,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             );
         }
 
-    }
-
-    private void switchToCustomerTab() {
-        this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
-    }
-
-    private void switchToSellerTab(){
-        this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.SELLER_TAB);
-    }
-
-
-    private void switchToSettingsTab() {
-        this.menu.updateTabSelectionClientside(SETTINGS_TAB);
     }
 
     void openWarnPopup(){
@@ -375,7 +358,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
         }
 
@@ -423,7 +406,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
+        protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY()-16;
             int tx = textX;
@@ -450,7 +433,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
         }
 
