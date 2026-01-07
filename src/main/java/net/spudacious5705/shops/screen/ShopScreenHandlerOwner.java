@@ -1,8 +1,6 @@
 package net.spudacious5705.shops.screen;
 
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -21,15 +19,11 @@ import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopTabSyncPkt;
-import net.spudacious5705.shops.screen.networking.ShopTabSyncResponsePkt;
 import net.spudacious5705.shops.screen.networking.ToggleSyncPkt;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.block.entity.AbstractShopEntity.player_ID_Records_Delegate.checkAction;
@@ -76,10 +70,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         playerInventory.player.closeContainer();
     }
 
-    private SettingsUpdater SETTINGS_UPDATER = null;
-    interface SettingsUpdater{
-        void updateSettings(ToggleButtonID id, boolean state);
-    }
 
 
     final AbstractShopEntity.InventoryDelegate shopInventory;
@@ -278,17 +268,15 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         }
     }
 
-    void settingsUpdater(SettingsUpdater function) {
-        SETTINGS_UPDATER = function;
-    }
 
     @OnlyIn(Dist.CLIENT)
     public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
-        SETTINGS_UPDATER.updateSettings(button,state);
+        SETTINGS_DELEGATE.attemptSetState(button,state);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public boolean handleToggleButtonInput(ToggleButtonID button, boolean state) {
+    public boolean handleToggleButtonInput(ToggleButtonID button) {
+        boolean state = !SETTINGS_DELEGATE.getState(button);
         if(SETTINGS_DELEGATE.attemptSetState(button,state)){
             NetworkHelper.CHANNEL.sendToServer(new ToggleSyncPkt(button,state));
             return state;

@@ -43,7 +43,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.leftPos = (width - imageWidth)/2;
         this.topPos = (height - imageHeight)/2;
 
-        menu.settingsUpdater(this::updateToggleButtonFromPacket);
         menu.updateTabSelection();
     }
 
@@ -319,13 +318,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final ToggleButtonID BUTTON_ID;
         private final Component tooltip;
 
-        private boolean toggle;
 
         public ToggleWidget(int x, int y, ToggleButtonID buttonID, ResourceLocation textureON, ResourceLocation textureOFF, MutableComponent tooltipText) {
             super(x, y, 32, 16, Component.literal(""));
             this.BUTTON_ID = buttonID;
             this.visible = false;
-            this.toggle = menu.getStateOfSetting(BUTTON_ID);
             this.TEXTURE_ON = textureON;
             this.TEXTURE_OFF = textureOFF;
             this.tooltip = tooltipText;
@@ -335,6 +332,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY();
+
+            boolean toggle = menu.getStateOfSetting(BUTTON_ID);
 
             context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
             context.blit(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
@@ -346,7 +345,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         @Override
         public void onClick(double pMouseX, double pMouseY) {
-            toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
+            menu.handleToggleButtonInput(BUTTON_ID);
         }
 
         @Override
@@ -354,9 +353,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         }
 
-    }
-    protected void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
-        toggleButtons.get(button).toggle = state;
     }
 
 
