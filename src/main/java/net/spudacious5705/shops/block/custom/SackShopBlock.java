@@ -99,10 +99,6 @@ public class SackShopBlock extends AbstractShopBlock{
                 .setValue(OPEN, false);
     }
 
-    private boolean matchingCarpet(Level world, BlockPos pos, BlockState state, Direction dir){
-        return world.getBlockState(pos.relative(dir)).getBlock() == state.getBlock();
-    }
-
 
     @Override
     public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
