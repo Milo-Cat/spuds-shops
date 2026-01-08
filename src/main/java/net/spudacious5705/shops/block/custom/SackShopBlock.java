@@ -83,7 +83,7 @@ public class SackShopBlock extends AbstractShopBlock{
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {
+        if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {//todo change to sack entity
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((RugShopEntity)be).renderTick()
                     : (lvl, pos, st, be) -> ((RugShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
