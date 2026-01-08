@@ -47,7 +47,7 @@ public class SackShopBlock extends AbstractShopBlock{
             BASE_SHAPE
     );
 
-    public static final BooleanProperty OPEN = BooleanProperty.create("north");
+    public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
     public SackShopBlock() {
         super(settingsCarpet);
