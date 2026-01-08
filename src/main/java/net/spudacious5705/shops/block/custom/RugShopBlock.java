@@ -77,7 +77,7 @@ public class RugShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new RugShopEntity(pos,state);
     }
 
@@ -125,7 +125,7 @@ public class RugShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((RugShopEntity)be).renderTick()
@@ -168,12 +168,13 @@ public class RugShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @NotNull BlockState mirror(BlockState pState, Mirror pMirror) {
+    public @NotNull BlockState mirror(@NotNull BlockState pState, Mirror pMirror) {
         return pState;
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, BlockPos pos, BlockPos neighborPos) {
+    @SuppressWarnings({"deprecation"})
+    public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
 
         BooleanProperty CONNECTION = switch(direction){
             case NORTH -> CONNECTED_NORTH;

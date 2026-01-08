@@ -47,14 +47,12 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     public static final BooleanProperty BREAKABLE = ModProperties.BREAKABLE;
 
 
-
-
     public AbstractShopBlock(BlockBehaviour.Properties properties) {
         super(properties.forceSolidOn());
         registerDefaultStateTemplate();
     }
 
-    protected void registerDefaultStateTemplate(){
+    protected void registerDefaultStateTemplate() {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(BREAKABLE, false));
@@ -75,18 +73,19 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
+    @SuppressWarnings({"deprecation"})
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 
-    public static VoxelShape createCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2){
-        return Block.box(x1 , y1 , z1 , x2 , y2 , z2 );
+    public static VoxelShape createCuboidShape(double x1, double y1, double z1, double x2, double y2, double z2) {
+        return Block.box(x1, y1, z1, x2, y2, z2);
     }
 
 
     @Override
-    public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-      if(placer != null) {
+    public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
+        if (placer != null) {
             if (placer instanceof Player player) {
                 BlockEntity blockEntity = world.getBlockEntity(pos);
                 if (blockEntity instanceof AbstractShopEntity shopEntity) {
@@ -98,7 +97,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public abstract @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state);
+    public abstract @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state);
 
     protected static PermissionLevel userSignIn(Level world, BlockPos pos, Player player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -113,6 +112,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     }
 
     @Override
+    @SuppressWarnings({"deprecation"})
     public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
         if (!(level.getBlockEntity(pos) instanceof AbstractShopEntity shop)) return;
 
@@ -131,20 +131,23 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+    @SuppressWarnings({"deprecation"})
+    public float getDestroyProgress(BlockState state, @NotNull Player player, @NotNull BlockGetter level, @NotNull BlockPos pos) {
         return state.getValue(BREAKABLE)
                 ? super.getDestroyProgress(state, player, level, pos)
                 : 0.0F;
     }
 
     @Override
-    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
+    @SuppressWarnings({"deprecation"})
+    public void tick(BlockState pState, ServerLevel pLevel, @NotNull BlockPos pPos, @NotNull RandomSource pRandom) {
         pLevel.setBlock(pPos, pState.setValue(BREAKABLE, false), 3);
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-      if (level.isClientSide()) return InteractionResult.SUCCESS;
+    @SuppressWarnings({"deprecation"})
+    public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         ItemStack stack = player.getItemInHand(hand);
         BlockEntity be = level.getBlockEntity(pos);
@@ -158,20 +161,19 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         }
 
 
-        if(player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer serverPlayer) {
             NetworkHooks.openScreen(serverPlayer, shop.createScreenHandlerFactory(false), buf -> {
                 buf.writeBlockPos(pos);//friendlyByteBuff formation here
-                buf.writeBoolean(false);//ignore this false value. its meant to be there
+                buf.writeBoolean(false);//ignore this false value. it's meant to be there
             });
         }
-
 
 
         return InteractionResult.SUCCESS;
     }
 
-    @SafeVarargs
-    protected final <T extends Comparable<T>> @NotNull BlockState copyValues(@NotNull BlockState subject, @NotNull BlockState source, @NotNull Property<?>... properties){
+
+    protected final <T extends Comparable<T>> @NotNull BlockState copyValues(@NotNull BlockState subject, @NotNull BlockState source, @NotNull Property<?>... properties) {
         for (Property<?> prop : properties) {
             Property<T> p = ((Property<T>) prop);
             if (source.hasProperty(p)) {
@@ -181,14 +183,15 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         return subject;
     }
 
-    protected boolean shouldOpenTop(BlockHitResult hit){
+    protected boolean shouldOpenTop(BlockHitResult hit) {
         return false;
     }
 
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (isStateReplacedValid(newState)){
+    @SuppressWarnings({"deprecation"})
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+        if (isStateReplacedValid(newState)) {
             return;
         }
 
@@ -211,33 +214,34 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public BlockState mirror(BlockState pState, Mirror pMirror) {
+    @SuppressWarnings({"deprecation"})
+    public @NotNull BlockState mirror(@NotNull BlockState pState, Mirror pMirror) {
         return rotate(pState, pMirror.getRotation(pState.getValue(FACING)));
     }
 
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){return getGenericShape(state);}
+    @SuppressWarnings({"deprecation"})
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext) {
+        return getGenericShape(state);
+    }
+
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context){return getGenericShape(state);}
+    @SuppressWarnings({"deprecation"})
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return getGenericShape(state);
+    }
+
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos){return getGenericShape(state);}
+    @SuppressWarnings({"deprecation"})
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+        return getGenericShape(state);
+    }
 
     private static final VoxelShape TEST_SHAPE = Block.box(0, 0, 0, 16, 10, 16);
 
-    protected VoxelShape getGenericShape(BlockState state){return TEST_SHAPE;}
-
-
-    protected boolean unbreakable(BlockState state) {
-        return !state.getValue(BREAKABLE);
-    }
-
-    protected void makeBreakable(ServerLevel level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, state.setValue(BREAKABLE, true), 3);
-    }
-
-    protected void makeUnbreakable(ServerLevel level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, state.setValue(BREAKABLE, false), 3);
+    protected VoxelShape getGenericShape(BlockState state) {
+        return TEST_SHAPE;
     }
 
 
@@ -247,7 +251,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
 
     @Override
-    public abstract<T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type);
+    public abstract <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level world, @NotNull BlockState state, @NotNull BlockEntityType<T> type);
 
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
@@ -269,7 +273,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     }
 
 
-    public ScreenSettingsGroup getScreenSettings(){
+    public ScreenSettingsGroup getScreenSettings() {
         return ScreenSettingsGroup.createBasicWood(VariantResources.wood_variant.OAK);
     }
 }

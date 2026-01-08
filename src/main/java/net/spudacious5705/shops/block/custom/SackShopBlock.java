@@ -2,7 +2,6 @@ package net.spudacious5705.shops.block.custom;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -70,7 +69,7 @@ public class SackShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new RugShopEntity(pos,state);
     }
 
@@ -82,7 +81,7 @@ public class SackShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {//todo change to sack entity
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((RugShopEntity)be).renderTick()
@@ -106,7 +105,7 @@ public class SackShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @NotNull BlockState mirror(BlockState pState, Mirror pMirror) {
+    public @NotNull BlockState mirror(@NotNull BlockState pState, Mirror pMirror) {
         return pState;
     }
 
@@ -121,12 +120,12 @@ public class SackShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @NotNull VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
         return BASE_SHAPE;
     }
 
     @Override
-    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return state.getValue(OPEN) ? OPEN_SHAPE : CLOSED_SHAPE;
     }
 

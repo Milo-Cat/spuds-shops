@@ -20,6 +20,7 @@ import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.block.PostRegAssigner;
 import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WindowSillShopBlock extends AbstractShopBlock{
@@ -35,7 +36,7 @@ public class WindowSillShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new WindowSillShopEntity(pos,state);
     }
 
@@ -66,7 +67,7 @@ public class WindowSillShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.WINDOW_SHOP_ENTITY.get() == type) {
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((WindowSillShopEntity)be).renderTick()
