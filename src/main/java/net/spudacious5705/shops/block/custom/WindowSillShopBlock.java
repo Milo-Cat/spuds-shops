@@ -17,8 +17,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +46,7 @@ public class WindowSillShopBlock extends AbstractShopBlock{
         if(item != this.STONE_TYPE) {
             if(world.getBlockEntity(pos) instanceof WindowSillShopEntity shopEntity) {
                 if (VariantResources.WINDOW_SILL.containsKey(item)) {
-                    BlockState newSill = net.spudacious5705.shops.block.VariantResources.WINDOW_SILL.get(item).defaultBlockState();
+                    BlockState newSill = VariantResources.WINDOW_SILL.get(item).defaultBlockState();
 
 
                     if (!player.isCreative()) {

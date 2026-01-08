@@ -13,16 +13,18 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.custom.*;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.item.custom.ShopItem;
 import net.spudacious5705.shops.properties.Colour;
+import net.spudacious5705.shops.util.PostRegAssigner;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
-import static net.spudacious5705.shops.block.VariantResources.*;
-import static net.spudacious5705.shops.block.VariantResources.wood_variant.*;
+import static net.spudacious5705.shops.block.resources.VariantResources.*;
+import static net.spudacious5705.shops.block.resources.VariantResources.wood_variant.*;
 
 public class ModBlocks{
 

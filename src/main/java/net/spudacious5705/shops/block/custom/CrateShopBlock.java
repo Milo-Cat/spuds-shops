@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.CrateShopEntity;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;

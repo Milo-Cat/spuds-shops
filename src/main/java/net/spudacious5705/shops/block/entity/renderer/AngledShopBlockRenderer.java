@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
-import net.spudacious5705.shops.util.CushionModel;
+import net.spudacious5705.shops.block.resources.CushionModel;
 
 public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEntity> {
 

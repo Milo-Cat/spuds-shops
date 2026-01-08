@@ -22,20 +22,20 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
 import net.spudacious5705.shops.item.custom.ShopItem;
 import net.spudacious5705.shops.properties.Colour;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
-import net.spudacious5705.shops.util.CushionResources;
+import net.spudacious5705.shops.block.resources.CushionResources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.spudacious5705.shops.block.VariantResources.ANGLED;
+import static net.spudacious5705.shops.block.resources.VariantResources.ANGLED;
 
 
 public class AngledShopBlock extends AbstractShopBlock {

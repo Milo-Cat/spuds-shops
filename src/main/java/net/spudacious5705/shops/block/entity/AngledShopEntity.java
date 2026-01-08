@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.properties.Colour;
-import net.spudacious5705.shops.util.CushionTextures;
+import net.spudacious5705.shops.block.resources.CushionTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

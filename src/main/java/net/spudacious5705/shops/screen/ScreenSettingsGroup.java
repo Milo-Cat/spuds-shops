@@ -3,7 +3,7 @@ package net.spudacious5705.shops.screen;
 
 import net.minecraft.resources.ResourceLocation;
 import net.spudacious5705.shops.SpudaciousShops;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.block.resources.VariantResources;
 
 
 public record ScreenSettingsGroup(

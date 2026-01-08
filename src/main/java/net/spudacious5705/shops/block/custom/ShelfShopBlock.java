@@ -28,8 +28,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
 import net.spudacious5705.shops.properties.PermissionLevel;
@@ -150,7 +150,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
         if(item != this.SlabWoodType.asItem()) {
             if(world.getBlockEntity(pos) instanceof ShelfShopEntity shopEntity) {
                 if (VariantResources.SHELF.containsKey(item)) {
-                    ShelfShopBlock newShelf = net.spudacious5705.shops.block.VariantResources.SHELF.get(item);
+                    ShelfShopBlock newShelf = VariantResources.SHELF.get(item);
 
 
                     if (!player.isCreative()) {
