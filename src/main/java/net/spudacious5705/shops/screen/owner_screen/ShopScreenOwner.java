@@ -1,4 +1,4 @@
-package net.spudacious5705.shops.screen;
+package net.spudacious5705.shops.screen.owner_screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,12 +21,11 @@ import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
 
 import java.util.EnumMap;
-import java.util.List;
 
 import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ScreenResources.*;
-import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
+import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner.*;
 
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
 
@@ -268,41 +267,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     ToggleWidget ToggleIconsEffects;
     ToggleWidget ToggleShopStyle;
     ToggleWidget ToggleIgnoreNBT;
+
     protected final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
-
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
-    }
-
-    @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float partialTick) {
-        renderBackground(context);
-        super.render(context, mouseX, mouseY, partialTick);
-        Font font = Minecraft.getInstance().font;
-
-
-        int activeTab = this.menu.getActiveTab();
-        
-        if(activeTab == SETTINGS_TAB) {
-
-                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
-                    ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
-                }
-            
-        }else if(activeTab == WARNING_TAB){
-
-            renderWarnPopupTextBody(context,font,leftPos,topPos);
-
-            
-        }else if(activeTab == SELLER_TAB){
-
-            renderStorageHeaders(context,font,leftPos,topPos);
-            
-        }
-        this.renderTooltip(context, mouseX, mouseY);
-    }
 
 
     interface ClickEventHandler {
