@@ -489,7 +489,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
 
             } else {
-
+                slot.safeInsert(itemstack.copy());
             }
         }
 
