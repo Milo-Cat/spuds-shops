@@ -13,38 +13,38 @@ public class ScreenResources {
 
     public static void init(){};
 
-    static final int DEFAULT_TEXT_COLOUR = 11141290;
+    public static final int DEFAULT_TEXT_COLOUR = 11141290;
 
-    static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
-    static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
-    static final MutableComponent SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
-    static final MutableComponent CLERK = Component.translatable("gui.spudaciousshops.clerk");
-    static final MutableComponent WARN_TITLE = Component.translatable("gui.spudaciousshops.delete_warn_title");
-    static final MutableComponent WARN_LINE_1 = Component.translatable("gui.spudaciousshops.delete_warn_message_line1");
-    static final MutableComponent WARN_LINE_2 = Component.translatable("gui.spudaciousshops.delete_warn_message_line2");
-    static final MutableComponent CANCEL = Component.translatable("gui.spudaciousshops.cancel");
-    static final MutableComponent DELETE = Component.translatable("gui.spudaciousshops.delete");
+    public static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
+    public static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
+    public static final MutableComponent SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
+    public static final MutableComponent CLERK = Component.translatable("gui.spudaciousshops.clerk");
+    public static final MutableComponent WARN_TITLE = Component.translatable("gui.spudaciousshops.delete_warn_title");
+    public static final MutableComponent WARN_LINE_1 = Component.translatable("gui.spudaciousshops.delete_warn_message_line1");
+    public static final MutableComponent WARN_LINE_2 = Component.translatable("gui.spudaciousshops.delete_warn_message_line2");
+    public static final MutableComponent CANCEL = Component.translatable("gui.spudaciousshops.cancel");
+    public static final MutableComponent DELETE = Component.translatable("gui.spudaciousshops.delete");
 
-    static final MutableComponent PERMISSIONS = Component.translatable("gui.spudaciousshops.text_permissions");
-    static final MutableComponent IMPORT_ITEMS = Component.translatable("gui.spudaciousshops.text_import_items");
-    static final MutableComponent TAKE_ITEMS = Component.translatable("gui.spudaciousshops.text_take_items");
-    static final MutableComponent EDIT_PERMS = Component.translatable("gui.spudaciousshops.text_edit_perms");
-    static final MutableComponent CHANGE_TRADE = Component.translatable("gui.spudaciousshops.text_change_trade");
-    static final MutableComponent BREAK_SHOP = Component.translatable("gui.spudaciousshops.text_break_shop");
-    static final MutableComponent YES = Component.translatable("gui.spudaciousshops.text_yes");
-    static final MutableComponent NO = Component.translatable("gui.spudaciousshops.text_no");
-    static final MutableComponent ALL = Component.translatable("gui.spudaciousshops.text_all");
-    static final MutableComponent SUPERVISOR_AND_LOWER = Component.translatable("gui.spudaciousshops.text_supervisor_and_lower");
-    static final MutableComponent NONE = Component.translatable("gui.spudaciousshops.text_none");
-    static final MutableComponent CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative");
-    static final MutableComponent EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects");
+    public static final MutableComponent PERMISSIONS = Component.translatable("gui.spudaciousshops.text_permissions");
+    public static final MutableComponent IMPORT_ITEMS = Component.translatable("gui.spudaciousshops.text_import_items");
+    public static final MutableComponent TAKE_ITEMS = Component.translatable("gui.spudaciousshops.text_take_items");
+    public static final MutableComponent EDIT_PERMS = Component.translatable("gui.spudaciousshops.text_edit_perms");
+    public static final MutableComponent CHANGE_TRADE = Component.translatable("gui.spudaciousshops.text_change_trade");
+    public static final MutableComponent BREAK_SHOP = Component.translatable("gui.spudaciousshops.text_break_shop");
+    public static final MutableComponent YES = Component.translatable("gui.spudaciousshops.text_yes");
+    public static final MutableComponent NO = Component.translatable("gui.spudaciousshops.text_no");
+    public static final MutableComponent ALL = Component.translatable("gui.spudaciousshops.text_all");
+    public static final MutableComponent SUPERVISOR_AND_LOWER = Component.translatable("gui.spudaciousshops.text_supervisor_and_lower");
+    public static final MutableComponent NONE = Component.translatable("gui.spudaciousshops.text_none");
+    public static final MutableComponent CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative");
+    public static final MutableComponent EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects");
 
-    static final MutableComponent STOCK = Component.translatable("gui.spudaciousshops.stock");
-    static final MutableComponent REGISTER = Component.translatable("gui.spudaciousshops.register");
-    static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
-    static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
+    public static final MutableComponent STOCK = Component.translatable("gui.spudaciousshops.stock");
+    public static final MutableComponent REGISTER = Component.translatable("gui.spudaciousshops.register");
+    public static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
+    public static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
 
-    static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = initSettingsHoverInfoTexts();
+    public static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = initSettingsHoverInfoTexts();
 
     static ToolTipText[] initSettingsHoverInfoTexts(){
         int textX = 14;
@@ -96,7 +96,7 @@ public class ScreenResources {
         return texts;
     }
 
-    static void renderWarnPopupTextBody(GuiGraphics context, Font font, int screenX, int screenY){
+    public static void renderWarnPopupTextBody(GuiGraphics context, Font font, int screenX, int screenY){
 
         int textX = screenX+110;
         int textY = screenY+84;
@@ -107,7 +107,7 @@ public class ScreenResources {
         renderCentredText(context, font, WARN_LINE_2, textX,textY,986895, false);
     }
 
-    static void renderStorageHeaders(GuiGraphics context, Font font, int screenX, int screenY){
+    public static void renderStorageHeaders(GuiGraphics context, Font font, int screenX, int screenY){
 
         renderText(context, font, STOCK,screenX+77,screenY+5,2434341, false);
 
@@ -119,7 +119,7 @@ public class ScreenResources {
 
     }
 
-    static void renderCentredText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
+    public static void renderCentredText(GuiGraphics context, Font font, MutableComponent text, int x, int y, int colour, boolean shadow){
         context.drawString(font, text, x - font.width(text) / 2, y, colour, shadow);
     }
 
@@ -127,7 +127,7 @@ public class ScreenResources {
         context.drawString(font, text, x, y, colour, shadow);
     }
 
-    static class ToolTipText{
+    public static class ToolTipText{
         private final Component TEXT;
         private final int X;
         private final int Y;
