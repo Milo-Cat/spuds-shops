@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -232,14 +233,9 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
 
     @OnlyIn(Dist.CLIENT)
-    public boolean updateTabSelectionResponse(int tab){
-        if(activeTab != tab){
-            activeTab = tab;
-            updateTabSelection();
-            return true;
-        }
-        //todo Minecraft.getInstance().setScreen(new ShopScreenOwner(this, playerInventory));
-        return false;
+    public void updateTabSelectionResponse(int tab){
+        activeTab = tab;
+        updateTabSelection();
     }
 
     public void updateTabSelection(){
@@ -427,9 +423,10 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     private void openWarnScreen(@NotNull Player player){//called when player removes their own contract
         if(player.level().isClientSide) {
-            player.playSound(
+            player.playNotifySound(
                     SoundEvents.NOTE_BLOCK_GUITAR.value(),
-                    3.0F,
+                    SoundSource.MASTER,
+                    32.0F,
                     0.3F
             );
             NetworkHelper.CHANNEL.sendToServer(new ShopTabSyncPkt(WARNING_TAB));

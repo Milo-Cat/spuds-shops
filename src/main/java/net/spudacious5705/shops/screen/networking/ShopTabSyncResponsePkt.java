@@ -23,7 +23,7 @@ public record ShopTabSyncResponsePkt(int tab) {
         ctx.get().enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.screen instanceof ShopScreenOwner screen) {
-                screen.updateTabSelectionResponse(tab);
+                screen.getMenu().updateTabSelectionResponse(tab);
             }
         });
         ctx.get().setPacketHandled(true);

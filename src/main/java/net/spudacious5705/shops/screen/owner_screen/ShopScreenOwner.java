@@ -1,4 +1,4 @@
-package net.spudacious5705.shops.screen;
+package net.spudacious5705.shops.screen.owner_screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -19,6 +19,7 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -53,8 +54,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     private final ScreenSettingsGroup SETTINGS;
 
-    private ResourceLocation TEXTURE;
-
+    private boolean isCreative;
 
     public ShopScreenOwner(ShopScreenHandlerOwner menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -64,16 +64,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.leftPos = (width - imageWidth)/2;
         this.topPos = (height - imageHeight)/2;
 
-        menu.updateTabSelection();
-    }
+        isCreative = playerInventory.player.isCreative();
 
-    private void closeWarnPopup(){
-        WarningCancel.visible=false;
-        WarningProceed.visible=false;
-        SettingsTabButton.visible=true;
-        SellerTabButton.visible=true;
-        ShopFrontTabButton.visible=true;
-        switchToSettingsTab();
+        menu.updateTabSelection();
     }
 
     private void WarnPopupContinue(){
@@ -137,91 +130,59 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     }
             );
         }
-        switch (menu.getActiveTab()) {
-            case SETTINGS_TAB -> {
-                settingsGUI();
-            }
-            case CUSTOMER_TAB -> {
-                customerGUI();
-            }
-            case WARNING_TAB -> {
-                warnGUI();
-            }
-            default -> { //SELLER_TAB
-                sellerGUI();
-            }
-        }
     }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
         renderBackground(context);
         super.render(context, mouseX, mouseY, partialTick);
         Font font = Minecraft.getInstance().font;
 
 
-        int activeTab = this.menu.getActiveTab();
+        switch (menu.getActiveTab()){
+            case SELLER_TAB -> {
+                renderStorageHeaders(context,font,leftPos,topPos);
 
-        if(activeTab == SETTINGS_TAB) {
-
-            for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
-                ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
             }
+            case SETTINGS_TAB -> {
 
-        }else if(activeTab == WARNING_TAB){
+                //toggleButtons.forEach();
 
-            renderWarnPopupTextBody(context,font,leftPos,topPos);
+                if(isCreative) {
+                    ToggleCreative.renderWidget(context, mouseX, mouseY, partialTick);
+                }
+
+                ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
 
 
-        }else if(activeTab == SELLER_TAB){
+                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
+                    ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
+                }
 
-            renderStorageHeaders(context,font,leftPos,topPos);
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+            }
+            case CUSTOMER_TAB -> {
 
+
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+            }
+            case WARNING_TAB -> {
+                WarningCancel.renderWidget(context,mouseX,mouseY,partialTick);
+                WarningProceed.renderWidget(context,mouseX,mouseY,partialTick);
+
+                renderWarnPopupTextBody(context,font,leftPos,topPos);
+
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + menu.getActiveTab());
         }
+
         this.renderTooltip(context, mouseX, mouseY);
-    }
-
-    private void switchToCustomerTab() {
-        this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
-        customerGUI();
-    }
-    protected void customerGUI(){
-        TEXTURE = SETTINGS.CUSTOMER().textureID();
-        ShopFrontTabButton.toggle();
-        SellerTabButton.unToggle();
-        SettingsTabButton.unToggle();this.setWidgetsVisible(false);
-    }
-
-    }
-
-    void openWarnPopup(){
-        this.menu.updateTabSelectionClientside(WARNING_TAB);
-        warnGUI();
-        LocalPlayer player = Minecraft.getInstance().player;
-        if(player != null) {
-            Minecraft.getInstance().player.playSound(
-                    SoundEvents.NOTE_BLOCK_GUITAR.value(),
-                    3.0F,
-                    0.3F
-            );
-        }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void updateTabSelectionResponse(int tab) {
-        if(this.menu.updateTabSelectionResponse(tab)) {
-            switch (tab) {
-                case WARNING_TAB -> warnGUI();
-                case ShopScreenHandlerOwner.CUSTOMER_TAB -> customerGUI();
-                case SETTINGS_TAB -> settingsGUI();
-                default -> sellerGUI();
-            }
-        }
     }
 
 
@@ -240,7 +201,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
-        if (true) {//todo checkButton
+        if (button == 0) {
 
             if(switch (menu.getActiveTab()) {
                 case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,
@@ -278,54 +239,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             if(widget.attemptClick(mouseX,mouseY))return true;
         }
         return false;
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
-    }
-
-    @Override
-    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
-        renderBackground(context);
-        super.render(context, mouseX, mouseY, partialTick);
-        Font font = Minecraft.getInstance().font;
-
-
-        switch (menu.getActiveTab()){
-            case SELLER_TAB -> {
-                renderStorageHeaders(context,font,leftPos,topPos);
-
-                renderScreenGenerics(context,mouseX,mouseY,partialTick);
-            }
-            case SETTINGS_TAB -> {
-                ToggleCreative.renderWidget(context,mouseX,mouseY,partialTick);
-
-                ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
-
-
-                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
-                    ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
-                }
-
-                renderScreenGenerics(context,mouseX,mouseY,partialTick);
-            }
-            case CUSTOMER_TAB -> {
-
-
-                renderScreenGenerics(context,mouseX,mouseY,partialTick);
-            }
-            case WARNING_TAB -> {
-                WarningCancel.renderWidget(context,mouseX,mouseY,partialTick);
-                WarningProceed.renderWidget(context,mouseX,mouseY,partialTick);
-
-                renderWarnPopupTextBody(context,font,leftPos,topPos);
-
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + menu.getActiveTab());
-        }
-
-        this.renderTooltip(context, mouseX, mouseY);
     }
 
     private void renderScreenGenerics(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
@@ -435,14 +348,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
     }
-    public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
-        toggleButtons.get(button).toggle = state;
-    }
-    protected void setWidgetsVisible(boolean state){
-        //TODO implement the other features
-        //toggleButtons.values().forEach((w)-> {if(w != null){w.visible=state;}});
-
-        }
 
     }
 
