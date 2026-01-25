@@ -26,10 +26,6 @@ import static net.spudacious5705.shops.screen.ScreenResources.*;
 import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.*;
 
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
-    
-    private final ScreenSettingsGroup SETTINGS;
-
-    private ResourceLocation TEXTURE;
 
     private static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
 
