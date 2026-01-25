@@ -62,9 +62,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.leftPos = (width - imageWidth)/2;
         this.topPos = (height - imageHeight)/2;
 
-        menu.initiateWarn(this::openWarnPopup);
-        menu.settingsUpdater(this::updateToggleButtonFromPacket);
-        menu.setWidgetFunction(this::setWidgetsVisible);
         menu.updateTabSelection();
     }
 
