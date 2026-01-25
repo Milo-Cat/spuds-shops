@@ -1,13 +1,11 @@
 package net.spudacious5705.shops.screen.owner_screen;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -472,6 +470,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         @Override
         public void onClick(double mouseX, double mouseY, int button) {
 
+            if(!menu.perms.canEditTrades()){
+                playWarnSound(menu.playerInventory.player);
+                return;
+            }
 
 
             ItemStack itemstack = draggingItem.isEmpty() ? menu.getCarried() :  draggingItem;
