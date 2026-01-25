@@ -37,6 +37,24 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private static final ResourceLocation RED_BUTTON_SELECTED = getResource("textures/gui/red_button_selected.png");
     private static final ResourceLocation GREEN_BUTTON = getResource("textures/gui/green_button.png");
     private static final ResourceLocation GREEN_BUTTON_SELECTED = getResource("textures/gui/green_button_selected.png");
+    private static final ResourceLocation COG_ICON = getResource("textures/gui/settings.png");
+    private static final ResourceLocation STORAGE_ICON = getResource("textures/gui/storage.png");
+    private static final ResourceLocation SHOPFRONT_ICON = CURRENCY_IMG_MAP.getOrDefault(
+            Component.translatable("gui.spudaciousshops.currency_type").getString().charAt(0),
+            getResource("textures/gui/currency_textures/gbp.png")
+    );
+    private static final ResourceLocation TAB_SELECTED = getResource("textures/gui/tab_selected.png");
+    private static final ResourceLocation TAB_DESELECTED = getResource("textures/gui/tab_deselected.png");
+    private static final ResourceLocation TAB_HOVER = getResource("textures/gui/tab_hover.png");
+    private static final ResourceLocation CREATIVE_ON = getResource("textures/gui/creative_on.png");
+    private static final ResourceLocation CREATIVE_OFF = getResource("textures/gui/creative_off.png");
+    private static final ResourceLocation EFFECTS_ON = getResource("textures/gui/effects_on.png");
+    private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
+
+
+    private final ScreenSettingsGroup SETTINGS;
+
+    private ResourceLocation TEXTURE;
 
 
     public ShopScreenOwner(ShopScreenHandlerOwner menu, Inventory playerInventory, Component title) {
