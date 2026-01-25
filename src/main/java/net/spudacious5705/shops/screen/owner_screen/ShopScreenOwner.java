@@ -450,7 +450,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
 
             context.pose().pushPose();
-            context.pose().translate(0.0F, 0.0F, 232.0F);
+            context.pose().translate(0.0F, 0.0F, 150.0F);
             if (isHovered(pMouseX,pMouseY)) {//hovered?
                 context.fill(x, y, x + 16, y + 16, -2130706433);
                 context.renderTooltip(font,stack,pMouseX,pMouseY);
