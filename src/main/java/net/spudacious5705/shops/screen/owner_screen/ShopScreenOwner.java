@@ -370,7 +370,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
     }
-    protected void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
+    public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
         toggleButtons.get(button).toggle = state;
     }
     protected void setWidgetsVisible(boolean state){

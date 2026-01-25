@@ -26,7 +26,7 @@ public record ToggleSyncResponsePkt(ToggleButtonID buttonID, boolean state) {
         ctx.get().enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
             if (mc.screen instanceof ShopScreenOwner screen) {
-                screen.getMenu().updateToggleButtonFromPacket(buttonID, state);
+                screen.updateToggleButtonFromPacket(buttonID, state);
             }
         });
         ctx.get().setPacketHandled(true);
