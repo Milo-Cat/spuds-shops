@@ -189,12 +189,15 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         }
     }
 
+    Slot PaymentSlot;
+    Slot VendingSlot;
+
     private void addShopTrades(){
         int x = 25;
         int y = 31;
 
-        new shop_trade_slot(shopInventory, PAYMENT_SLOT, x, y);
-        new shop_trade_slot(shopInventory, VENDING_SLOT, x, y + 47);
+        PaymentSlot = new shop_trade_slot(shopInventory, PAYMENT_SLOT, x, y);
+        VendingSlot = new shop_trade_slot(shopInventory, VENDING_SLOT, x, y + 47);
 
         new shop_payment_slot(shopInventory, PAYMENT_SLOT, 71, 126);
         new shop_vendor_slot(shopInventory, VENDING_SLOT, 140, 126,this);
@@ -516,8 +519,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
         public shop_trade_slot(AbstractShopEntity.InventoryDelegate inventory, int slot, int x, int y) {
             super(inventory, slot, x, y);
-            tabSellerSlots.add(this);
-            addSlot(this);
         }
 
         @NotNull
