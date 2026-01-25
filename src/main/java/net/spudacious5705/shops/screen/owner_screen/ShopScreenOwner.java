@@ -115,8 +115,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posY = SETTINGS.toggleEffectsButtonY()+topPos;
         ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
 
-        PaymentItemWidget = CreateTradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT);
-        ProductItemWidget = CreateTradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT);
+        PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT);
+        ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT);
 
         /*
         posX = SETTINGS.shopStyleButtonX()+leftPos;
@@ -219,7 +219,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,
                         ToggleCreative,
                         ToggleIconsEffects,
-                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton,
+                        ProductItemWidget, PaymentItemWidget
                         );
 
                 case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,
@@ -419,16 +420,13 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
 
-    TradeItemWidget CreateTradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, Slot slot, Component message) {
-        return new TradeItemWidget(inventory,slot.getSlotIndex(),slot.x,slot.y,message);
-    }
     private class TradeItemWidget extends CustomClickableWidget{
 
         private final Container container;
-        private final int slot;
+        private final Slot slot;
 
-        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, int slot, int x, int y, Component message) {
-            super(x, y, 16, 16, message);
+        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, Slot slot, Component message) {
+            super(slot.x, slot.y, 16, 16, message);
             this.container = inventory;
             this.slot = slot;
         }
@@ -439,9 +437,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             int x = this.getX()+leftPos;
             int y = this.getY()+topPos;
 
-            ItemStack stack = container.getItem(slot);
-
-            //renderSlot(context, menu.PaymentSlot);
+            ItemStack stack = slot.getItem();
 
 
 
@@ -471,11 +467,13 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         @Override
         public void onClick(double mouseX, double mouseY) {
-            if(isHovered(mouseX,mouseY)){
 
-            }
-            /*ItemStack itemstack = this.draggingItem.isEmpty() ? this.menu.getCarried() : this.draggingItem;
-            if (!itemstack.isEmpty()) {
+
+
+            ItemStack itemstack = draggingItem.isEmpty() ? menu.getCarried() :  draggingItem;
+            if (itemstack.isEmpty()) {
+                /*slot.onTake();
+
                 int l1 = 8;
                 int i2 = this.draggingItem.isEmpty() ? 8 : 16;
                 String s = null;
@@ -486,10 +484,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     if (itemstack.isEmpty()) {
                         s = ChatFormatting.YELLOW + "0";
                     }
-                }
+                }*/
 
 
-            }*/
+            } else {
+
+            }
         }
 
         @Override
