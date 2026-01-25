@@ -1,5 +1,6 @@
 package net.spudacious5705.shops.screen.owner_screen;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,15 +12,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.ScreenResources;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
-import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -112,6 +114,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posX = SETTINGS.toggleEffectsButtonX()+leftPos;
         posY = SETTINGS.toggleEffectsButtonY()+topPos;
         ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
+
+        PaymentItemWidget = CreateTradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT);
+        ProductItemWidget = CreateTradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT);
+
         /*
         posX = SETTINGS.shopStyleButtonX()+leftPos;
         posY = SETTINGS.shopStyleButtonY()+topPos;
@@ -160,6 +166,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
                 ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
 
+                PaymentItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
+                ProductItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
+
+
 
                 for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
                     ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
@@ -185,6 +195,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.renderTooltip(context, mouseX, mouseY);
     }
 
+    TradeItemWidget PaymentItemWidget;
+    TradeItemWidget ProductItemWidget;
 
     TabWidget SellerTabButton;
     TabWidget SettingsTabButton;
@@ -351,7 +363,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-
     private class ButtonWidget extends CustomClickableWidget{
 
         private final Runnable FUNCTION;
@@ -398,6 +409,87 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         @Override
         public void onClick(double mouseX, double mouseY) {
             FUNCTION.run();
+        }
+
+        @Override
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
+
+        }
+
+    }
+
+
+    TradeItemWidget CreateTradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, Slot slot, Component message) {
+        return new TradeItemWidget(inventory,slot.getSlotIndex(),slot.x,slot.y,message);
+    }
+    private class TradeItemWidget extends CustomClickableWidget{
+
+        private final Container container;
+        private final int slot;
+
+        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, int slot, int x, int y, Component message) {
+            super(x, y, 16, 16, message);
+            this.container = inventory;
+            this.slot = slot;
+        }
+
+
+        protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick, Font font) {
+
+            int x = this.getX()+leftPos;
+            int y = this.getY()+topPos;
+
+            ItemStack stack = container.getItem(slot);
+
+            //renderSlot(context, menu.PaymentSlot);
+
+
+
+            context.pose().pushPose();
+            context.pose().translate(0.0F, 0.0F, 232.0F);
+            if (isHovered(pMouseX,pMouseY)) {//hovered?
+                context.fill(x, y, x + 16, y + 16, -2130706433);
+                context.renderTooltip(font,stack,pMouseX,pMouseY);
+            }
+
+            context.renderItem(stack, x, y);
+            context.renderItemDecorations(font, stack, x, y, null);
+
+
+            context.pose().popPose();
+        }
+
+        @Override
+        public boolean isHovered(double X, double Y) {
+            return super.isHovered(X-leftPos, Y-topPos);
+        }
+
+        @Override
+        protected void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY) {
+            if(isHovered(mouseX,mouseY)){
+
+            }
+            /*ItemStack itemstack = this.draggingItem.isEmpty() ? this.menu.getCarried() : this.draggingItem;
+            if (!itemstack.isEmpty()) {
+                int l1 = 8;
+                int i2 = this.draggingItem.isEmpty() ? 8 : 16;
+                String s = null;
+                if (!this.draggingItem.isEmpty() && this.isSplittingStack) {
+                    itemstack = itemstack.copyWithCount(Mth.ceil((float)itemstack.getCount() / 2.0F));
+                } else if (this.isQuickCrafting && this.quickCraftSlots.size() > 1) {
+                    itemstack = itemstack.copyWithCount(this.quickCraftingRemainder);
+                    if (itemstack.isEmpty()) {
+                        s = ChatFormatting.YELLOW + "0";
+                    }
+                }
+
+
+            }*/
         }
 
         @Override
