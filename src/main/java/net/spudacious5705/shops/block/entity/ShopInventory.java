@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
+import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner.canUseInTrade;
 
 public class ShopInventory extends NonNullList<ItemStack> {
 

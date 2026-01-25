@@ -40,7 +40,7 @@ import net.spudacious5705.shops.item.custom.ContractScroll;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ShopScreenHandlerCustomer;
-import net.spudacious5705.shops.screen.ShopScreenHandlerOwner;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ import java.util.UUID;
 import static net.spudacious5705.shops.block.custom.AbstractShopBlock.BREAKABLE;
 import static net.spudacious5705.shops.block.entity.ShopInventory.*;
 import static net.spudacious5705.shops.item.custom.ContractScroll.isSigned;
-import static net.spudacious5705.shops.screen.ShopScreenHandlerOwner.canUseInTrade;
+import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner.canUseInTrade;
 
 public abstract class AbstractShopEntity extends BlockEntity {
 

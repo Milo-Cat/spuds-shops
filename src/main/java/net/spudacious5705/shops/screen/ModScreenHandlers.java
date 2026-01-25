@@ -12,6 +12,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.spudacious5705.shops.SpudaciousShops;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 
 import java.util.Map;
 

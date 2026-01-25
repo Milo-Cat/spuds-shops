@@ -16,7 +16,7 @@ import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.*;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ShopScreenCustomer;
-import net.spudacious5705.shops.screen.ShopScreenOwner;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
 import net.spudacious5705.shops.util.CushionModel;
 import net.spudacious5705.shops.util.CushionResources;
 import net.spudacious5705.shops.util.CushionTextures;

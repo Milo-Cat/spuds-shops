@@ -3,7 +3,7 @@ package net.spudacious5705.shops.screen.networking;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
-import net.spudacious5705.shops.screen.ShopScreenHandlerOwner;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 
 import java.util.function.Supplier;
 
