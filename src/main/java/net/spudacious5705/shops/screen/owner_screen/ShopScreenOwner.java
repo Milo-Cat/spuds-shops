@@ -1,4 +1,4 @@
-package net.spudacious5705.shops.screen.owner_screen;
+package net.spudacious5705.shops.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -19,6 +19,7 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 
@@ -60,7 +61,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.imageWidth = 228;
         this.imageHeight = 256;
         this.SETTINGS = menu.getSettings();
-        this.TEXTURE = SETTINGS.SELLER().textureID();
         this.leftPos = (width - imageWidth)/2;
         this.topPos = (height - imageHeight)/2;
 
@@ -83,9 +83,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void renderLabels(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // Do nothing — this prevents the title and inventory label from rendering
-        //TODO perhaps implement this in fabric
     }
 
     @Override
@@ -94,32 +93,32 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         int posX = SETTINGS.tab1ButtonX()+leftPos;
         int posY = SETTINGS.tab1ButtonY()+topPos;
-        SellerTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToSellerTab, true, STORAGE_ICON, true));
+        SellerTabButton = new TabWidget(posX, posY, Component.literal(""), STORAGE_ICON, SELLER_TAB);
 
 
         posX = SETTINGS.tab2ButtonX()+leftPos;
         posY = SETTINGS.tab2ButtonY()+topPos;
-        SettingsTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToSettingsTab, true, COG_ICON));
+        SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), COG_ICON, SETTINGS_TAB);
 
 
         posX = SETTINGS.tab3ButtonX()+leftPos;
         posY = SETTINGS.tab3ButtonY()+topPos;
-        ShopFrontTabButton = addRenderableWidget(new TabWidget(posX, posY, Component.literal(""), this::switchToCustomerTab, true, SHOPFRONT_ICON));
+        ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), SHOPFRONT_ICON, CUSTOMER_TAB);
 
 
         posX = 22+leftPos;
         posY = 128+topPos;
-        WarningCancel = addRenderableWidget(new ButtonWidget(posX, posY, Component.literal("CANCEL"), this::closeWarnPopup, GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840));
+        WarningCancel = new ButtonWidget(posX, posY, Component.literal("CANCEL"), () -> this.menu.updateTabSelectionClientside(SETTINGS_TAB), GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840);
 
         posX += 113;
-        WarningProceed = addRenderableWidget(new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329));
+        WarningProceed = new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329);
 
         posX = SETTINGS.creativeButtonX()+leftPos;
         posY = SETTINGS.creativeButtonY()+topPos;
-        ToggleCreative = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP));
+        ToggleCreative = new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP);
         posX = SETTINGS.toggleEffectsButtonX()+leftPos;
         posY = SETTINGS.toggleEffectsButtonY()+topPos;
-        ToggleIconsEffects = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP));
+        ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
         /*
         posX = SETTINGS.shopStyleButtonX()+leftPos;
         posY = SETTINGS.shopStyleButtonY()+topPos;
@@ -198,27 +197,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         SettingsTabButton.unToggle();this.setWidgetsVisible(false);
     }
 
-    private void switchToSellerTab(){
-        this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.SELLER_TAB);
-        sellerGUI();
-    }
-
-    protected void sellerGUI(){
-        TEXTURE = SETTINGS.SELLER().textureID();
-        SellerTabButton.toggle();
-        ShopFrontTabButton.unToggle();
-        SettingsTabButton.unToggle();this.setWidgetsVisible(false);
-    }
-
-    private void switchToSettingsTab() {
-        this.menu.updateTabSelectionClientside(SETTINGS_TAB);
-        settingsGUI();
-    }
-    protected void settingsGUI(){
-        TEXTURE = SETTINGS.SETTINGS().textureID();
-        SettingsTabButton.toggle();this.setWidgetsVisible(true);
-        ShopFrontTabButton.unToggle();
-        SellerTabButton.unToggle();
     }
 
     void openWarnPopup(){
@@ -232,17 +210,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     0.3F
             );
         }
-    }
-
-    protected void warnGUI(){
-        TEXTURE = WARNING_TEXTURE;
-        SettingsTabButton.visible=false;
-        SellerTabButton.visible=false;
-        ShopFrontTabButton.visible=false;
-        WarningCancel.visible=true;
-        WarningProceed.visible=true;
-
-        this.setWidgetsVisible(false);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -267,41 +234,149 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     ToggleWidget ToggleIconsEffects;
     ToggleWidget ToggleShopStyle;
     ToggleWidget ToggleIgnoreNBT;
+    private final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
 
-    protected final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+        if (true) {//todo checkButton
+
+            if(switch (menu.getActiveTab()) {
+                case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,
+                        ToggleCreative,
+                        ToggleIconsEffects,
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
+                        );
+
+                case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,
+                        WarningCancel,
+                        WarningProceed
+                );
+
+                default -> tryClickWidgets(mouseX,mouseY,
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
+                );
+            }){
+                var player = Minecraft.getInstance().player;
+                if(player != null){
+                    player.playSound(
+                            SoundEvents.UI_BUTTON_CLICK.value()
+                    );
+                }
+                return true;
+            }
+        }
 
 
-    interface ClickEventHandler {
-        void execute();
+
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    private static class TabWidget extends AbstractWidget {
+    private boolean tryClickWidgets(double mouseX, double mouseY, CustomClickableWidget... widgets) {
+        for(CustomClickableWidget widget : widgets){
+            if(widget.attemptClick(mouseX,mouseY))return true;
+        }
+        return false;
+    }
 
-        private final ClickEventHandler thisTab;
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, partialTick);
+        Font font = Minecraft.getInstance().font;
+
+
+        switch (menu.getActiveTab()){
+            case SELLER_TAB -> {
+                renderStorageHeaders(context,font,leftPos,topPos);
+
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+            }
+            case SETTINGS_TAB -> {
+                ToggleCreative.renderWidget(context,mouseX,mouseY,partialTick);
+
+                ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
+
+
+                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
+                    ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
+                }
+
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+            }
+            case CUSTOMER_TAB -> {
+
+
+                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+            }
+            case WARNING_TAB -> {
+                WarningCancel.renderWidget(context,mouseX,mouseY,partialTick);
+                WarningProceed.renderWidget(context,mouseX,mouseY,partialTick);
+
+                renderWarnPopupTextBody(context,font,leftPos,topPos);
+
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + menu.getActiveTab());
+        }
+
+        this.renderTooltip(context, mouseX, mouseY);
+    }
+
+    private void renderScreenGenerics(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+        SellerTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        SettingsTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        ShopFrontTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+    }
+
+    private abstract static class CustomClickableWidget extends AbstractWidget {
+
+        public CustomClickableWidget(int pX, int pY, int pWidth, int pHeight, Component pMessage) {
+            super(pX, pY, pWidth, pHeight, pMessage);
+        }
+
+        public boolean attemptClick(double X, double Y){
+            if( isHovered(X,Y) ){
+                onClick(X,Y);
+                return true;
+            }
+            return false;
+        }
+
+        public boolean isHovered(double X, double Y){
+            X -= this.getX();
+            Y -= this.getY();
+            return X >= 0 && X < this.width
+                    &&
+                    Y >= 0 && Y < this.height;
+        }
+
+    }
+
+    private class TabWidget extends CustomClickableWidget {
 
         private final ResourceLocation ICON_TEXTURE;
 
-        private boolean toggle;
+        private final int relatedState;
 
-        public TabWidget(int x, int y, Component message, ClickEventHandler tab, boolean visible, ResourceLocation texture) {
-            this(x,y, message,tab,visible,texture,false);
-        }
-
-        public TabWidget(int x, int y, Component message, ClickEventHandler tab, boolean visible, ResourceLocation texture, boolean toggle) {
+        public TabWidget(int x, int y, Component message, ResourceLocation texture, int relatedState) {
             super(x, y, 22, 22, message);
-            this.thisTab = tab;
-            this.visible = visible;
-            this.toggle = toggle;
+            this.relatedState = relatedState;
             this.ICON_TEXTURE = texture;
         }
 
         @Override
-        protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
+        protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX()-3;
             int y = this.getY()-6;
-            if(toggle){
+            if(menu.getActiveTab() == relatedState){
                 context.blit(TAB_SELECTED,x,y,32,32,0f,0f,32,32,32,32);
-            }else if(isHovered){
+            }else if(isHovered(pMouseX,pMouseY)){
                 context.blit(TAB_HOVER,x,y,32,32,0f,0f,32,32,32,32);
             }else{
                 context.blit(TAB_DESELECTED,x,y,32,32,0f,0f,32,32,32,32);
@@ -310,23 +385,15 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         public void onClick(double mouseX, double mouseY) {
-            thisTab.execute();
+            menu.updateTabSelectionClientside(relatedState);
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {}
-
-        void unToggle(){
-            this.toggle = false;
-        }
-
-        void toggle(){
-            this.toggle = true;
-        }
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {}
 
     }
 
-    private class ToggleWidget extends AbstractWidget{
+    private class ToggleWidget extends CustomClickableWidget{
 
         private final ResourceLocation TEXTURE_ON;
         private final ResourceLocation TEXTURE_OFF;
@@ -334,13 +401,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final ToggleButtonID BUTTON_ID;
         private final Component tooltip;
 
-        private boolean toggle;
 
         public ToggleWidget(int x, int y, ToggleButtonID buttonID, ResourceLocation textureON, ResourceLocation textureOFF, MutableComponent tooltipText) {
             super(x, y, 32, 16, Component.literal(""));
             this.BUTTON_ID = buttonID;
             this.visible = false;
-            this.toggle = menu.getStateOfSetting(BUTTON_ID);
             this.TEXTURE_ON = textureON;
             this.TEXTURE_OFF = textureOFF;
             this.tooltip = tooltipText;
@@ -351,6 +416,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             int x = this.getX();
             int y = this.getY();
 
+            boolean toggle = menu.getStateOfSetting(BUTTON_ID);
+
             context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
             context.blit(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
 
@@ -359,15 +426,13 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             }
         }
 
-
-        public void onClick(double mouseX, double mouseY) {
-            toggle = menu.handleToggleButtonInput(BUTTON_ID, !toggle);
+        @Override
+        public void onClick(double pMouseX, double pMouseY) {
+            menu.handleToggleButtonInput(BUTTON_ID);
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
-
-        }
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
     }
     public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
@@ -377,22 +442,14 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         //TODO implement the other features
         //toggleButtons.values().forEach((w)-> {if(w != null){w.visible=state;}});
 
-        ToggleWidget w = toggleButtons.get(ToggleButtonID.EffectsToggle);
-        if(w != null){
-            w.visible=state;
-        }
-
-        w = toggleButtons.get(ToggleButtonID.CreativeToggle);
-        if(w != null){
-            w.visible=state&&this.menu.isPlayerCreative();
         }
 
     }
 
 
-    private class ButtonWidget extends AbstractWidget{
+    private class ButtonWidget extends CustomClickableWidget{
 
-        private final ClickEventHandler FUNCTION;
+        private final Runnable FUNCTION;
         private final ResourceLocation TEXTURE;
         private final ResourceLocation TEXTURE_HOVERED;
         private final MutableComponent TEXT;
@@ -400,10 +457,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final int textY;
         private final int textColour;
 
-        public ButtonWidget(int x, int y, Component message, ClickEventHandler function, ResourceLocation texture, ResourceLocation textureHovered, MutableComponent text, int colour) {
+        public ButtonWidget(int x, int y, Component message, Runnable function, ResourceLocation texture, ResourceLocation textureHovered, MutableComponent text, int colour) {
             super(x, y, 64, 28, message);
             this.FUNCTION = function;
-            this.visible = false;
             this.TEXTURE = texture;
             this.TEXTURE_HOVERED = textureHovered;
             this.textX = 32+x;
@@ -413,12 +469,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void renderWidget(GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
+        protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY()-16;
             int tx = textX;
 
-            if(isHovered){
+            if(isHovered(pMouseX,pMouseY)){
 
                 context.blit(TEXTURE_HOVERED,x,y,64,64,0f,0f,64,64,64,64);
 
@@ -436,11 +492,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         @Override
         public void onClick(double mouseX, double mouseY) {
-            FUNCTION.execute();
+            FUNCTION.run();
         }
 
         @Override
-        protected void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
 
         }
 

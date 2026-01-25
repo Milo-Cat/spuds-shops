@@ -22,20 +22,20 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
 import net.spudacious5705.shops.item.custom.ShopItem;
 import net.spudacious5705.shops.properties.Colour;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
-import net.spudacious5705.shops.util.CushionResources;
+import net.spudacious5705.shops.block.resources.CushionResources;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.spudacious5705.shops.block.VariantResources.ANGLED;
+import static net.spudacious5705.shops.block.resources.VariantResources.ANGLED;
 
 
 public class AngledShopBlock extends AbstractShopBlock {
@@ -92,10 +92,6 @@ public class AngledShopBlock extends AbstractShopBlock {
         VARIANT = variant;
     }
 
-    public String getWoodName(){
-        return VARIANT.name;
-    }
-
     @Override
     public ScreenSettingsGroup getScreenSettings() {
         return ScreenSettingsGroup.createBasicWood(VARIANT);
@@ -107,7 +103,7 @@ public class AngledShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         if(placer != null) {
             if (placer instanceof Player player) {
                 BlockEntity blockEntity = world.getBlockEntity(pos);
@@ -124,7 +120,7 @@ public class AngledShopBlock extends AbstractShopBlock {
 
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new AngledShopEntity(pos, state);
     }
 
@@ -139,7 +135,7 @@ public class AngledShopBlock extends AbstractShopBlock {
 
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext){
         return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_SHAPE;
             case SOUTH -> SOUTH_SHAPE;
@@ -150,7 +146,7 @@ public class AngledShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context){
+    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context){
         return switch (state.getValue(FACING)) {
         case NORTH -> BASE_NORTH;
         case SOUTH -> BASE_SOUTH;
@@ -159,7 +155,7 @@ public class AngledShopBlock extends AbstractShopBlock {
         default -> CULLING_SHAPE;
     };}
     @Override
-    public @NotNull VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos){return CULLING_SHAPE;}
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos){return CULLING_SHAPE;}
 
     @Override
     protected VoxelShape getGenericShape(BlockState state) {
@@ -230,7 +226,7 @@ public class AngledShopBlock extends AbstractShopBlock {
 
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.ANGLED_SHOP_ENTITY.get() == type) {
             return level.isClientSide
                             ? (lvl, pos, st, be) -> ((AngledShopEntity)be).renderTick()

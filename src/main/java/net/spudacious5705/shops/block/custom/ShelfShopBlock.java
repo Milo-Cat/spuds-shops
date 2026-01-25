@@ -28,8 +28,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
 import net.spudacious5705.shops.properties.PermissionLevel;
@@ -83,10 +83,6 @@ public class ShelfShopBlock extends AbstractShopBlock{
         builder.add(FACING, BREAKABLE, SHELVES_ENABLED);
     }
 
-    public String getWoodName(){
-        return VARIANT.name;
-    }
-
     @Override
     public ScreenSettingsGroup getScreenSettings() {
         return ScreenSettingsGroup.createBasicWood(VARIANT);
@@ -112,7 +108,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
             return blockState.setValue(SHELVES_ENABLED, SlabType.DOUBLE);
         }
 
-        // Determine best horizontal wall to attach to
+        // Determine the best horizontal wall to attach to
         Direction finalDirection = null;
         Player player = ctx.getPlayer();
         Direction[] horizontalDirections = {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
@@ -144,7 +140,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new ShelfShopEntity(pos,state);
     }
 
@@ -154,7 +150,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
         if(item != this.SlabWoodType.asItem()) {
             if(world.getBlockEntity(pos) instanceof ShelfShopEntity shopEntity) {
                 if (VariantResources.SHELF.containsKey(item)) {
-                    ShelfShopBlock newShelf = net.spudacious5705.shops.block.VariantResources.SHELF.get(item);
+                    ShelfShopBlock newShelf = VariantResources.SHELF.get(item);
 
 
                     if (!player.isCreative()) {
@@ -187,7 +183,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.SHELF_SHOP_ENTITY.get() == type) {
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((ShelfShopEntity)be).renderTick()
@@ -198,7 +194,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
     }
 
    @Override
-    public @NotNull VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos){return CULLING_SHAPE;}
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos){return CULLING_SHAPE;}
 
     @Override
     protected VoxelShape getGenericShape(BlockState state) {
@@ -217,13 +213,14 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
 
     @Override
+    @SuppressWarnings({"deprecation"})
     public boolean canBeReplaced(BlockState state, @NotNull BlockPlaceContext context) {
         if(state.getValue(SHELVES_ENABLED) == SlabType.DOUBLE) return false;
         return context.getItemInHand().is(state.getBlock().asItem());
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
         ItemStack stack = player.getItemInHand(hand);

@@ -1,4 +1,4 @@
-package net.spudacious5705.shops.block;
+package net.spudacious5705.shops.util;
 
 
 import java.util.List;

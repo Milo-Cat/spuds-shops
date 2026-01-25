@@ -1,9 +1,10 @@
-package net.spudacious5705.shops.block;
+package net.spudacious5705.shops.block.resources;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.spudacious5705.shops.SpudaciousShops;
+import net.spudacious5705.shops.util.PostRegAssigner;
 import net.spudacious5705.shops.block.custom.*;
 
 import java.util.HashMap;

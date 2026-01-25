@@ -10,12 +10,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.spudacious5705.shops.block.*;
 import net.spudacious5705.shops.block.entity.renderer.ShopIconModels;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItemGroups;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
+import net.spudacious5705.shops.util.PostRegAssigner;
 import org.slf4j.Logger;
 
 import static net.spudacious5705.shops.block.ModBlocks.postRegistryTasks;

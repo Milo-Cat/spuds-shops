@@ -1,4 +1,4 @@
-package net.spudacious5705.shops.util;
+package net.spudacious5705.shops.block.resources;
 
 
 import net.minecraft.resources.ResourceLocation;

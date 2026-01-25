@@ -26,8 +26,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.RugShopEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +77,7 @@ public class RugShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new RugShopEntity(pos,state);
     }
 
@@ -125,7 +125,7 @@ public class RugShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((RugShopEntity)be).renderTick()
@@ -168,12 +168,13 @@ public class RugShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @NotNull BlockState mirror(BlockState pState, Mirror pMirror) {
+    public @NotNull BlockState mirror(@NotNull BlockState pState, Mirror pMirror) {
         return pState;
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, BlockPos pos, BlockPos neighborPos) {
+    @SuppressWarnings({"deprecation"})
+    public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
 
         BooleanProperty CONNECTION = switch(direction){
             case NORTH -> CONNECTED_NORTH;

@@ -17,9 +17,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.PostRegAssigner;
-import net.spudacious5705.shops.block.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WindowSillShopBlock extends AbstractShopBlock{
@@ -35,7 +36,7 @@ public class WindowSillShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new WindowSillShopEntity(pos,state);
     }
 
@@ -45,7 +46,7 @@ public class WindowSillShopBlock extends AbstractShopBlock{
         if(item != this.STONE_TYPE) {
             if(world.getBlockEntity(pos) instanceof WindowSillShopEntity shopEntity) {
                 if (VariantResources.WINDOW_SILL.containsKey(item)) {
-                    BlockState newSill = net.spudacious5705.shops.block.VariantResources.WINDOW_SILL.get(item).defaultBlockState();
+                    BlockState newSill = VariantResources.WINDOW_SILL.get(item).defaultBlockState();
 
 
                     if (!player.isCreative()) {
@@ -66,7 +67,7 @@ public class WindowSillShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if(ModBlockEntities.WINDOW_SHOP_ENTITY.get() == type) {
             return level.isClientSide
                     ? (lvl, pos, st, be) -> ((WindowSillShopEntity)be).renderTick()
