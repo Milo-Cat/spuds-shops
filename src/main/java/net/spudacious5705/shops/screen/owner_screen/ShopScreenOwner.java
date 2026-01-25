@@ -476,19 +476,16 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
             ItemStack itemstack = draggingItem.isEmpty() ? menu.getCarried() :  draggingItem;
             if (itemstack.isEmpty()) {
-                /*slot.onTake();
 
-                int l1 = 8;
-                int i2 = this.draggingItem.isEmpty() ? 8 : 16;
-                String s = null;
-                if (!this.draggingItem.isEmpty() && this.isSplittingStack) {
-                    itemstack = itemstack.copyWithCount(Mth.ceil((float)itemstack.getCount() / 2.0F));
-                } else if (this.isQuickCrafting && this.quickCraftSlots.size() > 1) {
-                    itemstack = itemstack.copyWithCount(this.quickCraftingRemainder);
-                    if (itemstack.isEmpty()) {
-                        s = ChatFormatting.YELLOW + "0";
+                if(slot.hasItem()){
+                    int count = slot.getItem().getCount();
+                    if(count > 0){
+                        if(button == 1) {
+                            count = (slot.getItem().getCount() + 1) / 2;
+                        }
+                        slot.remove(count);
                     }
-                }*/
+                }
 
 
             } else {
