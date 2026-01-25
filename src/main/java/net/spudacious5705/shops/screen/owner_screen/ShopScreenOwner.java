@@ -20,6 +20,7 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
+import net.spudacious5705.shops.screen.networking.TradeWidgetPressPkt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -113,8 +114,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posY = SETTINGS.toggleEffectsButtonY()+topPos;
         ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
 
-        PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT);
-        ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT);
+        PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT, 0);
+        ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT, 1);
 
         /*
         posX = SETTINGS.shopStyleButtonX()+leftPos;
@@ -432,11 +433,13 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         private final Container container;
         private final Slot slot;
+        private final int slotId;
 
-        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, Slot slot, Component message) {
+        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, Slot slot, Component message, int slotId) {
             super(slot.x, slot.y, 16, 16, message);
             this.container = inventory;
             this.slot = slot;
+            this.slotId = slotId;
         }
 
 
@@ -476,29 +479,15 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         @Override
         public void onClick(double mouseX, double mouseY, int button) {
 
+
             if(!menu.perms.canEditTrades()){
                 playWarnSound(menu.playerInventory.player);
                 return;
             }
 
+            menu.tradeWindowPress(draggingItem, slot, button);
+            NetworkHelper.CHANNEL.sendToServer(new TradeWidgetPressPkt(slotId,button));
 
-            ItemStack itemstack = draggingItem.isEmpty() ? menu.getCarried() :  draggingItem;
-            if (itemstack.isEmpty()) {
-
-                if(slot.hasItem()){
-                    int count = slot.getItem().getCount();
-                    if(count > 0){
-                        if(button == 1) {
-                            count = (slot.getItem().getCount() + 1) / 2;
-                        }
-                        slot.remove(count);
-                    }
-                }
-
-
-            } else {
-                slot.safeInsert(itemstack.copy());
-            }
         }
 
         @Override

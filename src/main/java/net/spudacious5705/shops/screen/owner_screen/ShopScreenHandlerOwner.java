@@ -191,6 +191,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     Slot PaymentSlot;
     Slot VendingSlot;
+    Slot[] TradeDefSlots;
 
     private void addShopTrades(){
         int x = 25;
@@ -198,6 +199,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
         PaymentSlot = new shop_trade_slot(shopInventory, PAYMENT_SLOT, x, y);
         VendingSlot = new shop_trade_slot(shopInventory, VENDING_SLOT, x, y + 47);
+        TradeDefSlots = new Slot[]{PaymentSlot, VendingSlot};
 
         new shop_payment_slot(shopInventory, PAYMENT_SLOT, 71, 126);
         new shop_vendor_slot(shopInventory, VENDING_SLOT, 140, 126,this);
@@ -442,6 +444,38 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         );
     }
 
+    public void tradeWindowPressServer(int slot, int button){
+        if(!perms.canEditTrades() || slot >1 || slot<0){
+            SpudaciousShops.LOGGER.debug("Player {} sent illegal packet!", playerInventory.player.getName());
+            return;
+        }
+        Slot s = TradeDefSlots[slot];
+
+        tradeWindowPress(ItemStack.EMPTY, s, button);
+    }
+
+    public void tradeWindowPress(ItemStack draggingItem, Slot slot, int button){
+
+
+        ItemStack itemstack = draggingItem.isEmpty() ? getCarried() :  draggingItem;
+        if (itemstack.isEmpty()) {
+
+            if(slot.hasItem()){
+                int count = slot.getItem().getCount();
+                if(count > 0){
+                    if(button == 1) {
+                        count = (slot.getItem().getCount() + 1) / 2;
+                    }
+                    slot.remove(count);
+                }
+            }
+
+
+        } else {
+            slot.safeInsert(itemstack.copy());
+        }
+    }
+
 
     class contract_slot extends TogglableSlot {
 
@@ -523,6 +557,8 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
         public shop_trade_slot(AbstractShopEntity.InventoryDelegate inventory, int slot, int x, int y) {
             super(inventory, slot, x, y);
+            addSlot(this);
+            this.disable();
         }
 
         @NotNull
@@ -577,7 +613,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
             if(stack.getItem() == oldStack.getItem()){
                 count += oldStack.getCount();
-                if(count>64)count=64;
+                if(count>256)count=256;//todo make this customisable
                 this.container.setItem(this.getSlotIndex(),stack.copyWithCount(count));
             }else {
                 this.container.setItem(this.getSlotIndex(), stack.copyWithCount(count));
@@ -603,7 +639,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             super(inventory, slot, x, y);
             tabCustomerSlots.add(this);
             addSlot(this);
-            this.disable();
         }
 
         @Override
