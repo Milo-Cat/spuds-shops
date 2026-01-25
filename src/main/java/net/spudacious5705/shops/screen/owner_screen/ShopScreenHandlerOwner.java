@@ -426,16 +426,20 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     private void openWarnScreen(@NotNull Player player){//called when player removes their own contract
         if(player.level().isClientSide) {
-            player.playNotifySound(
-                    SoundEvents.NOTE_BLOCK_GUITAR.value(),
-                    SoundSource.MASTER,
-                    32.0F,
-                    0.3F
-            );
+            playWarnSound(player);
             NetworkHelper.CHANNEL.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
         } else {
             activeTab = WARNING_TAB;
         }
+    }
+
+    public static void playWarnSound(@NotNull Player player){
+        player.playNotifySound(
+                SoundEvents.NOTE_BLOCK_GUITAR.value(),
+                SoundSource.MASTER,
+                32.0F,
+                0.3F
+        );
     }
 
 
