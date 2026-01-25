@@ -213,22 +213,21 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
-        if (button == 0) {
 
             if(switch (menu.getActiveTab()) {
-                case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,
+                case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,button,
                         ToggleCreative,
                         ToggleIconsEffects,
                         SettingsTabButton, SellerTabButton, ShopFrontTabButton,
                         ProductItemWidget, PaymentItemWidget
                         );
 
-                case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,
+                case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,button,
                         WarningCancel,
                         WarningProceed
                 );
 
-                default -> tryClickWidgets(mouseX,mouseY,
+                default -> tryClickWidgets(mouseX,mouseY,button,
                         SettingsTabButton, SellerTabButton, ShopFrontTabButton
                 );
             }){
@@ -240,16 +239,15 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 }
                 return true;
             }
-        }
 
 
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    private boolean tryClickWidgets(double mouseX, double mouseY, CustomClickableWidget... widgets) {
+    private boolean tryClickWidgets(double mouseX, double mouseY, int button, CustomClickableWidget... widgets) {
         for(CustomClickableWidget widget : widgets){
-            if(widget.attemptClick(mouseX,mouseY))return true;
+            if(widget.attemptClick(mouseX,mouseY,button))return true;
         }
         return false;
     }
@@ -266,12 +264,18 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             super(pX, pY, pWidth, pHeight, pMessage);
         }
 
-        public boolean attemptClick(double X, double Y){
+        public boolean attemptClick(double X, double Y, int button){
             if( isHovered(X,Y) ){
-                onClick(X,Y);
+                onClick(X,Y, button);
                 return true;
             }
             return false;
+        }
+
+        public void onClick(double X, double Y, int button){
+            if(button==0) {
+                onClick(X, Y);
+            }
         }
 
         public boolean isHovered(double X, double Y){
@@ -466,7 +470,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        public void onClick(double mouseX, double mouseY) {
+        public void onClick(double mouseX, double mouseY, int button) {
 
 
 
