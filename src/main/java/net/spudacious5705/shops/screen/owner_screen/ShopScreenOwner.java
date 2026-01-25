@@ -159,6 +159,39 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
     }
 
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        guiGraphics.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+    }
+
+    @Override
+    public void render(GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, partialTick);
+        Font font = Minecraft.getInstance().font;
+
+
+        int activeTab = this.menu.getActiveTab();
+
+        if(activeTab == SETTINGS_TAB) {
+
+            for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
+                ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
+            }
+
+        }else if(activeTab == WARNING_TAB){
+
+            renderWarnPopupTextBody(context,font,leftPos,topPos);
+
+
+        }else if(activeTab == SELLER_TAB){
+
+            renderStorageHeaders(context,font,leftPos,topPos);
+
+        }
+        this.renderTooltip(context, mouseX, mouseY);
+    }
+
     private void switchToCustomerTab() {
         this.menu.updateTabSelectionClientside(ShopScreenHandlerOwner.CUSTOMER_TAB);
         customerGUI();
