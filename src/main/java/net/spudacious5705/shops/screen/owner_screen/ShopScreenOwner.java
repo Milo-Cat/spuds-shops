@@ -153,6 +153,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 renderStorageHeaders(context,font,leftPos,topPos);
 
                 renderScreenGenerics(context,mouseX,mouseY,partialTick);
+
+                PaymentItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
+                ProductItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
             }
             case SETTINGS_TAB -> {
 
@@ -164,8 +167,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
                 ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
 
-                PaymentItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
-                ProductItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
+
 
 
 
@@ -216,13 +218,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,button,
                         ToggleCreative,
                         ToggleIconsEffects,
-                        SettingsTabButton, SellerTabButton, ShopFrontTabButton,
-                        ProductItemWidget, PaymentItemWidget
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
                         );
 
                 case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,button,
                         WarningCancel,
                         WarningProceed
+                );
+
+                case SELLER_TAB -> tryClickWidgets(mouseX,mouseY,button,
+                        SettingsTabButton, SellerTabButton, ShopFrontTabButton,
+                        ProductItemWidget, PaymentItemWidget
                 );
 
                 default -> tryClickWidgets(mouseX,mouseY,button,
