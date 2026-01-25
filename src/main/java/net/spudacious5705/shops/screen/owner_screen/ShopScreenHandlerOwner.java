@@ -1,4 +1,4 @@
-package net.spudacious5705.shops.screen;
+package net.spudacious5705.shops.screen.owner_screen;
 
 
 import net.minecraft.core.BlockPos;
@@ -15,6 +15,9 @@ import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
+import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopTabSyncPkt;
 import net.spudacious5705.shops.screen.networking.ToggleSyncPkt;
@@ -34,11 +37,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
 
-
-
-    void initiateWarn(WarningActivator function) {
-        warningActivator = function;
-    }
 
 
     public void selfDemotePlayer(Player player) {
@@ -66,15 +64,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         playerInventory.player.closeContainer();
     }
 
-    interface WarningActivator{
-        void openWarnScreen();
-    }
-    private SettingsUpdater SETTINGS_UPDATER = null;
-    interface SettingsUpdater{
-        void updateSettings(ToggleButtonID id, boolean state);
-    }
 
-    private WarningActivator warningActivator;
 
     final AbstractShopEntity.InventoryDelegate shopInventory;
     //private final PropertyDelegate propertyDelegate;
@@ -91,15 +81,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     private final List<TogglableSlot> tabSellerSlots = new ArrayList<>();
     final List<TogglableSlot> tabSettingsSlots = new ArrayList<>();
     private final List<TogglableSlot> tabCustomerSlots = new ArrayList<>();
-    private widgetCollection widgets;
 
-    interface widgetCollection{
-        void setToVal(boolean value);
-    }
-
-    void setWidgetFunction(widgetCollection c){
-        widgets = c;
-    }
 
     private static final int profit_itemStacks_start = 54;
 
@@ -246,13 +228,14 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             updateTabSelection();
             return true;
         }
+        //todo Minecraft.getInstance().setScreen(new ShopScreenOwner(this, playerInventory));
         return false;
     }
 
     public void updateTabSelection(){
         switch (activeTab) {
             case SETTINGS_TAB -> {
-                tabSettingsSlots.forEach(TogglableSlot::enable);widgets.setToVal(true);
+                tabSettingsSlots.forEach(TogglableSlot::enable);
                 playerInvSlots.forEach(TogglableSlot::enable);
 
                 tabSellerSlots.forEach(TogglableSlot::disable);
@@ -262,11 +245,11 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
                 playerInvSlots.forEach(TogglableSlot::enable);
                 tabCustomerSlots.forEach(TogglableSlot::enable);
 
-                tabSettingsSlots.forEach(TogglableSlot::disable);widgets.setToVal(false);
+                tabSettingsSlots.forEach(TogglableSlot::disable);
                 tabSellerSlots.forEach(TogglableSlot::disable);
             }
             case WARNING_TAB -> {
-                tabSettingsSlots.forEach(TogglableSlot::disable);widgets.setToVal(false);
+                tabSettingsSlots.forEach(TogglableSlot::disable);
                 tabSellerSlots.forEach(TogglableSlot::disable);
                 playerInvSlots.forEach(TogglableSlot::disable);
                 tabCustomerSlots.forEach(TogglableSlot::disable);
@@ -275,19 +258,10 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
                 tabSellerSlots.forEach(TogglableSlot::enable);
                 playerInvSlots.forEach(TogglableSlot::enable);
 
-                tabSettingsSlots.forEach(TogglableSlot::disable);widgets.setToVal(false);
+                tabSettingsSlots.forEach(TogglableSlot::disable);
                 tabCustomerSlots.forEach(TogglableSlot::disable);
             }
         }
-    }
-
-    void settingsUpdater(SettingsUpdater function) {
-        SETTINGS_UPDATER = function;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
-        SETTINGS_UPDATER.updateSettings(button,state);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -434,7 +408,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     }
 
-
     class contract_slot extends TogglableSlot {
 
         private final AbstractShopEntity.player_ID_Records_Delegate contract_delegate;
@@ -475,11 +448,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         @Override
         public @NotNull ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
             if(contract_delegate.belongsToInteractor(this.getItem())){
-                if(warningActivator!=null) {
-                    warningActivator.openWarnScreen();
-                } else {
-                    throw new IllegalStateException("[Spud's Shops] Warning activator not initialised");
-                }
+                selfDemotePlayer(pPlayer);
                 return ItemStack.EMPTY;
             }
             return container.removeItem(this.getSlotIndex(), 1);
@@ -488,11 +457,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
             if(contract_delegate.belongsToInteractor(this.getItem())){
-                if(warningActivator!=null) {
-                    warningActivator.openWarnScreen();
-                } else {
-                    throw new IllegalStateException("[Spud's Shops] Warning activator not initialised");
-                }
+                selfDemotePlayer(pPlayer);
                 return Optional.empty();
             }
             return Optional.of(container.removeItem(this.getSlotIndex(), 1));
