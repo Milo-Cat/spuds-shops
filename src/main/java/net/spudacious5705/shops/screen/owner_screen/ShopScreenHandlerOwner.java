@@ -618,6 +618,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             }else {
                 this.container.setItem(this.getSlotIndex(), stack.copyWithCount(count));
             }
+            this.setChanged();
             return stack;
         }
 
