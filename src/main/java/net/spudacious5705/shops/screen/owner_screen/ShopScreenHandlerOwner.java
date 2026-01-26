@@ -595,6 +595,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         public @NotNull ItemStack remove(int pAmount) {
             if(perms.canEditTrades()){
                 this.container.removeItem(this.getSlotIndex(), pAmount);
+                this.setChanged();
             }
             return ItemStack.EMPTY;
         }
