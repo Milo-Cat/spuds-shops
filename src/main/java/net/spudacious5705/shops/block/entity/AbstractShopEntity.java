@@ -1013,6 +1013,7 @@ public abstract class AbstractShopEntity extends BlockEntity {
         return this.getBlockState().getValue(AbstractShopBlock.FACING);
     }
 
+
     @OnlyIn(Dist.CLIENT)
     public class RendererData{
 
@@ -1025,6 +1026,8 @@ public abstract class AbstractShopEntity extends BlockEntity {
         protected Direction direction = Direction.NORTH;
         protected int rotation;
         protected float width;
+        protected boolean smallTextPrice;
+        protected boolean smallTextProduct;
         protected boolean shopFunctional = false;
         protected ItemStack paymentItem;
         protected ItemStack displayItem;
@@ -1075,16 +1078,28 @@ public abstract class AbstractShopEntity extends BlockEntity {
 
                 getRotation();
 
-                if(inventory.getPrice()>=10) {
-                    this.width = -7.0f;
+                if(inventory.getPrice()>=100) {
+                    this.width = -10.5f;
+                    this.smallTextPrice = true;
                 } else {
-                    this.width = -2.5f;
+                    this.smallTextPrice = false;
+                    if (inventory.getPrice() >= 10) {
+                        this.width = -7.0f;
+                    } else {
+                        this.width = -2.5f;
+                    }
                 }
 
-                if(inventory.getVendingQuantity()>=10) {
-                    this.qWidth = -7.0f;
+                if(inventory.getVendingQuantity()>=100) {
+                    this.qWidth = -10.5f;
+                    this.smallTextProduct = true;
                 } else {
-                    this.qWidth = -2.5f;
+                    this.smallTextProduct = false;
+                    if (inventory.getVendingQuantity() >= 10) {
+                        this.qWidth = -7.0f;
+                    } else {
+                        this.qWidth = -2.5f;
+                    }
                 }
 
                 Minecraft mc = Minecraft.getInstance();
@@ -1177,6 +1192,15 @@ public abstract class AbstractShopEntity extends BlockEntity {
         public float width() {
             return this.width;
         }
+
+        public boolean useSmallTextPrice() {
+            return this.smallTextPrice;
+        }
+
+        public boolean useSmallTextProduct() {
+            return this.smallTextProduct;
+        }
+
         public float qWidth() {
             return this.qWidth;
         }
@@ -1216,6 +1240,7 @@ public abstract class AbstractShopEntity extends BlockEntity {
             return shouldRenderParticles;
         }
     }
+
     //endregion
 
 

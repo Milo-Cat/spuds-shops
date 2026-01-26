@@ -123,7 +123,8 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     matrices.translate(-0.02f, -0.3124f, 0.16f);
                     matrices.mulPose(Axis.ZP.rotationDegrees(180f));//was rotated around 0,0,0
                     matrices.mulPose(Axis.XP.rotationDegrees(-90f));//was rotated around 0,0,0
-                    matrices.scale(0.02f, 0.02f, -0.02f);
+                    float textSize = data.useSmallTextPrice()?0.015f:0.02f;
+                    matrices.scale(textSize, textSize, -textSize);
                     font.drawInBatch(
                             data.text(),
                             data.width(),
@@ -142,7 +143,8 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     matrices.pushPose();
                     matrices.translate(-0.02f, -0.17f, 0.43749f);
                     matrices.mulPose(Axis.ZP.rotationDegrees(180f));//was rotated around 0,0,0,
-                    matrices.scale(0.022f, 0.022f, -0.022f);
+                    textSize = data.useSmallTextProduct()?0.015f:0.02f;
+                    matrices.scale(textSize, textSize, -textSize);
                     font.drawInBatch(
                             data.stockQuantity,
                             data.qWidth(),
@@ -192,7 +194,8 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     matrices.pushPose();
                     matrices.translate(-0.08f, -0.16f, 0.43749f);
                     matrices.mulPose(Axis.ZP.rotationDegrees(180f));//was rotated around 0,0,0
-                    matrices.scale(0.016f, 0.016f, -0.016f);
+                    float textSize = data.useSmallTextPrice()?0.012f:0.016f;
+                    matrices.scale(textSize, textSize, -textSize);
                     font.drawInBatch(
                             data.text(),
                             data.width(),
@@ -211,7 +214,8 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     matrices.pushPose();
                     matrices.translate(0.2f, -0.16f, 0.43749f);
                     matrices.mulPose(Axis.ZP.rotationDegrees(180f)); //was rotated around 0,0,0
-                    matrices.scale(0.016f, 0.016f, -0.016f);
+                    textSize = data.useSmallTextProduct()?0.012f:0.016f;
+                    matrices.scale(textSize, textSize, -textSize);
                     font.drawInBatch(
                             data.stockQuantity,
                             data.qWidth(),

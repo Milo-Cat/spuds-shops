@@ -121,7 +121,8 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             matrices.translate(-0.27f,-0.178f,-0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(-135f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            matrices.scale(0.02f, 0.02f, 0.02f);
+            float textSize = data.useSmallTextPrice()?0.012f:0.019f;
+            matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
                     data.text(),
@@ -141,7 +142,7 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             matrices.translate(0.27f,-0.178f,0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(45f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            matrices.scale(0.02f, 0.02f, 0.02f);
+            matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
                     data.text(),
@@ -165,7 +166,8 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             matrices.translate(0.37f,-0.178f,-0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(135f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            matrices.scale(0.02f, 0.02f, 0.02f);
+            textSize = data.useSmallTextProduct()?0.012f:0.019f;
+            matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
                     data.stockQuantity,
@@ -184,7 +186,7 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             matrices.translate(-0.37f,-0.178f,0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(-45f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            matrices.scale(0.02f, 0.02f, 0.02f);
+            matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
                     data.stockQuantity,

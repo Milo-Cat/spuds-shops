@@ -77,7 +77,8 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
 
             matrices.pushPose();
-            matrices.scale(0.016f, 0.016f, -0.016f);
+            float textSize = data.useSmallTextPrice()?0.012f:0.016f;
+            matrices.scale(textSize, textSize, -textSize);
             font.drawInBatch(
                     data.text(),
                     data.width(),
@@ -96,7 +97,7 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             matrices.translate(0.05f, 0f, 0.03126f);
             matrices.mulPose(Axis.YP.rotationDegrees(180f));
             matrices.translate(-0.05f, 0f, -0.03126f);
-            matrices.scale(0.016f, 0.016f, -0.016f);
+            matrices.scale(textSize, textSize, -textSize);
             font.drawInBatch(
                     data.text(),
                     data.width(),

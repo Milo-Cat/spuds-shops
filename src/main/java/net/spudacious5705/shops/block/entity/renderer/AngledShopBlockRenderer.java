@@ -116,8 +116,9 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
 
+            float tSc = data.useSmallTextPrice()?0.014f:0.018f;
 
-            poseStack.scale(0.018f, 0.018f, 0.018f);
+            poseStack.scale(tSc,tSc,tSc);
 
             font.drawInBatch(
                     data.text(),

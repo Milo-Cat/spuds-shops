@@ -135,7 +135,8 @@ public class CrateShopEntityRenderer implements BlockEntityRenderer<CrateShopEnt
             matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
             matrices.mulPose(Axis.XP.rotationDegrees(-22.5f));
 
-            matrices.scale(0.018f, 0.018f, 0.018f);
+            float textSize = data.useSmallTextPrice()?0.014f:0.018f;
+            matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
                     data.text(),
@@ -160,7 +161,9 @@ public class CrateShopEntityRenderer implements BlockEntityRenderer<CrateShopEnt
             matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
             matrices.mulPose(Axis.XP.rotationDegrees(-22.5f));
 
-            matrices.scale(0.025f, 0.025f, 0.025f);
+
+            textSize = data.useSmallTextProduct()?0.021f:0.024f;
+            matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
                     data.stockQuantity,
