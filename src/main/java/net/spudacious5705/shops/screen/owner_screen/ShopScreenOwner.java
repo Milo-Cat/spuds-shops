@@ -484,7 +484,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 return;
             }
 
-            menu.tradeWindowPress(draggingItem, slot, button);
             NetworkHelper.CHANNEL.sendToServer(new TradeWidgetPressPkt(slotId,button));
 
         }
