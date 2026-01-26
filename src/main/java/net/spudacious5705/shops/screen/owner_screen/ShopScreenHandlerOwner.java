@@ -565,6 +565,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         @Override
         public ItemStack safeTake(int amount, int shouldDecrement, @NotNull Player pPlayer) {
             this.container.removeItem(this.getSlotIndex(), amount);
+            this.setChanged();
             return ItemStack.EMPTY;
         }
 
@@ -572,6 +573,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         public boolean mayPlace(ItemStack stack) {
             if(stack.getItem() != this.getItem().getItem()) {
                 this.set(ItemStack.EMPTY);
+                this.setChanged();
                 return false;
             }
             return true;
@@ -587,6 +589,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
             if(perms.canEditTrades()){
                 this.container.removeItem(this.getSlotIndex(), pCount);
+                this.setChanged();
             }
             return Optional.empty();
         }
@@ -631,7 +634,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
         @Override
         public void setByPlayer(@NotNull ItemStack pStack) {
-
+            this.setChanged();
         }
     }
 
