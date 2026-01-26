@@ -189,9 +189,9 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         }
     }
 
-    Slot PaymentSlot;
-    Slot VendingSlot;
-    Slot[] TradeDefSlots;
+    shop_trade_slot PaymentSlot;
+    shop_trade_slot VendingSlot;
+    shop_trade_slot[] TradeDefSlots;
 
     private void addShopTrades(){
         int x = 25;
@@ -199,7 +199,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
         PaymentSlot = new shop_trade_slot(shopInventory, PAYMENT_SLOT, x, y);
         VendingSlot = new shop_trade_slot(shopInventory, VENDING_SLOT, x, y + 47);
-        TradeDefSlots = new Slot[]{PaymentSlot, VendingSlot};
+        TradeDefSlots = new shop_trade_slot[]{PaymentSlot, VendingSlot};
 
         new shop_payment_slot(shopInventory, PAYMENT_SLOT, 71, 126);
         new shop_vendor_slot(shopInventory, VENDING_SLOT, 140, 126,this);
@@ -449,12 +449,12 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             SpudaciousShops.LOGGER.debug("Player {} sent illegal packet!", playerInventory.player.getName());
             return;
         }
-        Slot s = TradeDefSlots[slot];
+        shop_trade_slot s = TradeDefSlots[slot];
 
         tradeWindowPress(ItemStack.EMPTY, s, button);
     }
 
-    public void tradeWindowPress(ItemStack draggingItem, Slot slot, int button){
+    void tradeWindowPress(ItemStack draggingItem, shop_trade_slot slot, int button){
 
 
         ItemStack itemstack = draggingItem.isEmpty() ? getCarried() :  draggingItem;

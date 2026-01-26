@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.ScreenResources;
@@ -432,10 +431,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private class TradeItemWidget extends CustomClickableWidget{
 
         private final Container container;
-        private final Slot slot;
+        private final ShopScreenHandlerOwner.shop_trade_slot slot;
         private final int slotId;
 
-        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, Slot slot, Component message, int slotId) {
+        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, ShopScreenHandlerOwner.shop_trade_slot slot, Component message, int slotId) {
             super(slot.x, slot.y, 16, 16, message);
             this.container = inventory;
             this.slot = slot;
