@@ -62,6 +62,8 @@ public class SpudaciousShops{
         // Some common setup code
         LOGGER.info("SETTING UP SPUD'S SHOPS...");
 
+        ConfigHandler.initialise();
+
         postRegistryTasks.forEach(Runnable::run);
         PostRegAssigner.runAllAssigners();
         ShopIconModels.initialise();
@@ -78,11 +80,6 @@ public class SpudaciousShops{
 
     public static ResourceLocation getResource(String path){
         return new ResourceLocation(MOD_ID, path);
-    }
-
-    @SubscribeEvent
-    static void loadConfig(final ModConfigEvent event) {
-        ConfigHandler.initialise(event);
     }
 
 
