@@ -16,6 +16,10 @@ public class ConfigHandler {
             .comment("Default shop settings value to show or hide shop effects")
             .define("effectsDefault", true);
 
+    private static final ForgeConfigSpec.IntValue SHOP_TRADE_STACK_MULTIPLIER = CONF_BUILDER
+            .comment("Multiplier for the stack size in a single shop trade. Min:1 Max:54")
+            .defineInRange("shopTradeStackMultiplier", 4, 1, 54);
+
 
     private static final EnumMap<ToggleButtonID, Boolean> toggleSettingsStates = initialiseToggleSettingStates();
 
@@ -35,7 +39,10 @@ public class ConfigHandler {
         return toggleSettingsStates.getOrDefault(ID,false);
     }
 
+    public static int stackSizeMultiplier = 1;
     public static void initialise(final ModConfigEvent event){
+        stackSizeMultiplier = SHOP_TRADE_STACK_MULTIPLIER.get();
+
         boolean effectsDefault = EFFECTS_ENABLED_DEFAULT.get();
         toggleSettingsStates.put(ToggleButtonID.EffectsToggle, effectsDefault);
     }
