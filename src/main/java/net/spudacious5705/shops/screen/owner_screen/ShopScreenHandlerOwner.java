@@ -10,12 +10,14 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
+import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.PermissionLevel;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
@@ -454,8 +456,21 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         tradeWindowPress(ItemStack.EMPTY, s, button);
     }
 
+    @Override
+    public void clicked(int pSlotId, int pButton, ClickType pClickType, Player pPlayer) {
+        if(pSlotId == PaymentSlot.index){
+            tradeWindowPress(ItemStack.EMPTY, PaymentSlot, pButton);
+        } else if(pSlotId == VendingSlot.index){
+            tradeWindowPress(ItemStack.EMPTY, VendingSlot, pButton);
+        } else {
+            super.clicked(pSlotId, pButton, pClickType, pPlayer);
+        }
+    }
+
     void tradeWindowPress(ItemStack draggingItem, shop_trade_slot slot, int button){
 
+
+        if(!perms.canEditTrades()) return;
 
         ItemStack itemstack = draggingItem.isEmpty() ? getCarried() :  draggingItem;
         if (itemstack.isEmpty()) {
@@ -472,7 +487,18 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
 
         } else {
-            slot.safeInsert(itemstack.copy());
+            if(itemstack.getItem() == slot.getItem().getItem()){
+                int count = slot.getItem().getCount() + itemstack.getCount();
+                int maxCount = itemstack.getMaxStackSize() * ConfigHandler.stackSizeMultiplier;
+                count = Math.min(maxCount,count);
+
+                slot.set(itemstack.copyWithCount(count));
+
+            } else if(slot.getItem().isEmpty()){
+                slot.set(itemstack.copy());
+            } else {
+                slot.set(ItemStack.EMPTY);
+            }
         }
     }
 
@@ -561,6 +587,17 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             this.disable();
         }
 
+        @Override
+        public int getMaxStackSize() {
+            return this.getMaxStackSize(this.getItem());
+        }
+
+        @Override
+        public int getMaxStackSize(@NotNull ItemStack pStack) {
+            return pStack.getMaxStackSize()*ConfigHandler.stackSizeMultiplier;
+        }
+
+        /*
         @NotNull
         @Override
         public ItemStack safeTake(int amount, int shouldDecrement, @NotNull Player pPlayer) {
@@ -617,7 +654,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
             if(stack.getItem() == oldStack.getItem()){
                 count += oldStack.getCount();
-                if(count>256)count=256;//todo make this customisable
+                if(count>256)count=256;
                 this.container.setItem(this.getSlotIndex(),stack.copyWithCount(count));
             }else {
                 this.container.setItem(this.getSlotIndex(), stack.copyWithCount(count));
@@ -626,16 +663,18 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             return stack;
         }
 
+
+        @Override
+        public void setByPlayer(@NotNull ItemStack pStack) {
+            super.setByPlayer(pStack);
+            this.setChanged();
+        }*/
+
         /**
          * DO NOT OVERRIDE
          * this method is for syncing and not accessible by the player
          public void set(ItemStack pStack)
          **/
-
-        @Override
-        public void setByPlayer(@NotNull ItemStack pStack) {
-            this.setChanged();
-        }
     }
 
     class shop_payment_slot extends TogglableSlot {

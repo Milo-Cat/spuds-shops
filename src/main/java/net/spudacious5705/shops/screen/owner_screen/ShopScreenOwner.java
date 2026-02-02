@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.ScreenResources;
@@ -484,8 +485,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                 return;
             }
 
-            NetworkHelper.CHANNEL.sendToServer(new TradeWidgetPressPkt(slotId,button));
-
+            assert minecraft != null;
+            assert minecraft.gameMode != null;
+            assert minecraft.player != null;
+            minecraft.gameMode.handleInventoryMouseClick(menu.containerId, slot.index, button, ClickType.PICKUP, minecraft.player);
         }
 
         @Override
