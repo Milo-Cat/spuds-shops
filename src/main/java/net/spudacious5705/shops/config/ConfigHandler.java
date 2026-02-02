@@ -22,7 +22,7 @@ public class ConfigHandler {
         config = FileConfig.of(CONFIG_PATH);
         config.load();
 
-        String StackMultiplierID = "TradeStackSizeMultiplier";
+        /*String StackMultiplierID = "TradeStackSizeMultiplier";
         int multiplier = 4;
         if (!config.contains(StackMultiplierID)) {
             config.set(StackMultiplierID, multiplier);
@@ -30,7 +30,8 @@ public class ConfigHandler {
         } else {
             multiplier = config.getOrElse(StackMultiplierID, multiplier);
         }
-        stackSizeMultiplier = multiplier;
+        stackSizeMultiplier = multiplier;*/
+        stackSizeMultiplier = 1;//todo check why these larger stacks cause desync issues.
 
         toggleSettingsStates = getDefaultToggleSettingStates();
 
