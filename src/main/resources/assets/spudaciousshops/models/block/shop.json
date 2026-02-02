@@ -1,6 +1,7 @@
 {
 	"credit": "Made with Blockbench, by Spudacious5705 and original textures by Janko1902",
 	"texture_size": [128, 128],
+	"render_type": "cutout",
 	"textures": {
 		"glass": "spudaciousshops:block/shop_glass",
 		"4": "spudaciousshops:block/angled_shop/oak_angled",

@@ -1,6 +1,7 @@
 {
 	"credit": "Made with Blockbench, by Spudacious5705",
 	"texture_size": [64, 64],
+	"render_type": "cutout",
 	"textures": {
 		"texture": "spudaciousshops:block/shop_window_calcite",
 		"plaque": "spudaciousshops:block/shop_window_accessories",
