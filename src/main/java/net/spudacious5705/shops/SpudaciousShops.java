@@ -6,6 +6,7 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.spudacious5705.shops.block.*;
@@ -32,8 +33,6 @@ public class SpudaciousShops{
 	public SpudaciousShops() {
 
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
-        ConfigHandler.initialise();
 
         ModItems.registerModItems(modEventBus);
 		ModBlocks.registerModBlocks(modEventBus);
@@ -81,6 +80,10 @@ public class SpudaciousShops{
         return new ResourceLocation(MOD_ID, path);
     }
 
+    @SubscribeEvent
+    static void loadConfig(final ModConfigEvent event) {
+        ConfigHandler.initialise(event);
+    }
 
 
 }
