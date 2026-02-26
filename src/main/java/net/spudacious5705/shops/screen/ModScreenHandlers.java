@@ -2,6 +2,7 @@ package net.spudacious5705.shops.screen;
 
 
 
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -13,6 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
 
 import java.util.Map;
 
@@ -47,5 +49,13 @@ public class ModScreenHandlers {
         ScreenResources.init();
         SpudaciousShops.LOGGER.info("Registering screen handlers for " + SpudaciousShops.MOD_ID);
         MENUS.register(modEventBus);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void registerScreens(){
+
+        MenuScreens.register(SHOP_SCREEN_HANDLER_OWNER.get(), ShopScreenOwner::new);
+        MenuScreens.register(SHOP_SCREEN_HANDLER_CUSTOMER.get(), ShopScreenCustomer::new);
+
     }
 }

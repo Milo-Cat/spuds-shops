@@ -20,6 +20,7 @@ import net.spudacious5705.shops.block.resources.CushionTextures;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ShopScreenCustomer;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
+import net.spudacious5705.shops.screen.testScreen.TestScreen;
 
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
@@ -33,10 +34,7 @@ public class SpudaciousShopsClient{
 
         event.enqueueWork(() -> {
 
-
-            MenuScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), ShopScreenOwner::new);
-            MenuScreens.register(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), ShopScreenCustomer::new);
-
+            ModScreenHandlers.registerScreens();
 
             ModBlocks.getAllShops().forEach((RegistryObject<? extends AbstractShopBlock> shop) -> {
                 ItemBlockRenderTypes.setRenderLayer(shop.get(), RenderType.cutout());
