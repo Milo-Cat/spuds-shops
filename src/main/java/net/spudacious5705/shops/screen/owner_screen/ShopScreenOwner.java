@@ -431,15 +431,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     private class TradeItemWidget extends CustomClickableWidget{
 
-        private final Container container;
         private final ShopScreenHandlerOwner.shop_trade_slot slot;
-        private final int slotId;
 
         private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, ShopScreenHandlerOwner.shop_trade_slot slot, Component message, int slotId) {
             super(slot.x, slot.y, 16, 16, message);
-            this.container = inventory;
             this.slot = slot;
-            this.slotId = slotId;
         }
 
 
