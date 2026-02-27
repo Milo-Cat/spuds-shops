@@ -1,7 +1,6 @@
 package net.spudacious5705.shops;
 
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,9 +17,6 @@ import net.spudacious5705.shops.block.resources.CushionModel;
 import net.spudacious5705.shops.block.resources.CushionResources;
 import net.spudacious5705.shops.block.resources.CushionTextures;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
-import net.spudacious5705.shops.screen.ShopScreenCustomer;
-import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
-import net.spudacious5705.shops.screen.testScreen.TestScreen;
 
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
