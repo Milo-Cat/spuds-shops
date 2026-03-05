@@ -42,11 +42,6 @@ public class NetworkHelper {
                 ShopTabSyncResponsePkt::encode,
                 ShopTabSyncResponsePkt::decode,
                 ShopTabSyncResponsePkt::handle);
-
-        CHANNEL.registerMessage(packetId++, TradeWidgetPressPkt.class,
-                TradeWidgetPressPkt::encode,
-                TradeWidgetPressPkt::decode,
-                TradeWidgetPressPkt::handle);
     }
 
 

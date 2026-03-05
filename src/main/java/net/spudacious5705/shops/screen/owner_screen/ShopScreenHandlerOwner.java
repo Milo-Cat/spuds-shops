@@ -40,8 +40,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
 
-
-
     public void selfDemotePlayer(Player player) {
         if(activeTab==WARNING_TAB){
             ID_RECORDS_DELEGATE.selfDemote(player);
@@ -444,16 +442,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
                 32.0F,
                 0.3F
         );
-    }
-
-    public void tradeWindowPressServer(int slot, int button){
-        if(!perms.canEditTrades() || slot >1 || slot<0){
-            SpudaciousShops.LOGGER.debug("Player {} sent illegal packet!", playerInventory.player.getName());
-            return;
-        }
-        shop_trade_slot s = TradeDefSlots[slot];
-
-        tradeWindowPress(ItemStack.EMPTY, s, button);
     }
 
     @Override

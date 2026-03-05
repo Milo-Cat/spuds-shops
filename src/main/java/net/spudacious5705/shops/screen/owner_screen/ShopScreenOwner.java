@@ -20,7 +20,6 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
-import net.spudacious5705.shops.screen.networking.TradeWidgetPressPkt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -427,7 +426,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
     }
-
 
     private class TradeItemWidget extends CustomClickableWidget{
 
