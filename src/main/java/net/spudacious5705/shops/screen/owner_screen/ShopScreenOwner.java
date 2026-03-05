@@ -65,7 +65,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     ToggleWidget ToggleIconsEffects;
     ToggleWidget ToggleShopStyle;
     ToggleWidget ToggleIgnoreNBT;
-    private final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
 
     public ShopScreenOwner(ShopScreenHandlerOwner menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -122,16 +121,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posY = SETTINGS.ignoreNBTButtonY()+topPos;
         ToggleIgnoreNBT = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
         */
-        for (ToggleButtonID value : ToggleButtonID.values()) {
-            toggleButtons.put(value,
-                    switch (value){
-                        case CreativeToggle -> ToggleCreative;
-                        case ShopStyleToggle -> ToggleShopStyle;
-                        case IgnoreNBTToggle -> ToggleIgnoreNBT;
-                        case EffectsToggle -> ToggleIconsEffects;
-                    }
-            );
-        }
     }
 
     //region rendering
