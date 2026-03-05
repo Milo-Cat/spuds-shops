@@ -31,8 +31,6 @@ import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwne
 
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
 
-    private static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
-
     private static final ResourceLocation RED_BUTTON = getResource("textures/gui/red_button.png");
     private static final ResourceLocation RED_BUTTON_SELECTED = getResource("textures/gui/red_button_selected.png");
     private static final ResourceLocation GREEN_BUTTON = getResource("textures/gui/green_button.png");

@@ -35,6 +35,7 @@ import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.block.entity.AbstractShopEntity.player_ID_Records_Delegate.checkAction;
 import static net.spudacious5705.shops.block.entity.ShopInventory.PAYMENT_SLOT;
 import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
+import static net.spudacious5705.shops.screen.ScreenResources.WARNING_TEXTURE;
 
 public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
@@ -54,7 +55,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         return SETTINGS_DELEGATE.isPlayerCreative();
     }
 
-    private static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
+
 
     public ResourceLocation getBackgroundTexture() {
         return switch (activeTab){

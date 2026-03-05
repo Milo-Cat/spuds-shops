@@ -5,15 +5,20 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.List;
+
+import static net.spudacious5705.shops.SpudaciousShops.getResource;
 
 public class ScreenResources {
 
     public static void init(){};
 
     public static final int DEFAULT_TEXT_COLOUR = 11141290;
+
+    public static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
 
     public static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
     public static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
