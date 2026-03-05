@@ -104,9 +104,9 @@ public record ScreenSettingsGroup(
                 203,225,
 
 
+                79,42,
+                31,42,
                 127,42,
-                75,42,
-                25,42,
                 175,42,
 
                 colour);
