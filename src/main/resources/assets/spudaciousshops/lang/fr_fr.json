@@ -101,6 +101,10 @@
   "gui.spudaciousshops.toggle_creative": "Activer/désactiver le mode boutique créative",
   "gui.spudaciousshops.toggle_effects": "Basculer les icônes et les particules",
 
+  "gui.spudaciousshops.toggle_ignore_nbt": "Basculer l'ignorance des NBT",
+  "gui.spudaciousshops.toggle_shop_style": "--shop style msg--",
+  "gui.spudaciousshops.payment_empty_tooltip": "Ajoutez votre objet de paiement ici !",
+  "gui.spudaciousshops.product_empty_tooltip": "Ajoutez votre objet produit ici !",
 
   "block.spudaciousshops.shelf_shop_acacia": "Boutique en étagère d'acacia",
   "item.spudaciousshops.shelf_shop_acacia": "Boutique en étagère d'acacia",

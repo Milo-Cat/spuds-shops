@@ -101,6 +101,10 @@
   "gui.spudaciousshops.toggle_creative": "Creatieve winkelmodus in- of uitschakelen",
   "gui.spudaciousshops.toggle_effects": "Pictogrammen en deeltjes in- of uitschakelen",
 
+  "gui.spudaciousshops.toggle_ignore_nbt": "Negeer NBT in- of uitschakelen",
+  "gui.spudaciousshops.toggle_shop_style": "--shop style msg--",
+  "gui.spudaciousshops.payment_empty_tooltip": "Voeg hier je betaalitem toe!",
+  "gui.spudaciousshops.product_empty_tooltip": "Voeg hier je productitem toe!",
 
   "block.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
   "item.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",

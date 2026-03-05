@@ -149,6 +149,10 @@
   "gui.spudaciousshops.toggle_creative": "Activar o desactivar el modo de tienda creativa",
   "gui.spudaciousshops.toggle_effects": "Alternar iconos y partículas",
 
+  "gui.spudaciousshops.toggle_ignore_nbt": "Alternar ignorar NBT",
+  "gui.spudaciousshops.toggle_shop_style": "--shop style msg--",
+  "gui.spudaciousshops.payment_empty_tooltip": "¡Añade tu objeto de pago aquí!",
+  "gui.spudaciousshops.product_empty_tooltip": "¡Añade tu objeto de producto aquí!",
 
   "block.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",
   "item.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",

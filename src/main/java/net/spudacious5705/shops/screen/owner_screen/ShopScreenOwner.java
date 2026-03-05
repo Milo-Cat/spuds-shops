@@ -110,8 +110,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posY = SETTINGS.toggleEffectsButtonY()+topPos;
         ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
 
-        PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT, 0);
-        ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT, 1);
+        PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT, 0, PAYMENT_EMPTY_TOOLTIP);
+        ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT, 1, PRODUCT_EMPTY_TOOLTIP);
 
         /*
         posX = SETTINGS.shopStyleButtonX()+leftPos;
@@ -340,6 +340,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             int x = this.getX();
             int y = this.getY();
 
+            //todo render tooltip
             boolean toggle = menu.getStateOfSetting(BUTTON_ID);
 
             context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
@@ -420,10 +421,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private class TradeItemWidget extends CustomClickableWidget{
 
         private final ShopScreenHandlerOwner.shop_trade_slot slot;
+        private final MutableComponent emptyStackTooltip;
 
-        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, ShopScreenHandlerOwner.shop_trade_slot slot, Component message, int slotId) {
+        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, ShopScreenHandlerOwner.shop_trade_slot slot, Component message, int slotId, MutableComponent emptyStackTooltip) {
             super(slot.x, slot.y, 16, 16, message);
             this.slot = slot;
+            this.emptyStackTooltip = emptyStackTooltip;
         }
 
 
@@ -440,7 +443,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             context.pose().translate(0.0F, 0.0F, 150.0F);
             if (isHovered(pMouseX,pMouseY)) {//hovered?
                 context.fill(x, y, x + 16, y + 16, -2130706433);
-                context.renderTooltip(font,stack,pMouseX,pMouseY);
+                if(stack.isEmpty()){
+                    context.renderTooltip(font, emptyStackTooltip, pMouseX, pMouseY);
+                } else {
+                    context.renderTooltip(font, stack, pMouseX, pMouseY);
+                }
             }
 
             context.renderItem(stack, x, y);
