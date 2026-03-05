@@ -342,6 +342,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             int x = this.getX();
             int y = this.getY();
 
+            //todo render tooltip
             boolean toggle = menu.getStateOfSetting(BUTTON_ID);
 
             context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
