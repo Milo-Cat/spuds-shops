@@ -31,6 +31,7 @@ import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwne
 
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
 
+    //region resources
     private static final ResourceLocation RED_BUTTON = getResource("textures/gui/red_button.png");
     private static final ResourceLocation RED_BUTTON_SELECTED = getResource("textures/gui/red_button_selected.png");
     private static final ResourceLocation GREEN_BUTTON = getResource("textures/gui/green_button.png");
@@ -48,11 +49,23 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private static final ResourceLocation CREATIVE_OFF = getResource("textures/gui/creative_off.png");
     private static final ResourceLocation EFFECTS_ON = getResource("textures/gui/effects_on.png");
     private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
-
+    //endregion resources
 
     private final ScreenSettingsGroup SETTINGS;
 
-    private boolean isCreative;
+    TradeItemWidget PaymentItemWidget;
+    TradeItemWidget ProductItemWidget;
+
+    TabWidget SellerTabButton;
+    TabWidget SettingsTabButton;
+    TabWidget ShopFrontTabButton;
+    ButtonWidget WarningCancel;
+    ButtonWidget WarningProceed;
+    ToggleWidget ToggleCreative;
+    ToggleWidget ToggleIconsEffects;
+    ToggleWidget ToggleShopStyle;
+    ToggleWidget ToggleIgnoreNBT;
+    private final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
 
     public ShopScreenOwner(ShopScreenHandlerOwner menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -62,20 +75,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.leftPos = (width - imageWidth)/2;
         this.topPos = (height - imageHeight)/2;
 
-        isCreative = playerInventory.player.isCreative();
-
         menu.updateTabSelection();
-    }
-
-    private void WarnPopupContinue(){
-        NetworkHelper.CHANNEL.sendToServer(new ShopSelfDemotePkt());
-        menu.close();
-    }
-
-
-    @Override
-    protected void renderLabels(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Do nothing — this prevents the title and inventory label from rendering
     }
 
     @Override
@@ -134,6 +134,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
     }
 
+    //region rendering
+    @Override
+    protected void renderLabels(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Do nothing — this prevents the title and inventory label from rendering
+    }
+
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -159,7 +165,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
                 //toggleButtons.forEach();
 
-                if(isCreative) {
+                if(menu.isPlayerCreative()) {
                     ToggleCreative.renderWidget(context, mouseX, mouseY, partialTick);
                 }
 
@@ -193,20 +199,18 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.renderTooltip(context, mouseX, mouseY);
     }
 
-    TradeItemWidget PaymentItemWidget;
-    TradeItemWidget ProductItemWidget;
+    private void renderScreenGenerics(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
+        SellerTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        SettingsTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        ShopFrontTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+    }
+    //endregion rendering
 
-    TabWidget SellerTabButton;
-    TabWidget SettingsTabButton;
-    TabWidget ShopFrontTabButton;
-    ButtonWidget WarningCancel;
-    ButtonWidget WarningProceed;
-    ToggleWidget ToggleCreative;
-    ToggleWidget ToggleIconsEffects;
-    ToggleWidget ToggleShopStyle;
-    ToggleWidget ToggleIgnoreNBT;
-    private final EnumMap<ToggleButtonID, ToggleWidget> toggleButtons = new EnumMap<>(ToggleButtonID.class);
-
+    //region interaction
+    private void WarnPopupContinue(){
+        NetworkHelper.CHANNEL.sendToServer(new ShopSelfDemotePkt());
+        menu.close();
+    }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -233,6 +237,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                         SettingsTabButton, SellerTabButton, ShopFrontTabButton
                 );
             }){
+                //click success
                 var player = Minecraft.getInstance().player;
                 if(player != null){
                     player.playSound(
@@ -253,12 +258,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
         return false;
     }
+    //endregion interaction
 
-    private void renderScreenGenerics(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
-        SellerTabButton.renderWidget(context,mouseX,mouseY,partialTick);
-        SettingsTabButton.renderWidget(context,mouseX,mouseY,partialTick);
-        ShopFrontTabButton.renderWidget(context,mouseX,mouseY,partialTick);
-    }
 
     private abstract static class CustomClickableWidget extends AbstractWidget {
 

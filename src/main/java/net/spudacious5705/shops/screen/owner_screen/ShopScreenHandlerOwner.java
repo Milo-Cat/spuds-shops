@@ -292,10 +292,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     //endregion menu open/setup/close
 
-    //region gui
-
-    //endregion gui
-
     //region interactions
 
     //item slots
@@ -766,7 +762,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     }
 
     //endregion widgets
-
 
 
 }
