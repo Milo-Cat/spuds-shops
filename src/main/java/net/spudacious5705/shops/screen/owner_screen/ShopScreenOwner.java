@@ -323,7 +323,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final ResourceLocation TEXTURE_OFF;
 
         private final ToggleButtonID BUTTON_ID;
-        private final Component tooltip;
+        private final MutableComponent tooltip;
 
 
         public ToggleWidget(int x, int y, ToggleButtonID buttonID, ResourceLocation textureON, ResourceLocation textureOFF, MutableComponent tooltipText) {
@@ -340,13 +340,12 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             int x = this.getX();
             int y = this.getY();
 
-            //todo render tooltip
             boolean toggle = menu.getStateOfSetting(BUTTON_ID);
 
             context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
             context.blit(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
 
-            if(isHovered){
+            if(isHovered(mouseX,mouseY)){
                 context.renderTooltip(Minecraft.getInstance().font, tooltip,mouseX,mouseY);
             }
         }
