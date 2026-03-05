@@ -161,6 +161,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
                 ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
 
+                ToggleIgnoreNBT.renderWidget(context,mouseX,mouseY,partialTick);
+
 
 
 
@@ -208,8 +210,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
             if(switch (menu.getActiveTab()) {
                 case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,button,
-                        ToggleCreative,
-                        ToggleIconsEffects,
+                        ToggleCreative, ToggleIconsEffects, ToggleIgnoreNBT,
                         SettingsTabButton, SellerTabButton, ShopFrontTabButton
                         );
 
