@@ -41,7 +41,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
     }
 
     public boolean canUseAsProduct(ItemStack stack) {
-        ItemStack product = this.getPaymentStack();
+        ItemStack product = this.getVendingStack();
         if (tradeConfig.get()) {
             return product.is(stack.getItem());
         }
