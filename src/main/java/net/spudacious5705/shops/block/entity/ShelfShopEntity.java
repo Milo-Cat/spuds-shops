@@ -11,13 +11,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.ModBlockEntities;
+import net.spudacious5705.shops.screen.ToggleButtonID;
 import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.block.entity.ShopInventory.ItemScatterer;
 
 public class ShelfShopEntity extends AbstractShopEntity{
 
-    private final ShopInventory shopInventoryTop = ShopInventory.create();
+    private final ShopInventory shopInventoryTop;
 
     @OnlyIn(Dist.CLIENT)
     protected ShelfRenderData furtherDataTop;
@@ -63,6 +64,9 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
     public ShelfShopEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SHELF_SHOP_ENTITY.get(), pos, state, -0.3f);
+        this.shopInventoryTop = ShopInventory.create(
+                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle,true)
+        );
         if (FMLEnvironment.dist == Dist.CLIENT) {
             createRendererDataForShelf();
         }

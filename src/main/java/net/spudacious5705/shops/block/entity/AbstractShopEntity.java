@@ -46,21 +46,17 @@ import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static net.spudacious5705.shops.block.custom.AbstractShopBlock.BREAKABLE;
 import static net.spudacious5705.shops.block.entity.ShopInventory.*;
 import static net.spudacious5705.shops.item.custom.ContractScroll.isSigned;
-import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner.canUseInTrade;
 
 public abstract class AbstractShopEntity extends BlockEntity {
 
     //region INVENTORY
 
-    protected final ShopInventory shopInventory = ShopInventory.create();
+    protected final ShopInventory shopInventory;
 
     @NotNull
     public InventoryDelegate getInventoryDelegate(Player player) {
@@ -139,19 +135,20 @@ public abstract class AbstractShopEntity extends BlockEntity {
                 vendList = NonNullList.create();
                 vendList.add(0, inventory.getVendingStack().copy());
             } else {
-                vendList = takeItems(inventory.getVendingStack(), inventory::get, 0, STOCK_END);
+                vendList = takeItems(inventory.getVendingStack().getCount(), inventory::canUseAsProduct,
+                        inventory::get, 0, STOCK_END);
             }
-            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack(), playerInv::getItem,0,36);
+            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
+                    inventory::canUseAsPayment, playerInv::getItem,0,36);
 
             if(!tradeCreative) {
                 //place players payment into register
-                ItemStack allowStack = inventory.getPaymentStack();
                 ItemStack storageStack;
                 int space;
                 int ptr = 0;
                 for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
                     storageStack = inventory.get(i);
-                    if (canUseInTrade(storageStack, allowStack) || storageStack.isEmpty()) {
+                    if (inventory.canUseAsPayment(storageStack) || storageStack.isEmpty()) {
                         while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxStackSize())) {
                             space = getAvalableSpace(storageStack);
                             if (storageStack.isEmpty()) {
@@ -213,17 +210,20 @@ public abstract class AbstractShopEntity extends BlockEntity {
             ItemStack getStack(int index);
         }
 
-        private static NonNullList<ItemStack> takeItems(ItemStack retrieveStack, miniDelegate inventory, int start, int end){
+        private interface IstackQuery{
+            boolean checkCanUse_(ItemStack stack);
+        }
+
+        private NonNullList<ItemStack> takeItems(int quantityRequired, IstackQuery stackQueryType, miniDelegate inventory, int start, int end){
             NonNullList<ItemStack> list = NonNullList.create();
-            int moneyRequired = retrieveStack.getCount();
             for (int i = start; i <= end; i++) {
                 ItemStack stack = inventory.getStack(i);
-                if(canUseInTrade(stack,retrieveStack)){
-                    if(stack.getCount()>=moneyRequired){
-                        addToList(list,stack.split(moneyRequired));
+                if(stackQueryType.checkCanUse_(stack)){
+                    if(stack.getCount()>=quantityRequired){
+                        addToList(list,stack.split(quantityRequired));
                         break;
                     }
-                    moneyRequired -= stack.getCount();
+                    quantityRequired -= stack.getCount();
                     addToList(list,stack);
                 }
             }
@@ -805,6 +805,9 @@ public abstract class AbstractShopEntity extends BlockEntity {
 
     public <SHOP extends AbstractShopEntity>AbstractShopEntity(BlockEntityType<SHOP> type, BlockPos pos, BlockState state, float particleOffset) {
         super(type, pos, state);
+        this.shopInventory = ShopInventory.create(
+                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle,true)
+        );
         this.particleOffset = particleOffset;
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
