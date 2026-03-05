@@ -154,7 +154,7 @@
   "gui.spudaciousshops.payment": "Payment",
   "gui.spudaciousshops.product": "Product",
 
-  "gui.spudaciousshops.toggle_ignore_nbt": "Toggle ignore NBT",
+  "gui.spudaciousshops.toggle_ignore_nbt": "Toggle matching product item NBT",
   "gui.spudaciousshops.toggle_shop_style": "--shop style msg--",
   "gui.spudaciousshops.payment_empty_tooltip": "Add your payment item here!",
   "gui.spudaciousshops.product_empty_tooltip": "Add your product item here!",

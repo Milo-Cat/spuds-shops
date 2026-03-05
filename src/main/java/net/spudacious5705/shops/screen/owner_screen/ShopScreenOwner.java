@@ -49,6 +49,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private static final ResourceLocation CREATIVE_OFF = getResource("textures/gui/creative_off.png");
     private static final ResourceLocation EFFECTS_ON = getResource("textures/gui/effects_on.png");
     private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
+    private static final ResourceLocation NBT_IGNORE = getResource("textures/gui/nbt_ignore.png");
+    private static final ResourceLocation NBT_CHECK = getResource("textures/gui/nbt_check.png");
     //endregion resources
 
     private final ScreenSettingsGroup SETTINGS;
@@ -120,7 +122,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         */
         posX = SETTINGS.ignoreNBTButtonX()+leftPos;
         posY = SETTINGS.ignoreNBTButtonY()+topPos;
-        ToggleIgnoreNBT = new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, EFFECTS_ON, EFFECTS_OFF, IGNORE_NBT_TOGGLE_TOOLTIP);
+        ToggleIgnoreNBT = new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, NBT_IGNORE, NBT_CHECK, IGNORE_NBT_TOGGLE_TOOLTIP);
 
     }
 
