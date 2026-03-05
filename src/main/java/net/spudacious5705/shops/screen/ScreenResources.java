@@ -43,6 +43,8 @@ public class ScreenResources {
     public static final MutableComponent NONE = Component.translatable("gui.spudaciousshops.text_none");
     public static final MutableComponent CREATIVE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_creative");
     public static final MutableComponent EFFECTS_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_effects");
+    public static final MutableComponent SHOP_STYLE_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_shop_style");//todo add translations
+    public static final MutableComponent IGNORE_NBT_TOGGLE_TOOLTIP = Component.translatable("gui.spudaciousshops.toggle_ignore_nbt");
 
     public static final MutableComponent STOCK = Component.translatable("gui.spudaciousshops.stock");
     public static final MutableComponent REGISTER = Component.translatable("gui.spudaciousshops.register");

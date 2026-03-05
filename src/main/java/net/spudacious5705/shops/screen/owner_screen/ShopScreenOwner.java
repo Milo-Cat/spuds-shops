@@ -117,10 +117,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posX = SETTINGS.shopStyleButtonX()+leftPos;
         posY = SETTINGS.shopStyleButtonY()+topPos;
         ToggleShopStyle = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.ShopStyleToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
+        */
         posX = SETTINGS.ignoreNBTButtonX()+leftPos;
         posY = SETTINGS.ignoreNBTButtonY()+topPos;
-        ToggleIgnoreNBT = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
-        */
+        ToggleIgnoreNBT = new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, EFFECTS_ON, EFFECTS_OFF, IGNORE_NBT_TOGGLE_TOOLTIP);
+
     }
 
     //region rendering
