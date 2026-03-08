@@ -32,7 +32,7 @@ import net.spudacious5705.shops.util.PostRegAssigner;
 import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
-import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

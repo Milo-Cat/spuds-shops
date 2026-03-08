@@ -18,7 +18,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
-import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.permission.PermissionLevel;
+import net.spudacious5705.shops.permission.PermissionManager;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
@@ -30,9 +31,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static net.spudacious5705.shops.block.entity.AbstractShopEntity.player_ID_Records_Delegate.checkAction;
 import static net.spudacious5705.shops.block.entity.ShopInventory.PAYMENT_SLOT;
 import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
+import static net.spudacious5705.shops.permission.PermissionManager.player_ID_Records_Delegate.checkAction;
 import static net.spudacious5705.shops.screen.ScreenResources.WARNING_TEXTURE;
 
 public class ShopScreenHandlerOwner extends AbstractContainerMenu {
@@ -47,7 +48,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     @MagicConstant static final int WARNING_TAB = 4;
 
     private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
-    private final AbstractShopEntity.player_ID_Records_Delegate ID_RECORDS_DELEGATE;
+    private final PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate ID_RECORDS_DELEGATE;
     final PermissionLevel perms;
 
     final AbstractShopEntity.InventoryDelegate shopInventory;
@@ -170,7 +171,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             Inventory playerInventory,
             AbstractShopEntity shop,
             AbstractShopEntity.InventoryDelegate inventoryDelegate,
-            AbstractShopEntity.player_ID_Records_Delegate recordsDelegate,
+            PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate recordsDelegate,
             AbstractShopEntity.settings_Delegate settingsDelegate
     ) {//serverInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId);
@@ -491,13 +492,13 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     class contract_slot extends TogglableSlot {
 
-        private final AbstractShopEntity.player_ID_Records_Delegate contract_delegate;
+        private final PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate contract_delegate;
 
         /**
          *
          * Automatically adds itself to the neccecary lists
          */
-        public contract_slot(AbstractShopEntity.player_ID_Records_Delegate inventory, int slot, int x, int y) {
+        public contract_slot(PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate inventory, int slot, int x, int y) {
             super(inventory, slot, x, y);
             tabSettingsSlots.add(this);
             this.contract_delegate = inventory;
@@ -521,7 +522,8 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         @Override
         public @NotNull ItemStack safeInsert(ItemStack stack, int count) {
             if (!stack.isEmpty()&&stack.getItem() == ModItems.CONTRACT_SCROLL.get()) {
-                return ((AbstractShopEntity.player_ID_Records_Delegate) container).insertContract(stack, this.getSlotIndex());
+
+                return ((PermissionManager.player_ID_Records_Delegate) container).insertContract(stack, this.getSlotIndex());
             }
             return stack;
         }

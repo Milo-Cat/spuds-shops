@@ -35,7 +35,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.properties.ModProperties;
-import net.spudacious5705.shops.properties.PermissionLevel;
+import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,7 +116,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
         if (!(level.getBlockEntity(pos) instanceof AbstractShopEntity shop)) return;
 
-        if (!shop.canBreak(player)) {
+        if (shop.isUnbreakable(player)) {
             level.setBlock(pos, state.setValue(BREAKABLE, false), 3);
             if (level.isClientSide) {
                 player.displayClientMessage(shop.cantBreakMessage(), true);
@@ -257,7 +257,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         BlockEntity be = world.getBlockEntity(pos);
         if (be instanceof AbstractShopEntity shop) {
-            if (!shop.canBreak(player)) {
+            if (shop.isUnbreakable(player)) {
                 if (world.isClientSide) {
                     player.displayClientMessage(shop.cantBreakMessage(), true);
                 }

@@ -100,7 +100,7 @@ public class ShelfShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         ListTag nbtList = new ListTag();
 
         for (int i = 0; i < shopInventoryTop.size(); i++) {
@@ -120,7 +120,7 @@ public class ShelfShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    public void load(CompoundTag nbt) {
+    public void load(@NotNull CompoundTag nbt) {
         ListTag nbtList = nbt.getList("ItemsTwo", 10);
 
 
