@@ -35,11 +35,6 @@ public class AngledShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
     public void load(@NotNull CompoundTag tag) {
         super.load(tag);
         if(tag.contains(COLOUR_NBT_TAG)) {
@@ -50,7 +45,7 @@ public class AngledShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         tag.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
         super.saveAdditional(tag);
     }
