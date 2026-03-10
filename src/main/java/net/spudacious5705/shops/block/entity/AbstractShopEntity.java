@@ -133,6 +133,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
 
         public void trade(Inventory playerInv){
+            if(toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle,false))return;//not using the correct style
+
             NonNullList<ItemStack> vendList;
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
             if(tradeCreative) {
@@ -145,38 +147,53 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
                     inventory::canUseAsPayment, playerInv::getItem,0,36);
 
-            if(!tradeCreative) {
-                //place players payment into register
-                ItemStack storageStack;
-                int space;
-                int ptr = 0;
-                for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
-                    storageStack = inventory.get(i);
-                    if (inventory.canUseAsPayment(storageStack) || storageStack.isEmpty()) {
-                        while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxStackSize())) {
-                            space = getAvailableSpace(storageStack);
-                            if (storageStack.isEmpty()) {
-                                storageStack = payList.get(ptr).copyAndClear();
-                            } else {
-                                storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
-                            }
-                            inventory.set(i, storageStack);
-                            if (payList.get(ptr).isEmpty()) {
-                                ptr++;
-                            }
-                        }
-                    }
-                }
+            if(tradeCreative){
+                payList.forEach((ItemStack::copyAndClear));//todo incase I want to remove can-trade
+            } else {
+                acceptPayment(payList);
             }
 
-            int ptr = 0;
+
+            int ptr = vendList.size()-1;
             boolean success = true;
-            while(success && ptr<(vendList.size())){
+            while(success && ptr >= 0){
                 success = playerInv.add(vendList.get(ptr));
+                ptr--;
             }
 
             Player player = playerInv.player;
             ItemScatterer(player.level(),player.getOnPos(),vendList);
+
+        }
+
+        public void tradeWithSelection(Inventory playerInv, int index){
+            if(!toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle,false))return;//not using the correct style
+
+            if(index>STOCK_END||index<0){
+                return;//not within bounds??
+            }
+            ItemStack product = inventory.get(index);
+            if(product.isEmpty()){
+                return;//No Item??
+            }
+            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
+                    inventory::canUseAsPayment, playerInv::getItem,0,36);
+
+            boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
+
+            if(tradeCreative){
+                product = product.copy();
+                payList.forEach((ItemStack::copyAndClear));
+            } else {
+                acceptPayment(payList);
+            }
+
+            playerInv.add(product.copyAndClear());
+            if(!product.isEmpty()){
+                Player player = playerInv.player;
+                ItemScatterer(player.level(),player.getOnPos(),product);
+            }
+
 
         }
 
@@ -196,6 +213,31 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 return false;
             }
             return true;
+        }
+
+        private void acceptPayment(NonNullList<ItemStack> payList) {
+            //place players payment into register
+            ItemStack storageStack;
+            int space;
+            int ptr = 0;
+            for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
+                storageStack = inventory.get(i);
+                if (inventory.canUseAsPayment(storageStack) || storageStack.isEmpty()) {
+                    while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxStackSize())) {
+                        space = getAvailableSpace(storageStack);
+                        if (storageStack.isEmpty()) {
+                            storageStack = payList.get(ptr).copyAndClear();
+                        } else {
+                            storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
+                        }
+                        inventory.set(i, storageStack);
+                        if (payList.get(ptr).isEmpty()) {
+                            ptr++;
+                        }
+                    }
+                }
+            }
+
         }
 
 
@@ -224,7 +266,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 ItemStack stack = inventory.getStack(i);
                 if(stackQueryType.checkCanUse_(stack)){
                     if(stack.getCount()>=quantityRequired){
-                        addToList(list,stack.split(quantityRequired));
+                        addToList(list,stack.split(quantityRequired));//todo incase I want to remove can-trade, just reference the stack.
                         break;
                     }
                     quantityRequired -= stack.getCount();
@@ -329,6 +371,12 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         );
     }
 
+    public settings_Delegate getSettingsReader(){
+        return new settings_Delegate();
+    }
+
+
+
     public final class settings_Delegate {
         private final boolean isCreative;
         private final boolean canEditSettings;
@@ -336,6 +384,11 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         private settings_Delegate(PermissionLevel perms, Player player){
             isCreative = player.isCreative();
             canEditSettings = perms.canEditTrades();
+        }
+
+        private settings_Delegate(){
+            isCreative = false;
+            canEditSettings = false;
         }
 
         public boolean getState(@NotNull ToggleButtonID ID){
@@ -476,9 +529,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
     public <SHOP extends AbstractShopEntity>AbstractShopEntity(BlockEntityType<SHOP> type, BlockPos pos, BlockState state, float particleOffset) {
         super(type, pos, state);
-        this.shopInventory = ShopInventory.create(
-                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle,true)
-        );
+        this.shopInventory = ShopInventory.create(toggleSettings);
         this.particleOffset = particleOffset;
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -710,8 +761,6 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             if(this.shopFunctional) {
                 this.paymentItem = inventory.getPaymentStack();
 
-                this.stockQuantity = Integer.toString(inventory.getVendingStack().getCount());
-
                 boolean bl = stockWarning || paymentWarning;
 
                 this.paymentWarning = inventory.paymentRegisterFull();
@@ -726,34 +775,36 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 }
 
 
-                this.displayItem = inventory.getVendingStack();
+                this.displayItem = inventory.getDisplayStack();
+
+                this.stockQuantity = Integer.toString(displayItem.getCount());
 
                 //this.lightLevel = getLightLevel(shop.getWorld(), shop.getPos());
 
-                this.text = Integer.toString(inventory.getPrice());
+                this.text = Integer.toString(paymentItem.getCount());
 
                 this.direction = getCachedFacingDirection();
 
                 getRotation();
 
-                if(inventory.getPrice()>=100) {
+                if(paymentItem.getCount()>=100) {
                     this.width = -10.5f;
                     this.smallTextPrice = true;
                 } else {
                     this.smallTextPrice = false;
-                    if (inventory.getPrice() >= 10) {
+                    if (paymentItem.getCount() >= 10) {
                         this.width = -7.0f;
                     } else {
                         this.width = -2.5f;
                     }
                 }
 
-                if(inventory.getVendingQuantity()>=100) {
+                if(displayItem.getCount()>=100) {
                     this.qWidth = -10.5f;
                     this.smallTextProduct = true;
                 } else {
                     this.smallTextProduct = false;
-                    if (inventory.getVendingQuantity() >= 10) {
+                    if (displayItem.getCount() >= 10) {
                         this.qWidth = -7.0f;
                     } else {
                         this.qWidth = -2.5f;

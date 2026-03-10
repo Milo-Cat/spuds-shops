@@ -8,13 +8,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.spudacious5705.shops.screen.ToggleButtonID;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
+//todo BUGFIX:
+//toggling NBT match disables warning icon
 public class ShopInventory extends NonNullList<ItemStack> {
 
     protected static final int INV_SIZE = 78;
@@ -23,17 +23,26 @@ public class ShopInventory extends NonNullList<ItemStack> {
     protected static final int STOCK_END = 53;
     protected static final int PROFIT_END = 75;
 
-    private final Supplier<Boolean> tradeConfig;
+    private final Supplier<Boolean> ignoreNBT;
+    private final Supplier<Boolean> selectableTrade;
 
-    protected ShopInventory(List<ItemStack> delegate, Supplier<Boolean> tradeConfig) {
+    protected ShopInventory(List<ItemStack> delegate, Supplier<Boolean> ignoreNBT, Supplier<Boolean> selectableTrade) {
         super(delegate, ItemStack.EMPTY);
-        this.tradeConfig = tradeConfig;
+        this.ignoreNBT = ignoreNBT;
+        this.selectableTrade = selectableTrade;
     }
 
-    public static ShopInventory create(Supplier<Boolean> tradeConfig){
+    public static ShopInventory create(EnumMap<ToggleButtonID, Boolean> toggleSettings){
+
+
+
         List<ItemStack> stacks = new ArrayList<>(Collections.nCopies(INV_SIZE,ItemStack.EMPTY));
-        return new ShopInventory(stacks, tradeConfig);
+        return new ShopInventory(stacks,
+                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle,true),
+                () -> toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle,true)
+                );
     }
+
 
     public boolean canUseAsPayment(ItemStack stack) {
         ItemStack payment = this.getPaymentStack();
@@ -42,13 +51,19 @@ public class ShopInventory extends NonNullList<ItemStack> {
 
     public boolean canUseAsProduct(ItemStack stack) {
         ItemStack product = this.getVendingStack();
-        if (tradeConfig.get()) {
+        if (ignoreNBT.get()) {
             return product.is(stack.getItem());
         }
         return product.is(stack.getItem()) && Objects.equals(product.getTag(), stack.getTag());
     }
 
     boolean outOfStock(){
+        if(selectableTrade.get()){//select trade
+            for (int i = 0; i <= STOCK_END; i++) {
+                if(!get(i).isEmpty())return false;
+            }
+            return true;
+        }
         int stock = 0;
         ItemStack vend = getVendingStack();
         ItemStack stockStack;
@@ -99,6 +114,27 @@ public class ShopInventory extends NonNullList<ItemStack> {
     }
 
     public ItemStack getVendingStack() {return get(VENDING_SLOT).copy();}
+
+    private int displayIndex = -1;
+    public ItemStack getDisplayStack() {
+        displayIndex++;
+        if(displayIndex>STOCK_END){
+            displayIndex = -1;
+            return get(VENDING_SLOT).copy();
+        }
+
+        ItemStack stack;
+        for(int i = displayIndex; i <= STOCK_END; i++){
+            stack = get(i);
+            if(!stack.isEmpty()){
+                displayIndex = i;
+                return stack.copy();
+            }
+        }
+
+        displayIndex = -1;
+        return get(VENDING_SLOT).copy();
+    }
 
     public ItemStack getPaymentStack() {return get(PAYMENT_SLOT).copy();}
 

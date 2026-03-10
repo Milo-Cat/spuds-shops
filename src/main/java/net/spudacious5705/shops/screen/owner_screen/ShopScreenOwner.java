@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
@@ -21,8 +20,6 @@ import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.EnumMap;
 
 import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
@@ -51,6 +48,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
     private static final ResourceLocation NBT_IGNORE = getResource("textures/gui/nbt_ignore.png");
     private static final ResourceLocation NBT_CHECK = getResource("textures/gui/nbt_check.png");
+    private static final ResourceLocation TRADE_MONO = getResource("textures/gui/trade_mono.png");
+    private static final ResourceLocation TRADE_SELECT = getResource("textures/gui/trade_select.png");
     //endregion resources
 
     private final ScreenSettingsGroup SETTINGS;
@@ -115,11 +114,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT, 0, PAYMENT_EMPTY_TOOLTIP);
         ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT, 1, PRODUCT_EMPTY_TOOLTIP);
 
-        /*
+
         posX = SETTINGS.shopStyleButtonX()+leftPos;
         posY = SETTINGS.shopStyleButtonY()+topPos;
-        ToggleShopStyle = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.ShopStyleToggle, SHOPFRONT_ICON, EFFECTS_OFF, "foo"));
-        */
+        ToggleShopStyle = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.SelectableTradeToggle, TRADE_SELECT, TRADE_MONO, SHOP_STYLE_TOGGLE_TOOLTIP));
+
         posX = SETTINGS.ignoreNBTButtonX()+leftPos;
         posY = SETTINGS.ignoreNBTButtonY()+topPos;
         ToggleIgnoreNBT = new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, NBT_IGNORE, NBT_CHECK, IGNORE_NBT_TOGGLE_TOOLTIP);
@@ -165,6 +164,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
                 ToggleIgnoreNBT.renderWidget(context,mouseX,mouseY,partialTick);
 
+                ToggleShopStyle.renderWidget(context,mouseX,mouseY,partialTick);
 
 
 
@@ -212,7 +212,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
             if(switch (menu.getActiveTab()) {
                 case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,button,
-                        ToggleCreative, ToggleIconsEffects, ToggleIgnoreNBT,
+                        ToggleCreative, ToggleIconsEffects, ToggleIgnoreNBT, ToggleShopStyle,
                         SettingsTabButton, SellerTabButton, ShopFrontTabButton
                         );
 

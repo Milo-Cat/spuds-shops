@@ -54,7 +54,7 @@ public class ConfigHandler {
             tss.put(value,
                     switch (value){
                         case CreativeToggle -> false;
-                        case ShopStyleToggle -> false;
+                        case SelectableTradeToggle -> false;
                         case IgnoreNBTToggle -> false;
                         case EffectsToggle -> effectsEnabled;
                     }

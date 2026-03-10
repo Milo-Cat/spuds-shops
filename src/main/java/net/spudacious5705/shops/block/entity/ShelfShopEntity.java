@@ -64,9 +64,7 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
     public ShelfShopEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SHELF_SHOP_ENTITY.get(), pos, state, -0.3f);
-        this.shopInventoryTop = ShopInventory.create(
-                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle,true)
-        );
+        this.shopInventoryTop = ShopInventory.create(toggleSettings);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             createRendererDataForShelf();
         }

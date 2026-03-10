@@ -8,6 +8,7 @@ import net.spudacious5705.shops.block.resources.VariantResources;
 
 public record ScreenSettingsGroup(
         ScreenSettings CUSTOMER,
+        ScreenSettings CUSTOMER_MULTI,
         ScreenSettings SELLER,
         ScreenSettings SETTINGS,
         ResourceLocation BUTTON_BACKGROUND,
@@ -67,6 +68,13 @@ public record ScreenSettingsGroup(
                     0,0,
                     80,11);
         }
+        public static ScreenSettings createBasicCUSTOMER_MULTI(ResourceLocation textureID){
+            return new ScreenSettings(textureID,
+                    176, 165,
+                    8,84,
+                    0,0,
+                    80,11);
+        }
         public static ScreenSettings createBasicSELLER(ResourceLocation textureID){
             return new ScreenSettings(textureID,
                     228, 254,
@@ -84,17 +92,19 @@ public record ScreenSettingsGroup(
     }
 
     public static ScreenSettingsGroup createBasicWood(VariantResources.wood_variant VARIANT){
-        return createBasic(VARIANT.owner_trade,VARIANT.storage,VARIANT.settings,VARIANT.settings_button, VARIANT.settings_text_colour);
+        return createBasic(VARIANT.trade, VARIANT.trade_multi, VARIANT.storage,VARIANT.settings,VARIANT.settings_button, VARIANT.settings_text_colour);
     }
 
     public static ScreenSettingsGroup createBasic(
             ResourceLocation CUSTOMER,
+            ResourceLocation CUSTOMER_MULTI,
             ResourceLocation SELLER,
             ResourceLocation SETTINGS,
             ResourceLocation BUTTON_BACKGROUND,
             int colour){
         return new ScreenSettingsGroup(
                 ScreenSettings.createBasicCUSTOMER(CUSTOMER),
+                ScreenSettings.createBasicCUSTOMER_MULTI(CUSTOMER_MULTI),
                 ScreenSettings.createBasicSELLER(SELLER),
                 ScreenSettings.createBasicSETTINGS(SETTINGS),
                 BUTTON_BACKGROUND,
@@ -104,8 +114,8 @@ public record ScreenSettingsGroup(
                 203,225,
 
 
-                79,42,
                 31,42,
+                79,42,
                 127,42,
                 175,42,
 

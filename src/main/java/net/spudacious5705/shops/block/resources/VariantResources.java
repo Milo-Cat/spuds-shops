@@ -60,8 +60,8 @@ public class VariantResources {
         JUNGLE("jungle",11141290);
         
         public final String name;
-        public final ResourceLocation customer;
-        public final ResourceLocation owner_trade;
+        public final ResourceLocation trade;
+        public final ResourceLocation trade_multi;
         public final ResourceLocation settings;
         public final ResourceLocation storage;
         public final ResourceLocation settings_button;
@@ -70,8 +70,8 @@ public class VariantResources {
         wood_variant(String texture, int text_colour) {
             ResourceLocation[] ids = GUIid(texture);
             name = texture;
-            customer = ids[0];
-            owner_trade = ids[1];
+            trade = ids[0];
+            trade_multi = ids[1];
             settings = ids[2];
             storage = ids[3];
             settings_button = ids[4];
@@ -81,8 +81,8 @@ public class VariantResources {
         private static ResourceLocation[] GUIid(String texture){
 
             return new ResourceLocation[]{
-                    SpudaciousShops.id("textures/gui/wood_gui/customer_"+texture+".png"),
-                    SpudaciousShops.id("textures/gui/wood_gui/owner_trade_"+texture+".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/trade_"+texture+".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/trade_multi_"+texture+".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/settings_"+texture+".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/storage_"+texture+".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/button_back_"+texture+".png")

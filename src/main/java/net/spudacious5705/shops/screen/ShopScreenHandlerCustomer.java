@@ -4,6 +4,7 @@ package net.spudacious5705.shops.screen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,6 +23,9 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
     final ScreenSettingsGroup SCREEN_SETTINGS;
     private final Inventory playerInventory;
     private final BlockPos pos;
+
+    private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
+    private final boolean shopStyle;
 
 
 
@@ -57,11 +61,17 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
 
             this.SCREEN_SETTINGS = shop.getScreenSettings();
 
+            this.SETTINGS_DELEGATE = shop.getSettingsReader();
+
+            this.shopStyle = SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
+
             finishSetup();
         } else {
             Minecraft.getInstance().setScreen(null);
             this.shopInventory = null;
             this.SCREEN_SETTINGS = null;
+            this.SETTINGS_DELEGATE = null;
+            this.shopStyle = false;
         }
     }
 
@@ -70,6 +80,8 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
         this.shopInventory = shop.getInventoryDelegate(playerInv.player);
         this.pos = shop.getBlockPos();
         this.SCREEN_SETTINGS = null;
+        this.SETTINGS_DELEGATE = shop.getSettingsReader();
+        this.shopStyle = SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
         this.playerInventory = playerInv;
         shop.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
             this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 11));
@@ -95,8 +107,21 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
     }
 
     public void addCustomerInventory() {
-        this.addSlot(new shop_payment_slot(shopInventory, PAYMENT_SLOT, 80-34, 11+25));
-        this.addSlot(new shop_vendor_slot(shopInventory, VENDING_SLOT, 80+35, 59-23, this));
+        if(shopStyle){
+            int offsetx = 21;
+            int offsety = 35;
+
+            for (int i = 0; i < 6; ++i) {
+                for (int j = 0; j < 9; ++j) {
+                    this.addSlot(new shop_vendor_slot(shopInventory, j + i * 9, offsetx + j * 21, offsety + i * 20));
+                }
+            }
+
+            this.addSlot(new shop_payment_slot(shopInventory, PAYMENT_SLOT, 71, 20));
+        } else {
+            this.addSlot(new shop_payment_slot(shopInventory, PAYMENT_SLOT, 80 - 34, 11 + 25));
+            this.addSlot(new shop_vendor_slot(shopInventory, VENDING_SLOT, 80 + 35, 59 - 23));
+        }
     }
 
     public void addPlayerInventory(Inventory playerInv) {
@@ -118,11 +143,12 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int pIndex) {
-        int tradeCount = 0;
+        /*
+        int tradeCount = 0;//todo fix this
         while(tradeCount<64&&shopInventory.canTrade(player)){
             trade();
             tradeCount++;
-        }
+        }*/
         return ItemStack.EMPTY;
     }
 
@@ -181,21 +207,19 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
     }
 
     class shop_vendor_slot extends Slot {
-        private final ShopScreenHandlerCustomer handler;
-        public shop_vendor_slot(AbstractShopEntity.InventoryDelegate inventory, int index, int x, int y, ShopScreenHandlerCustomer handler) {
+        public shop_vendor_slot(AbstractShopEntity.InventoryDelegate inventory, int index, int x, int y) {
             super(inventory, index, x, y);
-            this.handler = handler;
         }
 
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, Player pPlayer) {
-            if(shopInventory.canTrade(pPlayer))handler.trade();
+            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
             return Optional.empty();
         }
 
         @Override
         public ItemStack safeTake(int pCount, int pDecrement, Player pPlayer) {
-            handler.trade();
+            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
             return ItemStack.EMPTY;
         }
 
@@ -223,8 +247,20 @@ public class ShopScreenHandlerCustomer extends AbstractContainerMenu {
 
     }
 
-    private void trade() {
-        this.shopInventory.trade(playerInventory);
+    private void attemptTrade(int index, Player player){
+        if(SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) != shopStyle){
+            if(player instanceof ServerPlayer sp) {
+                sp.doCloseContainer();
+            }
+            return;
+        }
+        if(shopInventory.canTrade(player)){
+            if(shopStyle){//standard trade
+                this.shopInventory.tradeWithSelection(playerInventory, index);
+            } else {//selectable trade
+                this.shopInventory.trade(playerInventory);
+            }
+        }
     }
 
     @Override

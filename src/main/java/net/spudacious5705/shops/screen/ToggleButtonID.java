@@ -2,7 +2,7 @@ package net.spudacious5705.shops.screen;
 
 public enum ToggleButtonID {
     CreativeToggle("Crea"),
-    ShopStyleToggle("Styl"),
+    SelectableTradeToggle("Styl"),
     IgnoreNBTToggle("iNBT"),
     EffectsToggle("Efex");
 
