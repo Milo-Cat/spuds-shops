@@ -28,14 +28,15 @@ public class SpudaciousShopsClient{
 
 
 
-        event.enqueueWork(() -> {
+        event.enqueueWork(//() -> {
 
-            ModScreenHandlers.registerScreens();
+            ModScreenHandlers::registerScreens
 
-            ModBlocks.getAllShops().forEach((RegistryObject<? extends AbstractShopBlock> shop) -> {
-                ItemBlockRenderTypes.setRenderLayer(shop.get(), RenderType.cutout());
+            /*ModBlocks.getAllShops().forEach((RegistryObject<? extends AbstractShopBlock> shop) -> {
+                ItemBlockRenderTypes.setRenderLayer(shop.get(), RenderType.translucent());
             });
-        });
+        }*/
+        );
 
 
         CushionTextures.initialiseCushionTextures();
