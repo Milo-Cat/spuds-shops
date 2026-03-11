@@ -117,7 +117,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         posX = SETTINGS.shopStyleButtonX()+leftPos;
         posY = SETTINGS.shopStyleButtonY()+topPos;
-        ToggleShopStyle = addRenderableWidget(new ToggleWidget(posX, posY, ToggleButtonID.SelectableTradeToggle, TRADE_SELECT, TRADE_MONO, SHOP_STYLE_TOGGLE_TOOLTIP));
+        ToggleShopStyle = new ToggleWidget(posX, posY, ToggleButtonID.SelectableTradeToggle, TRADE_SELECT, TRADE_MONO, SHOP_STYLE_TOGGLE_TOOLTIP);
 
         posX = SETTINGS.ignoreNBTButtonX()+leftPos;
         posY = SETTINGS.ignoreNBTButtonY()+topPos;
