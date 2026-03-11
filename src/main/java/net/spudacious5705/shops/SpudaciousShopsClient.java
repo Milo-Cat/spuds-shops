@@ -1,17 +1,13 @@
 package net.spudacious5705.shops;
 
 
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.RegistryObject;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.ModBlocks;
-import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.*;
 import net.spudacious5705.shops.block.resources.CushionModel;
 import net.spudacious5705.shops.block.resources.CushionResources;
