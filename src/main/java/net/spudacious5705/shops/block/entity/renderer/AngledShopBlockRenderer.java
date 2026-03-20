@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
 import net.spudacious5705.shops.block.resources.CushionModel;
+import org.jetbrains.annotations.NotNull;
 
 public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEntity> {
 
@@ -26,7 +27,10 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
 
 
     @Override
-    public void render(AngledShopEntity shop, float tickDelta, PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay) {
+    public void render(
+            AngledShopEntity shop, float tickDelta, PoseStack poseStack,
+            @NotNull MultiBufferSource bufferSource, int light, int overlay
+    ) {
         ItemDisplayContext mode;
         final AngledShopEntity.RendererData data = shop.rendererData();
         Font font = this.context.getFont();
@@ -47,7 +51,7 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                 bufferSource.getBuffer(RenderType.entitySolid(shop.getCushionTextureID())),
                 light,
                 overlay,
-                1f,1f,1f,1f
+                1
         );
 
         poseStack.popPose();

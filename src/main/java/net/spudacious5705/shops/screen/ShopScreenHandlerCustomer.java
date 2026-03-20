@@ -8,8 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.SlotItemHandler;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
@@ -49,10 +47,10 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
     public ShopScreenHandlerCustomer(int syncId, Inventory playerInventory, AbstractShopEntity shop, AbstractShopEntity.InventoryDelegate inventoryDelegate) {//serverInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), syncId, inventoryDelegate, shop.getSettingsReader(), playerInventory, null);
 
-        shop.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
+        /*shop.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
             this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 11));
             this.addSlot(new SlotItemHandler(iItemHandler, 1, 80, 59));
-        });
+        });*/
         finishSetup();
     }
 

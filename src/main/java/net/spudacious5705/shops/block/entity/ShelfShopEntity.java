@@ -2,14 +2,16 @@ package net.spudacious5705.shops.block.entity;
 
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,40 +91,33 @@ public class ShelfShopEntity extends AbstractShopEntity{
         return shopInventory.tradeFunctional()||shopInventoryTop.tradeFunctional();
     }
 
-
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        ListTag nbtList = new ListTag();
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
 
-        for (int i = 0; i < shopInventoryTop.size(); i++) {
-            ItemStack itemStack = shopInventoryTop.get(i);
-            if (!itemStack.isEmpty()) {
-                CompoundTag compoundtag = new CompoundTag();
-                compoundtag.putByte("SlotTwo", (byte)i);
-                itemStack.save(compoundtag);
-                nbtList.add(compoundtag);
-            }
-        }
+        CompoundTag donorTag = new CompoundTag();
+        ContainerHelper.saveAllItems(donorTag, shopInventoryTop, holder);
 
-        if (!nbtList.isEmpty()) {
-            tag.put("ItemsTwo", nbtList);
-        }
-        super.saveAdditional(tag);
+        ListTag inventoryTwo = donorTag.getList("Items", Tag.TAG_COMPOUND);
+
+        tag.put("ItemsTwo", inventoryTwo);
+
+        super.saveAdditional(tag, holder);
     }
 
     @Override
-    public void load(@NotNull CompoundTag nbt) {
-        ListTag nbtList = nbt.getList("ItemsTwo", 10);
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
+        super.loadAdditional(tag, holder);
 
+        CompoundTag donorTag = new CompoundTag();
+        ListTag inventoryTwo = tag.getList("ItemsTwo", Tag.TAG_COMPOUND);
+        donorTag.put("Items", inventoryTwo);
 
-        for (int i = 0; i < nbtList.size(); i++) {
-            CompoundTag nbtCompound = nbtList.getCompound(i);
-            int j = nbtCompound.getByte("SlotTwo") & 255;
-            if (j < shopInventoryTop.size()) {
-                shopInventoryTop.set(j, ItemStack.of(nbtCompound));
-            }
-        }
-        super.load(nbt);
+        ContainerHelper.loadAllItems(donorTag, shopInventoryTop, holder);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        return saveCustomOnly(registries);
     }
     
     

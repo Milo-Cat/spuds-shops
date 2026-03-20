@@ -1,38 +1,55 @@
 package net.spudacious5705.shops.screen.networking;
 
-import net.minecraft.network.FriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+import static net.spudacious5705.shops.SpudaciousShops.id;
 
-public record ShopTabSyncPkt(int tab) {
+public record ShopTabSyncPkt(int tab) implements CustomPacketPayload{
 
-    public void encode(FriendlyByteBuf friendlyByteBuf) {
-        friendlyByteBuf.writeInt(tab);
+    public static final CustomPacketPayload.Type<ShopTabSyncPkt> TYPE = new CustomPacketPayload.Type<>(id("shop_tab_sync"));
+
+    public static final StreamCodec<ByteBuf, ShopTabSyncPkt> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT,
+            ShopTabSyncPkt::tab,
+            ShopTabSyncPkt::new
+    );
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static ShopTabSyncPkt decode(FriendlyByteBuf friendlyByteBuf) {
-        return new ShopTabSyncPkt(
-                friendlyByteBuf.readInt()
-        );
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
-            if (player != null && player.containerMenu instanceof ShopScreenHandlerOwner screenHandler) {
+    public void handleServerSide(IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if(
+                    ctx.player() instanceof ServerPlayer player
+                    &&
+                    player.containerMenu instanceof ShopScreenHandlerOwner screenHandler
+            ) {
                 screenHandler.updateTabSelectionServerside(tab);
 
-                // Send response back to client
-                NetworkHelper.CHANNEL.send(
-                        PacketDistributor.PLAYER.with(() -> player),
-                        new ShopTabSyncResponsePkt(tab)
-                );
+                PacketDistributor.sendToPlayer(player,new ShopTabSyncPkt(tab));
+
             }
         });
-        ctx.get().setPacketHandled(true);
+    }
+
+    public void handleClientSide(IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.screen instanceof ShopScreenOwner screen) {
+                screen.getMenu().updateTabSelectionResponse(tab);
+            }
+        });
     }
 }

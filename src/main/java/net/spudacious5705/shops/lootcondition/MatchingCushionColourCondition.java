@@ -1,25 +1,25 @@
 package net.spudacious5705.shops.lootcondition;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.Serializer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
+import org.jetbrains.annotations.NotNull;
 
-public class MatchingCushionColourCondition implements LootItemCondition {
-    private final String expectedColourName;
+public record MatchingCushionColourCondition(String expectedColourName) implements LootItemCondition {
 
-    public MatchingCushionColourCondition(String expectedColourName) {
-        this.expectedColourName = expectedColourName;
-    }
+    public static final MapCodec<MatchingCushionColourCondition> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(Codec.STRING.fieldOf("expected_colour").forGetter(MatchingCushionColourCondition::expectedColourName))
+                    .apply(instance, MatchingCushionColourCondition::new)
+    );
 
     @Override
-    public LootItemConditionType getType() {
+    public @NotNull LootItemConditionType getType() {
         return ModLootConditions.MATCHES_ENUM;
     }
 
@@ -30,18 +30,5 @@ public class MatchingCushionColourCondition implements LootItemCondition {
             return shop.getCushionColour().matchesString(expectedColourName);
         }
         return false;
-    }
-
-    public static class ConditionSerializer implements Serializer<MatchingCushionColourCondition> {
-        @Override
-        public void serialize(JsonObject json, MatchingCushionColourCondition condition, JsonSerializationContext context) {
-            json.addProperty("expected_colour", condition.expectedColourName);
-        }
-
-        @Override
-        public MatchingCushionColourCondition deserialize(JsonObject json, JsonDeserializationContext context) {
-            String colourName = json.get("expected_colour").getAsString();
-            return new MatchingCushionColourCondition(colourName);
-        }
     }
 }

@@ -11,15 +11,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.permission.PermissionManager;
 import net.spudacious5705.shops.screen.*;
-import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopTabSyncPkt;
 import net.spudacious5705.shops.screen.networking.ToggleSyncPkt;
 import org.intellij.lang.annotations.MagicConstant;
@@ -94,7 +94,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     private void openWarnScreen(@NotNull Player player){//called when player removes their own contract
         if(player.level().isClientSide) {
             playWarnSound(player);
-            NetworkHelper.CHANNEL.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
+            PacketDistributor.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
         } else {
             activeTab = WARNING_TAB;
         }
@@ -269,13 +269,15 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     //item slots
     @Override
     public void clicked(int pSlotId, int pButton, @NotNull ClickType pClickType, @NotNull Player pPlayer) {
-        if(pSlotId == PaymentSlot.index){
-            tradeWindowPress(PaymentSlot, pButton);
-        } else if(pSlotId == VendingSlot.index){
-            tradeWindowPress(VendingSlot, pButton);
-        } else {
-            super.clicked(pSlotId, pButton, pClickType, pPlayer);//locked down slots handled in super
+        if(pClickType != ClickType.QUICK_MOVE) {
+            if (pSlotId == PaymentSlot.index) {
+                tradeWindowPress(PaymentSlot, pButton); return;
+            } else if (pSlotId == VendingSlot.index) {
+                tradeWindowPress(VendingSlot, pButton); return;
+            }
         }
+        super.clicked(pSlotId, pButton, pClickType, pPlayer);//locked down slots handled in super
+
     }
 
     void tradeWindowPress(shop_trade_slot slot, int button){
@@ -309,6 +311,11 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
                 slot.set(ItemStack.EMPTY);
             }
         }
+    }
+
+    @Override
+    protected boolean moveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+        return super.moveItemStackTo(stack, startIndex, endIndex, reverseDirection);
     }
 
     @Override
@@ -356,7 +363,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     @OnlyIn(Dist.CLIENT)
     public void updateTabSelectionClientside(int tab){
         activeTab = tab;
-        NetworkHelper.CHANNEL.sendToServer(new ShopTabSyncPkt(activeTab));
+        PacketDistributor.sendToServer(new ShopTabSyncPkt(activeTab));
         updateTabSelection();
     }
 
@@ -420,7 +427,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     public void handleToggleButtonInput(ToggleButtonID button) {
         boolean state = !SETTINGS_DELEGATE.getState(button);
         if(SETTINGS_DELEGATE.attemptSetState(button,state)){
-            NetworkHelper.CHANNEL.sendToServer(new ToggleSyncPkt(button,state));
+            PacketDistributor.sendToServer(new ToggleSyncPkt(button,state));
         }
     }
 

@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -27,9 +28,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.ShopRenderUtils;
 import net.spudacious5705.shops.config.ConfigHandler;
@@ -140,7 +141,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
             if(tradeCreative) {
                 vendList = NonNullList.create();
-                vendList.add(0, inventory.getVendingStack().copy());
+                vendList.addFirst(inventory.getVendingStack().copy());
             } else {
                 vendList = takeItems(inventory.getVendingStack().getCount(), inventory::canUseAsProduct,
                         inventory::get, 0, STOCK_END);
@@ -478,9 +479,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        ContainerHelper.loadAllItems(tag, shopInventory);
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
+        super.loadAdditional(tag, holder);
+        ContainerHelper.loadAllItems(tag, shopInventory, holder);
 
         permissionManager.load(tag);
 
@@ -501,8 +502,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        ContainerHelper.saveAllItems(tag, shopInventory);
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
+        ContainerHelper.saveAllItems(tag, shopInventory, holder);
 
         permissionManager.save(tag);
 
@@ -516,13 +517,13 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         checkShouldRenderParticles();
+        super.saveAdditional(tag, holder);
     }
 
 
-
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 
     //endregion

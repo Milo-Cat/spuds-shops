@@ -46,7 +46,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
 
     public boolean canUseAsPayment(ItemStack stack) {
         ItemStack payment = this.getPaymentStack();
-        return payment.is(stack.getItem()) && Objects.equals(payment.getTag(), stack.getTag());
+        return ItemStack.isSameItemSameComponents(payment, stack);
     }
 
     public boolean canUseAsProduct(ItemStack stack) {
@@ -54,7 +54,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
         if (ignoreNBT.get()) {
             return product.is(stack.getItem());
         }
-        return product.is(stack.getItem()) && Objects.equals(product.getTag(), stack.getTag());
+        return ItemStack.isSameItemSameComponents(product, stack);
     }
 
     boolean outOfStock(){
@@ -117,6 +117,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
 
     private int displayIndex = -1;
     public ItemStack getDisplayStack() {
+        if(!selectableTrade.get()) return get(VENDING_SLOT).copy();
         displayIndex++;
         if(displayIndex>STOCK_END){
             displayIndex = -1;
@@ -170,8 +171,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
     }
 
     public boolean tradeNonFunctional() {
-        boolean bl = get(PAYMENT_SLOT).isEmpty()  ||  get(VENDING_SLOT).isEmpty();
-        return bl;
+        return get(PAYMENT_SLOT).isEmpty()  ||  get(VENDING_SLOT).isEmpty();
     }
 
     public static void ItemScatterer(Level world, BlockPos pos, ItemStack itemStack){

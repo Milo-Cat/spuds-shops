@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,13 +25,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.util.PostRegAssigner;
 import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
-import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -213,34 +210,27 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
 
     @Override
-    @SuppressWarnings({"deprecation"})
     public boolean canBeReplaced(BlockState state, @NotNull BlockPlaceContext context) {
         if(state.getValue(SHELVES_ENABLED) == SlabType.DOUBLE) return false;
         return context.getItemInHand().is(state.getBlock().asItem());
     }
 
     @Override
-    public @NotNull InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
 
-        ItemStack stack = player.getItemInHand(hand);
         BlockEntity be = level.getBlockEntity(pos);
 
         if (!(be instanceof AbstractShopEntity shop)) return InteractionResult.FAIL;
 
-        PermissionLevel perm = userSignIn(level, pos, player);
 
-        if (!stack.isEmpty() && perm.canEditTrades()) {
-            if (onUseWithItem(stack, state, level, pos, player)) return InteractionResult.SUCCESS;
-        }
-
-
-        if(player instanceof ServerPlayer serverPlayer) {
-            boolean openTop = hit.getLocation().y - pos.getY() > 0.5;
-            NetworkHooks.openScreen(serverPlayer, shop.createScreenHandlerFactory(openTop), buf -> {
-                buf.writeBlockPos(pos);
-                buf.writeBoolean(openTop);
-            });
+        if (player instanceof ServerPlayer serverPlayer) {
+            boolean openTop = hitResult.getLocation().y - pos.getY() > 0.5;
+            serverPlayer.openMenu(shop.createScreenHandlerFactory(openTop),
+                    buf -> {
+                        buf.writeBlockPos(pos);
+                        buf.writeBoolean(openTop);
+                    });
         }
 
 

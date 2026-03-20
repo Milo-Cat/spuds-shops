@@ -13,17 +13,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.spudacious5705.shops.screen.ScreenResources;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
-import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-import static net.spudacious5705.shops.SpudaciousShops.getResource;
+import static net.spudacious5705.shops.SpudaciousShops.id;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ScreenResources.*;
 import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner.*;
@@ -31,27 +31,27 @@ import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwne
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
 
     //region resources
-    private static final ResourceLocation RED_BUTTON = getResource("textures/gui/red_button.png");
-    private static final ResourceLocation RED_BUTTON_SELECTED = getResource("textures/gui/red_button_selected.png");
-    private static final ResourceLocation GREEN_BUTTON = getResource("textures/gui/green_button.png");
-    private static final ResourceLocation GREEN_BUTTON_SELECTED = getResource("textures/gui/green_button_selected.png");
-    private static final ResourceLocation COG_ICON = getResource("textures/gui/settings.png");
-    private static final ResourceLocation STORAGE_ICON = getResource("textures/gui/storage.png");
+    private static final ResourceLocation RED_BUTTON = id("textures/gui/red_button.png");
+    private static final ResourceLocation RED_BUTTON_SELECTED = id("textures/gui/red_button_selected.png");
+    private static final ResourceLocation GREEN_BUTTON = id("textures/gui/green_button.png");
+    private static final ResourceLocation GREEN_BUTTON_SELECTED = id("textures/gui/green_button_selected.png");
+    private static final ResourceLocation COG_ICON = id("textures/gui/settings.png");
+    private static final ResourceLocation STORAGE_ICON = id("textures/gui/storage.png");
     private static final ResourceLocation SHOPFRONT_ICON = CURRENCY_IMG_MAP.getOrDefault(
             Component.translatable("gui.spudaciousshops.currency_type").getString().charAt(0),
-            getResource("textures/gui/currency_textures/gbp.png")
+            id("textures/gui/currency_textures/gbp.png")
     );
-    private static final ResourceLocation TAB_SELECTED = getResource("textures/gui/tab_selected.png");
-    private static final ResourceLocation TAB_DESELECTED = getResource("textures/gui/tab_deselected.png");
-    private static final ResourceLocation TAB_HOVER = getResource("textures/gui/tab_hover.png");
-    private static final ResourceLocation CREATIVE_ON = getResource("textures/gui/creative_on.png");
-    private static final ResourceLocation CREATIVE_OFF = getResource("textures/gui/creative_off.png");
-    private static final ResourceLocation EFFECTS_ON = getResource("textures/gui/effects_on.png");
-    private static final ResourceLocation EFFECTS_OFF = getResource("textures/gui/effects_off.png");
-    private static final ResourceLocation NBT_IGNORE = getResource("textures/gui/nbt_ignore.png");
-    private static final ResourceLocation NBT_CHECK = getResource("textures/gui/nbt_check.png");
-    private static final ResourceLocation TRADE_MONO = getResource("textures/gui/trade_mono.png");
-    private static final ResourceLocation TRADE_SELECT = getResource("textures/gui/trade_select.png");
+    private static final ResourceLocation TAB_SELECTED = id("textures/gui/tab_selected.png");
+    private static final ResourceLocation TAB_DESELECTED = id("textures/gui/tab_deselected.png");
+    private static final ResourceLocation TAB_HOVER = id("textures/gui/tab_hover.png");
+    private static final ResourceLocation CREATIVE_ON = id("textures/gui/creative_on.png");
+    private static final ResourceLocation CREATIVE_OFF = id("textures/gui/creative_off.png");
+    private static final ResourceLocation EFFECTS_ON = id("textures/gui/effects_on.png");
+    private static final ResourceLocation EFFECTS_OFF = id("textures/gui/effects_off.png");
+    private static final ResourceLocation NBT_IGNORE = id("textures/gui/nbt_ignore.png");
+    private static final ResourceLocation NBT_CHECK = id("textures/gui/nbt_check.png");
+    private static final ResourceLocation TRADE_MONO = id("textures/gui/trade_mono.png");
+    private static final ResourceLocation TRADE_SELECT = id("textures/gui/trade_select.png");
     //endregion resources
 
     private final ScreenSettingsGroup SETTINGS;
@@ -153,7 +153,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     @Override
     public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
-        renderBackground(context);
+        renderBackground(context, mouseX, mouseY, partialTick);
         super.render(context, mouseX, mouseY, partialTick);
         Font font = Minecraft.getInstance().font;
 
@@ -220,7 +220,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     //region interaction
     private void WarnPopupContinue(){
-        NetworkHelper.CHANNEL.sendToServer(new ShopSelfDemotePkt());
+        PacketDistributor.sendToServer(new ShopSelfDemotePkt());
         menu.close();
     }
 

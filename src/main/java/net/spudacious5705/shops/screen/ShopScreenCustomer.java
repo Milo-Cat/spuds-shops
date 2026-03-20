@@ -45,7 +45,7 @@ public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandle
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         NotifNBTMatchOFF.renderWidget(guiGraphics,mouseX,mouseY,partialTick, font);
         this.renderTooltip(guiGraphics, mouseX, mouseY);

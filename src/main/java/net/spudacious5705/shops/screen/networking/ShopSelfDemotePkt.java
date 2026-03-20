@@ -1,28 +1,44 @@
 package net.spudacious5705.shops.screen.networking;
 
-import net.minecraft.network.FriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
+import static net.spudacious5705.shops.SpudaciousShops.id;
 
-public record ShopSelfDemotePkt() {
-    public void encode(FriendlyByteBuf friendlyByteBuf) {
+public record ShopSelfDemotePkt() implements CustomPacketPayload {
+
+    public static final CustomPacketPayload.Type<ShopSelfDemotePkt> TYPE = new CustomPacketPayload.Type<>(id("self_demote"));
+
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static ShopSelfDemotePkt decode(FriendlyByteBuf friendlyByteBuf) {
-        return new ShopSelfDemotePkt();
-    }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
-            if (player != null && player.containerMenu instanceof ShopScreenHandlerOwner screenHandler) {
+    public static final StreamCodec<ByteBuf, ShopSelfDemotePkt> STREAM_CODEC = new StreamCodec<>() {
+            public @NotNull ShopSelfDemotePkt decode(ByteBuf b) {
+                return new ShopSelfDemotePkt();
+            }
+
+            public void encode(@NotNull ByteBuf b, @NotNull ShopSelfDemotePkt de) {}
+        };
+
+    public void handle(IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            if(
+                    ctx.player() instanceof ServerPlayer player
+                            &&
+                            player.containerMenu instanceof ShopScreenHandlerOwner screenHandler
+            ) {
                 screenHandler.selfDemotePlayer(player);
                 player.doCloseContainer();
             }
         });
-        ctx.get().setPacketHandled(true);
     }
 }

@@ -2,13 +2,7 @@ package net.spudacious5705.shops;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.spudacious5705.shops.block.*;
 import net.spudacious5705.shops.block.entity.renderer.ShopIconModels;
 import net.spudacious5705.shops.block.resources.VariantResources;
@@ -17,22 +11,22 @@ import net.spudacious5705.shops.item.ModItemGroups;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
-import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.util.PostRegAssigner;
 import org.slf4j.Logger;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 
 import static net.spudacious5705.shops.block.ModBlocks.postRegistryTasks;
 
 //import net.spudacious5705.shops.command.DebugShopsStatesCommand;
 
-@Mod("spudaciousshops")
+@Mod(SpudaciousShops.MOD_ID)
 public class SpudaciousShops{
 	public static final String MOD_ID = "spudaciousshops";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public SpudaciousShops() {
-
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer) {
 
         ModItems.registerModItems(modEventBus);
 		ModBlocks.registerModBlocks(modEventBus);
@@ -50,11 +44,11 @@ public class SpudaciousShops{
 
 		//DebugShopsStatesCommand.register(); //for DEBUG purposes only
 
-		NetworkHelper.register();
 	}
 
+
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID,path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -70,17 +64,5 @@ public class SpudaciousShops{
         VariantResources.register();
         //Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
-
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
-
-    public static ResourceLocation getResource(String path){
-        return new ResourceLocation(MOD_ID, path);
-    }
-
 
 }

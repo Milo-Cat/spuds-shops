@@ -1,6 +1,7 @@
 package net.spudacious5705.shops.permission;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -9,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.spudacious5705.shops.item.ModItems;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import static net.spudacious5705.shops.item.custom.ContractScroll.isSigned;
+import static net.spudacious5705.shops.item.custom.ContractScroll.*;
 import static net.spudacious5705.shops.permission.PermissionLevel.*;
 
 public class PermissionManager<B extends BlockEntity> implements IBlockPermissions<B>{
@@ -103,12 +105,13 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
         public static final PlayerID EMPTY = new PlayerID(new UUID(0,0),"##OWNER NAME NULL##",PermissionLevel.CUSTOMER);
 
         public static PlayerID fromContract(ItemStack contract, PermissionLevel permissionLevel) {
-            CompoundTag nbt = contract.getTag();
-            if(nbt != null) {
-                if (ContractScroll.isSigned(contract)) {//technically dont need this 2nd check
+            CustomData data = contract.get(DataComponents.CUSTOM_DATA);
+            if (data != null) {
+                CompoundTag tag = data.copyTag();
+                if(tag.hasUUID(NBTuuid)){
                     return new PlayerID(
-                            nbt.getUUID(ContractScroll.NBTuuid),
-                            nbt.getString(ContractScroll.NBTname),
+                    tag.getUUID(NBTuuid),
+                            tag.getString(NBTname),
                             permissionLevel
                     );
                 }
@@ -137,14 +140,9 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
 
         ItemStack stack = new ItemStack(ModItems.CONTRACT_SCROLL.get());
 
-        CompoundTag nbt = new CompoundTag();
+        ContractScroll.writeData(stack,id.name,id.uuid);
 
-        nbt.putString("player_name", id.name);
-        nbt.putUUID("player_uuid", id.uuid);
-
-        stack.setTag(nbt);
-
-        return stack.setHoverName(Component.literal("Contract - "+id.name));
+        return stack;
     }
 
     protected String ownerName = PlayerID.EMPTY.name;

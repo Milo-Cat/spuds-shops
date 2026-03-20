@@ -10,15 +10,15 @@ import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.List;
 
-import static net.spudacious5705.shops.SpudaciousShops.getResource;
+import static net.spudacious5705.shops.SpudaciousShops.id;
 
 public class ScreenResources {
 
-    public static void init(){};
+    public static void init(){}
 
     public static final int DEFAULT_TEXT_COLOUR = 11141290;
 
-    public static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
+    public static final ResourceLocation WARNING_TEXTURE = id("textures/gui/warning_screen.png");
 
     public static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
     public static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
@@ -53,7 +53,7 @@ public class ScreenResources {
     public static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
     public static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
 
-    public static final ResourceLocation NOTIFICATION_ICON = getResource("textures/gui/notification.png");
+    public static final ResourceLocation NOTIFICATION_ICON = id("textures/gui/notification.png");
 
     public static final List<Component> PRODUCT_NBT_UNCHECKED_WARN = List.of(
             Component.translatable("gui.spudaciousshops.nbt_unchecked_warn_header"),

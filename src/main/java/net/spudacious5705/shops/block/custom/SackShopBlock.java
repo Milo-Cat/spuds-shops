@@ -100,7 +100,7 @@ public class SackShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
+    public @NotNull BlockState rotate(BlockState state, @NotNull LevelAccessor level, @NotNull BlockPos pos, Rotation direction) {
         return state;
     }
 

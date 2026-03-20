@@ -163,7 +163,7 @@ public class RugShopBlock extends AbstractShopBlock{
 
 
     @Override
-    public BlockState rotate(BlockState state, LevelAccessor level, BlockPos pos, Rotation direction) {
+    public @NotNull BlockState rotate(BlockState state, @NotNull LevelAccessor level, @NotNull BlockPos pos, Rotation direction) {
         return state;
     }
 
@@ -173,7 +173,6 @@ public class RugShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    @SuppressWarnings({"deprecation"})
     public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
 
         BooleanProperty CONNECTION = switch(direction){

@@ -15,12 +15,13 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
+import static net.spudacious5705.shops.SpudaciousShops.id;
 
 public class CushionModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("spudaciousshops", "cushion_model"), "main");
+            id("cushion_model"), "main");
 
 
 	private final ModelPart main;
@@ -41,11 +42,11 @@ public class CushionModel extends Model {
 
 
 	public void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
-        renderToBuffer(matrices, vertices, light, overlay, 1.0F, 1.0F, 1.0F, 1.0F);
+        renderToBuffer(matrices, vertices, light, overlay, 1);
 	}
 
     @Override
-    public void renderToBuffer(@NotNull PoseStack matrices, @NotNull VertexConsumer vertices, int light, int overlay, float pRed, float pGreen, float pBlue, float pAlpha) {
+    public void renderToBuffer(@NotNull PoseStack matrices, @NotNull VertexConsumer vertices, int light, int overlay, int unknown) {
         main.render(matrices, vertices, light, overlay);
     }
 }

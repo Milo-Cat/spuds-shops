@@ -5,11 +5,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.ModBlocks;
+
+import java.util.function.Supplier;
 
 
 public final class ModItemGroups {
@@ -17,7 +18,7 @@ public final class ModItemGroups {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SpudaciousShops.MOD_ID);
 
-    public static final RegistryObject<CreativeModeTab> SHOPS_TAB = CREATIVE_MODE_TABS.register("shops_tab",
+    public static final Supplier<CreativeModeTab> SHOPS_TAB = CREATIVE_MODE_TABS.register("shops_tab",
             () -> CreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.SHOP_BLOCK_ANGLED_OAK.get().getDefaultColouredShopItem()))
                     .title(Component.translatable("itemGroup.spudaciousshops.shop_item_group"))
                     .displayItems(

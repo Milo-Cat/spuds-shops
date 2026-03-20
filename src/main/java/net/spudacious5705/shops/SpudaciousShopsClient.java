@@ -2,37 +2,24 @@ package net.spudacious5705.shops;
 
 
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.renderer.*;
 import net.spudacious5705.shops.block.resources.CushionModel;
 import net.spudacious5705.shops.block.resources.CushionResources;
 import net.spudacious5705.shops.block.resources.CushionTextures;
-import net.spudacious5705.shops.screen.ModScreenHandlers;
 
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
-@Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
 public class SpudaciousShopsClient{
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event){
-
-
-
-        event.enqueueWork(//() -> {
-
-            ModScreenHandlers::registerScreens
-
-            /*ModBlocks.getAllShops().forEach((RegistryObject<? extends AbstractShopBlock> shop) -> {
-                ItemBlockRenderTypes.setRenderLayer(shop.get(), RenderType.translucent());
-            });
-        }*/
-        );
 
 
         CushionTextures.initialiseCushionTextures();

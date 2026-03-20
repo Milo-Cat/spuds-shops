@@ -2,6 +2,7 @@ package net.spudacious5705.shops.block.entity;
 
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,8 +28,8 @@ public class AngledShopEntity extends AbstractShopEntity{
 
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
+        super.loadAdditional(tag, holder);
         if(tag.contains(COLOUR_NBT_TAG)) {
             this.cushionColour = Colour.fromId(tag.getInt(COLOUR_NBT_TAG));
         }else{
@@ -37,9 +38,9 @@ public class AngledShopEntity extends AbstractShopEntity{
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
         tag.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
-        super.saveAdditional(tag);
+        super.saveAdditional(tag, holder);
     }
 
     public Colour getCushionColour() {

@@ -2,19 +2,19 @@ package net.spudacious5705.shops.block.resources;
 
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.spudacious5705.shops.properties.Colour;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static net.spudacious5705.shops.SpudaciousShops.getResource;
+import static net.spudacious5705.shops.SpudaciousShops.id;
 import static net.spudacious5705.shops.properties.Colour.*;
 
 @OnlyIn(Dist.CLIENT)
 public class CushionTextures {
-    public static final Map<Colour, ResourceLocation> TEXTURE_MAP = new HashMap<Colour,ResourceLocation>();
+    public static final Map<Colour, ResourceLocation> TEXTURE_MAP = new HashMap<>();
 
     public static final ResourceLocation TEXTURE_RED = registerTexture(RED,"textures/block/cushion/red.png");
     public static final ResourceLocation TEXTURE_WHITE = registerTexture(WHITE,"textures/block/cushion/white.png");
@@ -34,7 +34,7 @@ public class CushionTextures {
     public static final ResourceLocation TEXTURE_PINK = registerTexture(PINK,"textures/block/cushion/pink.png");
 
     public static ResourceLocation registerTexture(Colour colour, String path) {
-        ResourceLocation texture = getResource(path);
+        ResourceLocation texture = id(path);
         TEXTURE_MAP.put(colour, texture);
         return texture;
     }

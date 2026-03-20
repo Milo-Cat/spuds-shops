@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -125,7 +126,10 @@ public class AngledShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+    public @NotNull ItemStack getCloneItemStack(
+            @NotNull BlockState state, @NotNull HitResult target,
+            LevelReader level, @NotNull BlockPos pos, @NotNull Player player
+    ) {
        Colour colour = Colour.RED;
         if(level.getBlockEntity(pos) instanceof AngledShopEntity shopEntity) {
             colour = shopEntity.getCushionColour();
@@ -135,7 +139,10 @@ public class AngledShopBlock extends AbstractShopBlock {
 
 
     @Override
-    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos, @NotNull CollisionContext pContext){
+    public @NotNull VoxelShape getShape(
+            @NotNull BlockState state, @NotNull BlockGetter pLevel,
+            @NotNull BlockPos pPos, @NotNull CollisionContext pContext
+    ){
         return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_SHAPE;
             case SOUTH -> SOUTH_SHAPE;
@@ -146,7 +153,10 @@ public class AngledShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getCollisionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context){
+    public @NotNull VoxelShape getCollisionShape(
+            @NotNull BlockState state, @NotNull BlockGetter level,
+            @NotNull BlockPos pos, @NotNull CollisionContext context
+    ){
         return switch (state.getValue(FACING)) {
         case NORTH -> BASE_NORTH;
         case SOUTH -> BASE_SOUTH;
@@ -155,7 +165,10 @@ public class AngledShopBlock extends AbstractShopBlock {
         default -> CULLING_SHAPE;
     };}
     @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos){return CULLING_SHAPE;}
+    public @NotNull VoxelShape getOcclusionShape(
+            @NotNull BlockState state, @NotNull BlockGetter level,
+            @NotNull BlockPos pos
+    ){return CULLING_SHAPE;}
 
     @Override
     protected VoxelShape getGenericShape(BlockState state) {

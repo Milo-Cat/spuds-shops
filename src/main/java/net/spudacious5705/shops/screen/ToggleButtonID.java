@@ -6,7 +6,7 @@ public enum ToggleButtonID {
     IgnoreNBTToggle("iNBT"),
     EffectsToggle("Efex");
 
-    private final String serialised;
+    public final String serialised;
 
     ToggleButtonID(String s) {
         this.serialised = s;

@@ -1,47 +1,47 @@
 package net.spudacious5705.shops.screen.networking;
 
 
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.spudacious5705.shops.SpudaciousShops;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
+import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
+
+@EventBusSubscriber(modid = MOD_ID)
 public class NetworkHelper {
 
     private static final String PROTOCOL_VERSION = "1.0";
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            SpudaciousShops.getResource("main"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
-    );
 
-    private static int packetId = 0;
+    @SubscribeEvent // on the mod event bus
+    public static void register(final RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar reg = event.registrar(PROTOCOL_VERSION);
+        reg.playBidirectional(
+                ShopTabSyncPkt.TYPE,
+                ShopTabSyncPkt.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ShopTabSyncPkt::handleClientSide,
+                        ShopTabSyncPkt::handleServerSide
+                )
+        );
 
-    public static void register() {
-        CHANNEL.registerMessage(packetId++, ShopTabSyncPkt.class,
-                ShopTabSyncPkt::encode,
-                ShopTabSyncPkt::decode,
-                ShopTabSyncPkt::handle);
+        reg.playBidirectional(
+                ToggleSyncPkt.TYPE,
+                ToggleSyncPkt.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(
+                        ToggleSyncPkt::handleClientSide,
+                        ToggleSyncPkt::handleServerSide
+                )
+        );
 
-        CHANNEL.registerMessage(packetId++, ShopSelfDemotePkt.class,
-                ShopSelfDemotePkt::encode,
-                ShopSelfDemotePkt::decode,
-                ShopSelfDemotePkt::handle);
+        reg.playToServer(
+                ShopSelfDemotePkt.TYPE,
+                ShopSelfDemotePkt.STREAM_CODEC,
+                ShopSelfDemotePkt::handle
+        );
 
-        CHANNEL.registerMessage(packetId++, ToggleSyncPkt.class,
-                ToggleSyncPkt::encode,
-                ToggleSyncPkt::decode,
-                ToggleSyncPkt::handle);
 
-        CHANNEL.registerMessage(packetId++, ToggleSyncResponsePkt.class,
-                ToggleSyncResponsePkt::encode,
-                ToggleSyncResponsePkt::decode,
-                ToggleSyncResponsePkt::handle);
-
-        CHANNEL.registerMessage(packetId++, ShopTabSyncResponsePkt.class,
-                ShopTabSyncResponsePkt::encode,
-                ShopTabSyncResponsePkt::decode,
-                ShopTabSyncResponsePkt::handle);
     }
 
 
