@@ -29,10 +29,10 @@ public class ModScreenHandlers {
 
 
     public static final RegistryObject<MenuType<ShopScreenHandlerOwner>> SHOP_SCREEN_HANDLER_OWNER =
-            registerMenuType("shop_gui_owner", ShopScreenHandlerOwner::new);
+            registerMenuType("shop_gui_owner", ShopScreenHandlerOwner::create);
 
     public static final RegistryObject<MenuType<ShopScreenHandlerCustomer>> SHOP_SCREEN_HANDLER_CUSTOMER =
-            registerMenuType("shop_gui_customer",ShopScreenHandlerCustomer::new);
+            registerMenuType("shop_gui_customer",ShopScreenHandlerCustomer::create);
 
     private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MENUS.register(name, () -> IForgeMenuType.create(factory));

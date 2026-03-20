@@ -122,13 +122,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         public @NotNull ItemStack getItem(int slot) {
             if(slot>this.getContainerSize()||slot<0) return ItemStack.EMPTY;
 
-            if(slot>PROFIT_END) {
+            /*if(slot>PROFIT_END) {
                 return inventory.get(slot);
             }
 
-            if(permissions.canViewShopScreen()) return inventory.get(slot);
+            //if(permissions.canViewShopScreen())*/
+            return inventory.get(slot);
 
-            return ItemStack.EMPTY;
+            //return ItemStack.EMPTY;
         }
 
 
@@ -661,8 +662,6 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             breakableTicks = -1; // Reset
         }
     }
-
-    public abstract int getTextureId();
 
 
     protected int decayTimer = -1;

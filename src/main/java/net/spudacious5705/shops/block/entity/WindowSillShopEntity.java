@@ -11,10 +11,4 @@ public class WindowSillShopEntity extends AbstractShopEntity{
         super(ModBlockEntities.WINDOW_SHOP_ENTITY.get(), pos, state, -0.3f);
     }
 
-
-    @Override
-    public int getTextureId() {
-        return 0;
-    }
-
 }

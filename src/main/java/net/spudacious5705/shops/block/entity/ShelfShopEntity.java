@@ -11,7 +11,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.screen.ToggleButtonID;
 import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.block.entity.ShopInventory.ItemScatterer;
@@ -90,12 +89,6 @@ public class ShelfShopEntity extends AbstractShopEntity{
         return shopInventory.tradeFunctional()||shopInventoryTop.tradeFunctional();
     }
 
-
-
-    @Override
-    public int getTextureId() {
-        return 0;
-    }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {

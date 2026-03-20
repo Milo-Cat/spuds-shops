@@ -4,33 +4,32 @@ package net.spudacious5705.shops.screen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
 import org.jetbrains.annotations.NotNull;
+
+import static net.spudacious5705.shops.screen.ScreenResources.PRODUCT_NBT_UNCHECKED_WARN;
 
 
 public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandlerCustomer> {
 
-    protected int textureX = 0;
-    protected int textureY = 0;
-
-    private final ResourceLocation TEXTURE;
 
     public ShopScreenCustomer(ShopScreenHandlerCustomer handler, Inventory playerInventory, Component title) {
         super(handler, playerInventory, title);
-        TEXTURE = handler.getSettings().CUSTOMER().textureID();
-        imageWidth = 256;
+        imageWidth = 228;
         imageHeight = 256;
     }
+
+    ShopScreenOwner.NotificationWidget NotifNBTMatchOFF;
     @Override
     protected void init() {
         super.init();
 
-        leftPos = (width - imageWidth)/2+42;
-        topPos = (height - imageHeight)/2+50;
+        leftPos = (width - imageWidth)/2;
+        topPos = (height - imageHeight)/2;
 
-        textureX = leftPos-25;
-        textureY = topPos-90;
+        NotifNBTMatchOFF = new ShopScreenOwner.NotificationWidget(168 + leftPos, 127 + topPos, PRODUCT_NBT_UNCHECKED_WARN,
+                menu::showNBToffNotif);
     }
 
     @Override
@@ -39,17 +38,16 @@ public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandle
         //TODO perhaps implement this in fabric
     }
 
-
-
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(TEXTURE, textureX, textureY, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+        NotifNBTMatchOFF.renderWidget(guiGraphics,mouseX,mouseY,partialTick, font);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 }

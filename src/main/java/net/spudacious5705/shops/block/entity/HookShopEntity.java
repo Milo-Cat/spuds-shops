@@ -11,10 +11,5 @@ public class HookShopEntity extends AbstractShopEntity{
         super(ModBlockEntities.HOOK_SHOP_ENTITY.get(), pos, state, -2.1f);
     }
 
-    @Override
-    public int getTextureId() {
-        return 0;
-    }
-
 
 }

@@ -13,7 +13,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.ScreenResources;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
@@ -88,56 +87,56 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     protected void init() {
         super.init();
 
-        int posX = SETTINGS.tab1ButtonX()+leftPos;
-        int posY = SETTINGS.tab1ButtonY()+topPos;
+        int posX = SETTINGS.tab1ButtonX() + leftPos;
+        int posY = SETTINGS.tab1ButtonY() + topPos;
         SellerTabButton = new TabWidget(posX, posY, Component.literal(""), STORAGE_ICON, SELLER_TAB);
 
 
-        posX = SETTINGS.tab2ButtonX()+leftPos;
-        posY = SETTINGS.tab2ButtonY()+topPos;
+        posX = SETTINGS.tab2ButtonX() + leftPos;
+        posY = SETTINGS.tab2ButtonY() + topPos;
         SettingsTabButton = new TabWidget(posX, posY, Component.literal(""), COG_ICON, SETTINGS_TAB);
 
 
-        posX = SETTINGS.tab3ButtonX()+leftPos;
-        posY = SETTINGS.tab3ButtonY()+topPos;
+        posX = SETTINGS.tab3ButtonX() + leftPos;
+        posY = SETTINGS.tab3ButtonY() + topPos;
         ShopFrontTabButton = new TabWidget(posX, posY, Component.literal(""), SHOPFRONT_ICON, CUSTOMER_TAB);
 
 
-        posX = 22+leftPos;
-        posY = 128+topPos;
+        posX = 22 + leftPos;
+        posY = 128 + topPos;
         WarningCancel = new ButtonWidget(posX, posY, Component.literal("CANCEL"), () -> this.menu.updateTabSelectionClientside(SETTINGS_TAB), GREEN_BUTTON, GREEN_BUTTON_SELECTED, CANCEL, 3840);
 
         posX += 113;
         WarningProceed = new ButtonWidget(posX, posY, Component.literal("CONTINUE"), this::WarnPopupContinue, RED_BUTTON, RED_BUTTON_SELECTED, DELETE, 984329);
 
-        posX = SETTINGS.creativeButtonX()+leftPos;
-        posY = SETTINGS.creativeButtonY()+topPos;
+        posX = SETTINGS.creativeButtonX() + leftPos;
+        posY = SETTINGS.creativeButtonY() + topPos;
         ToggleCreative = new ToggleWidget(posX, posY, ToggleButtonID.CreativeToggle, CREATIVE_ON, CREATIVE_OFF, CREATIVE_TOGGLE_TOOLTIP);
-        posX = SETTINGS.toggleEffectsButtonX()+leftPos;
-        posY = SETTINGS.toggleEffectsButtonY()+topPos;
+        posX = SETTINGS.toggleEffectsButtonX() + leftPos;
+        posY = SETTINGS.toggleEffectsButtonY() + topPos;
         ToggleIconsEffects = new ToggleWidget(posX, posY, ToggleButtonID.EffectsToggle, EFFECTS_ON, EFFECTS_OFF, EFFECTS_TOGGLE_TOOLTIP);
 
-        PaymentItemWidget = new TradeItemWidget(menu.shopInventory, menu.PaymentSlot, PAYMENT, 0, PAYMENT_EMPTY_TOOLTIP);
-        ProductItemWidget = new TradeItemWidget(menu.shopInventory, menu.VendingSlot, PRODUCT, 1, PRODUCT_EMPTY_TOOLTIP);
+        PaymentItemWidget = new TradeItemWidget(menu.PaymentSlot, PAYMENT, 0, PAYMENT_EMPTY_TOOLTIP);
+        ProductItemWidget = new TradeItemWidget(menu.VendingSlot, PRODUCT, 1, PRODUCT_EMPTY_TOOLTIP);
 
 
-        posX = SETTINGS.shopStyleButtonX()+leftPos;
-        posY = SETTINGS.shopStyleButtonY()+topPos;
+        posX = SETTINGS.shopStyleButtonX() + leftPos;
+        posY = SETTINGS.shopStyleButtonY() + topPos;
         ToggleShopStyle = new ToggleWidget(posX, posY, ToggleButtonID.SelectableTradeToggle, TRADE_SELECT, TRADE_MONO, SHOP_STYLE_TOGGLE_TOOLTIP);
 
-        posX = SETTINGS.ignoreNBTButtonX()+leftPos;
-        posY = SETTINGS.ignoreNBTButtonY()+topPos;
+        posX = SETTINGS.ignoreNBTButtonX() + leftPos;
+        posY = SETTINGS.ignoreNBTButtonY() + topPos;
         ToggleIgnoreNBT = new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, NBT_IGNORE, NBT_CHECK, IGNORE_NBT_TOGGLE_TOOLTIP);
 
-        posX = 2+leftPos;
-        posY = 78+topPos;
+        posX = 2 + leftPos;
+        posY = 78 + topPos;
         NotifShopStyleSelectOn = new NotificationWidget(posX, posY, SELECT_STYLE_INFO,
                 () -> menu.getStateOfSetting(ToggleButtonID.SelectableTradeToggle));
 
-        posX = 168+leftPos;
-        posY = 127+topPos;
+        posX = 168 + leftPos;
+        posY = 127 + topPos;
         NotifNBTMatchOFF = new NotificationWidget(posX, posY, PRODUCT_NBT_UNCHECKED_WARN,
-                () -> menu.getStateOfSetting(ToggleButtonID.IgnoreNBTToggle)&&!menu.getStateOfSetting(ToggleButtonID.SelectableTradeToggle));
+                () -> menu.getStateOfSetting(ToggleButtonID.IgnoreNBTToggle) && !menu.getStateOfSetting(ToggleButtonID.SelectableTradeToggle));
 
     }
 
@@ -434,7 +433,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         private final ShopScreenHandlerOwner.shop_trade_slot slot;
         private final MutableComponent emptyStackTooltip;
 
-        private TradeItemWidget(AbstractShopEntity.InventoryDelegate inventory, ShopScreenHandlerOwner.shop_trade_slot slot, Component message, int slotId, MutableComponent emptyStackTooltip) {
+        private TradeItemWidget(ShopScreenHandlerOwner.shop_trade_slot slot, Component message, int slotId, MutableComponent emptyStackTooltip) {
             super(slot.x, slot.y, 16, 16, message);
             this.slot = slot;
             this.emptyStackTooltip = emptyStackTooltip;
@@ -490,7 +489,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-    static class NotificationWidget extends CustomClickableWidget {
+    public static class NotificationWidget extends CustomClickableWidget {
         private final List<Component> tooltip;
 
         private final Supplier<Boolean> renderToggle;
@@ -500,7 +499,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             this.tooltip = tooltip;
             this.renderToggle = renderToggle;
         }
-        protected void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float d, Font font) {
+        public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float d, Font font) {
             if(!renderToggle.get())return;
             int x = this.getX();
             int y = this.getY();

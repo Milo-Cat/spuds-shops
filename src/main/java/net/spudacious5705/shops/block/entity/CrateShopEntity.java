@@ -11,10 +11,5 @@ public class CrateShopEntity extends AbstractShopEntity{
         super(ModBlockEntities.CRATE_SHOP_ENTITY.get(), pos, state, 0f);
     }
 
-    @Override
-    public int getTextureId() {
-        return 0;
-    }
-
 
 }

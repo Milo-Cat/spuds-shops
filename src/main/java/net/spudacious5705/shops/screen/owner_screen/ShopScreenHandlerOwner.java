@@ -1,17 +1,15 @@
 package net.spudacious5705.shops.screen.owner_screen;
 
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -20,9 +18,7 @@ import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.permission.PermissionManager;
-import net.spudacious5705.shops.screen.ModScreenHandlers;
-import net.spudacious5705.shops.screen.ScreenSettingsGroup;
-import net.spudacious5705.shops.screen.ToggleButtonID;
+import net.spudacious5705.shops.screen.*;
 import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopTabSyncPkt;
 import net.spudacious5705.shops.screen.networking.ToggleSyncPkt;
@@ -36,7 +32,7 @@ import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
 import static net.spudacious5705.shops.permission.PermissionManager.player_ID_Records_Delegate.checkAction;
 import static net.spudacious5705.shops.screen.ScreenResources.WARNING_TEXTURE;
 
-public class ShopScreenHandlerOwner extends AbstractContainerMenu {
+public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //region variables
 
@@ -47,37 +43,18 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     @MagicConstant static final int CUSTOMER_TAB = 3;
     @MagicConstant static final int WARNING_TAB = 4;
 
-    private final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
     private final PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate ID_RECORDS_DELEGATE;
     final PermissionLevel perms;
 
-    final AbstractShopEntity.InventoryDelegate shopInventory;
-    final Inventory playerInventory;
 
-    final ScreenSettingsGroup SCREEN_SETTINGS;
-
-    private final List<TogglableSlot> playerInvSlots = new ArrayList<>();
     private final List<TogglableSlot> tabSellerSlots = new ArrayList<>();
     final List<TogglableSlot> tabSettingsSlots = new ArrayList<>();
-    private final List<TogglableSlot> tabTradeMonoSlots = new ArrayList<>();
-    private final List<TogglableSlot> tabTradeSelectSlots = new ArrayList<>();
-
     private int activeTab = SELLER_TAB;
 
 
     //endregion variables
 
     //region utilities
-
-    private void attemptTrade(int index, Player player){
-        if(shopInventory.canTrade(player)){
-            if(SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle)){//standard trade
-                this.shopInventory.tradeWithSelection(playerInventory, index);
-            } else {//selectable trade
-                this.shopInventory.trade(playerInventory);
-            }
-        }
-    }
 
     public void selfDemotePlayer(Player player) {
         if(activeTab==WARNING_TAB){
@@ -136,44 +113,28 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     //region menu open/setup/close
 
-    public ShopScreenHandlerOwner(int syncId, Inventory playerInventory, FriendlyByteBuf buf) {//clientInit
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId);
+    public static ShopScreenHandlerOwner create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
         boolean openTop = buf.readBoolean();
+
+        Player player = playerInv.player;
+        if(player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
+            return new ShopScreenHandlerOwner(syncId, playerInv, pos, openTop, shop);
+        }
+
+        Minecraft.getInstance().setScreen(null);
+        return null;
+    }
+
+    public ShopScreenHandlerOwner(int syncId, Inventory playerInventory, BlockPos pos, boolean openTop, AbstractShopEntity shop) {//clientInit
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId, playerInventory, openTop, shop);
         Player player = playerInventory.player;
 
-        this.playerInventory = playerInventory;
+        this.perms = shopInventory.checkPermissions();
 
-        if(player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
+        ID_RECORDS_DELEGATE = shop.getRecordsDelegate(player);
 
-            AbstractShopEntity.InventoryDelegate inventoryDelegate = openTop ?
-                    shop.getOtherInventoryDelegate(player)
-                    :
-                    shop.getInventoryDelegate(player);
-
-
-            if (inventoryDelegate != null && inventoryDelegate.getContainerSize() != EXPECTED_CONTAINER_SIZE) {
-                throw new IllegalArgumentException("Inventory size must be 78");
-            }
-
-            this.shopInventory = inventoryDelegate;
-            this.perms = shopInventory.checkPermissions();
-
-            this.SCREEN_SETTINGS = shop.getScreenSettings();
-
-            ID_RECORDS_DELEGATE = shop.getRecordsDelegate(player);
-
-            SETTINGS_DELEGATE = shop.getSettingsDelegate(player);
-
-            finishSetup();
-        } else {
-            player.closeContainer();
-            this.shopInventory = null;
-            this.SCREEN_SETTINGS = null;
-            this.perms = PermissionLevel.CUSTOMER;
-            ID_RECORDS_DELEGATE = null;
-            SETTINGS_DELEGATE = null;
-        }
+        finishSetup();
     }
 
     public ShopScreenHandlerOwner(
@@ -184,14 +145,10 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate recordsDelegate,
             AbstractShopEntity.settings_Delegate settingsDelegate
     ) {//serverInit
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId);
-        this.shopInventory = inventoryDelegate;
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId, inventoryDelegate, settingsDelegate, playerInventory, null);
         checkContainerSize(shopInventory, EXPECTED_CONTAINER_SIZE );
         this.perms = shopInventory.checkPermissions();
-        this.SCREEN_SETTINGS = null;
-        this.playerInventory = playerInventory;
         this.ID_RECORDS_DELEGATE = recordsDelegate;
-        this.SETTINGS_DELEGATE = settingsDelegate;
 
         finishSetup();
     }
@@ -200,12 +157,10 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     private int shopInvEnd;
     private int tradeInvEnd;
     private int contractsInvEnd;
-    private int monoVendorSlotIndex;
     private void finishSetup() {
 
 
-        int intialSlots = slots.size();
-        addPlayerInventory(playerInventory);
+        addPlayerInventory(playerInventory, 33, 174);
         playerInventory.startOpen(playerInventory.player);
         playerInvEnd = slots.size()-1;
 
@@ -239,8 +194,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     shop_trade_slot VendingSlot;
     shop_trade_slot[] TradeDefSlots;
 
-    private int[] lockedDownSlots = new int[2];
-
     private void addShopTrades() {
         int x = 25;
         int y = 31;
@@ -273,19 +226,8 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
 
     }
 
-    @Override
-    public boolean stillValid(@NotNull Player player) {
-        return this.shopInventory.stillValid(player);
-    }
-
     public void close() {
         playerInventory.player.closeContainer();
-    }
-
-    @Override
-    public void removed(@NotNull Player player) {
-        super.removed(player);
-        playerInventory.stopOpen(player); // Notify close
     }
 
     private void addShopInventory(){
@@ -318,22 +260,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     }
 
 
-    private void addPlayerInventory(Inventory playerInventory) {
 
-        int offsetx = 33;
-        int offsety = 232;
-
-        for (int i = 0; i < 9; ++i) {
-            new player_slot(playerInventory, i, offsetx + i * 18, offsety);
-        }
-
-        offsety = 174;
-        for (int i = 0; i < 3; ++i) {
-            for (int l = 0; l < 9; ++l) {
-                new player_slot(playerInventory, l + i * 9 + 9, offsetx + l * 18, offsety + i * 18);
-            }
-        }
-    }
 
     //endregion menu open/setup/close
 
@@ -347,8 +274,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         } else if(pSlotId == VendingSlot.index){
             tradeWindowPress(VendingSlot, pButton);
         } else {
-            for (int i : lockedDownSlots) if (i == pSlotId) return;
-            super.clicked(pSlotId, pButton, pClickType, pPlayer);
+            super.clicked(pSlotId, pButton, pClickType, pPlayer);//locked down slots handled in super
         }
     }
 
@@ -426,26 +352,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         return executeQuickMove(invSlot, 0, playerInvEnd);
     }
 
-    private ItemStack executeQuickMove(int invSlot, int startIndex, int endIndex){
-        ItemStack newStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(invSlot);
-        if (!slot.hasItem()) {return newStack;}
-        ItemStack originalStack = slot.getItem();
-        newStack = originalStack.copy();
-
-        if (!this.moveItemStackTo(originalStack, startIndex, endIndex, false)) {
-            return ItemStack.EMPTY;
-        }
-
-        if (originalStack.isEmpty()) {
-            slot.set(ItemStack.EMPTY);
-        } else {
-            slot.setChanged();
-        }
-
-        return newStack;
-    }
-
     //tab/screen
     @OnlyIn(Dist.CLIENT)
     public void updateTabSelectionClientside(int tab){
@@ -496,25 +402,12 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
         }
     }
 
-    private void updateTradeSlots(boolean enable){
-        if(enable){
-            if(SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle)){
-                tabTradeSelectSlots.forEach(TogglableSlot::enable);
-                tabTradeMonoSlots.forEach(TogglableSlot::disable);
-            } else {
-                tabTradeSelectSlots.forEach(TogglableSlot::disable);
-                tabTradeMonoSlots.forEach(TogglableSlot::enable);
-            }
-        } else {
-            tabTradeSelectSlots.forEach(TogglableSlot::disable);
-            tabTradeMonoSlots.forEach(TogglableSlot::disable);
-        }
-    }
-
     //settings buttons
     public boolean toggleButtonServersideUpdate(ToggleButtonID button, boolean state) {
         //SpudaciousShops.LOGGER.debug("packet received: {} - {}", button.getSerialised(), state);
-        SETTINGS_DELEGATE.attemptSetState(button,state);
+        if(SETTINGS_DELEGATE.attemptSetState(button,state)){
+            shopInventory.setChanged();
+        }
         return SETTINGS_DELEGATE.getState(button);
     }
 
@@ -534,41 +427,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
     //endregion interactions
 
     //region widgets
-
-    static class TogglableSlot extends Slot {
-        private boolean toggled = true;
-        public TogglableSlot(Container inventory, int slot, int x, int y) {
-            super(inventory, slot, x, y);
-        }
-
-        @Override
-        public boolean isActive() {
-            return toggled;
-        }
-
-        public void enable(){
-            toggled=true;
-        }
-
-        public void disable(){
-            toggled=false;
-        }
-
-
-    }
-
-    class player_slot extends TogglableSlot {
-        /**
-         *
-         * Automatically adds itself to the neccecary lists
-         */
-        public player_slot(Inventory inventory, int slot, int x, int y) {
-            super(inventory, slot, x, y);
-            playerInvSlots.add(this);
-            addSlot(this);
-        }
-
-    }
 
     class contract_slot extends TogglableSlot {
 
@@ -743,101 +601,6 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
          * this method is for syncing and not accessible by the player
          public void set(ItemStack pStack)
          */
-    }
-
-    class shop_payment_slot extends TogglableSlot {
-
-        public shop_payment_slot(AbstractShopEntity.InventoryDelegate inventory, int slot, int x, int y) {
-            super(inventory, slot, x, y);
-            addSlot(this);
-            this.disable();
-        }
-
-        @Override
-        public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            return Optional.empty();
-        }
-
-        @Override
-        public boolean mayPlace(@NotNull ItemStack pStack) {
-            return false;
-        }
-
-        @Override
-        public boolean mayPickup(@NotNull Player pPlayer) {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack safeInsert(@NotNull ItemStack pStack) {
-            return pStack;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack safeInsert(@NotNull ItemStack pStack, int pIncrement) {
-            return pStack;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            return ItemStack.EMPTY;
-        }
-
-        /**
-         * DO NOT OVERRIDE
-         * this method is for syncing and not accessible by the player
-         public void set(ItemStack pStack)
-         **/
-
-        @Override
-        public void setByPlayer(@NotNull ItemStack pStack) {
-        }
-    }
-
-    class shop_vendor_slot extends TogglableSlot {
-        public shop_vendor_slot(AbstractShopEntity.InventoryDelegate inventory, int index, int x, int y) {
-            super(inventory, index, x, y);
-            addSlot(this);
-            this.disable();
-        }
-
-        @Override
-        public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
-            return Optional.empty();
-        }
-
-        @NotNull
-        @Override
-        public ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public boolean mayPickup(@NotNull Player playerEntity) {
-            return true;//shopInventory.canTrade(playerEntity);
-        }
-
-        @Override
-        public boolean mayPlace(@NotNull ItemStack s) {
-            return false;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack safeInsert(@NotNull ItemStack pStack) {
-            return pStack;
-        }
-
-        @NotNull
-        @Override
-        public ItemStack safeInsert(@NotNull ItemStack pStack, int pIncrement) {
-            return pStack;
-        }
     }
 
     //endregion widgets
