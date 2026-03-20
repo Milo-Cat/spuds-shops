@@ -282,6 +282,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
                     Y >= 0 && Y < this.height;
         }
 
+        @Override
+        protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {}
+
+        @Override
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {}
     }
 
     private class TabWidget extends CustomClickableWidget {
@@ -314,9 +319,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             menu.updateTabSelectionClientside(relatedState);
         }
 
-        @Override
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {}
-
     }
 
     private class ToggleWidget extends CustomClickableWidget{
@@ -338,11 +340,10 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float pPartialTick) {
+        protected void renderWidget(@NotNull GuiGraphics context, int mouseX, int mouseY, float pPartialTick) {
             int x = this.getX();
             int y = this.getY();
 
-            //todo render tooltip
             boolean toggle = menu.getStateOfSetting(BUTTON_ID);
 
             context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
@@ -357,12 +358,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         public void onClick(double pMouseX, double pMouseY) {
             menu.handleToggleButtonInput(BUTTON_ID);
         }
-
-        @Override
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
-
-    }
-
     }
 
     private class ButtonWidget extends CustomClickableWidget{
@@ -413,11 +408,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             FUNCTION.run();
         }
 
-        @Override
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
-
-        }
-
     }
 
     private class TradeItemWidget extends CustomClickableWidget{
@@ -462,11 +452,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         @Override
         public boolean isHovered(double X, double Y) {
             return super.isHovered(X-leftPos, Y-topPos);
-        }
-
-        @Override
-        protected void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-
         }
 
         @Override
