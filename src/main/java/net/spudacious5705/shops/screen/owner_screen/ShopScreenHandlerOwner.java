@@ -258,7 +258,7 @@ public class ShopScreenHandlerOwner extends AbstractContainerMenu {
             }
         }
 
-        shop_payment_slot lockedSlot = new shop_payment_slot(shopInventory, PAYMENT_SLOT, 71, 20);
+        shop_payment_slot lockedSlot = new shop_payment_slot(shopInventory, PAYMENT_SLOT, 105, 12);
         lockedDownSlots[0] = lockedSlot.index;
         tabTradeSelectSlots.add(lockedSlot);
 
