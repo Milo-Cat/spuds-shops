@@ -53,6 +53,20 @@ public class ScreenResources {
     public static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
     public static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
 
+    public static final ResourceLocation NOTIFICATION_ICON = getResource("textures/gui/notification.png");
+
+    public static final List<Component> PRODUCT_NBT_UNCHECKED_WARN = List.of(
+            Component.translatable("gui.spudaciousshops.nbt_unchecked_warn_header"),
+            Component.translatable("gui.spudaciousshops.nbt_unchecked_warn_line1"),
+            Component.translatable("gui.spudaciousshops.nbt_unchecked_warn_line2")
+    );
+
+    public static final List<Component> SELECT_STYLE_INFO = List.of(
+            Component.translatable("gui.spudaciousshops.select_style_info_header"),
+            Component.translatable("gui.spudaciousshops.select_style_info_line1"),
+            Component.translatable("gui.spudaciousshops.select_style_info_line2")
+    );
+
     public static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = initSettingsHoverInfoTexts();
 
     static ToolTipText[] initSettingsHoverInfoTexts(){

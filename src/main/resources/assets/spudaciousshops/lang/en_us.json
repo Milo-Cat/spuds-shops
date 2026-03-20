@@ -190,5 +190,11 @@
   "item.spudaciousshops.shelf_shop_warped": "Warped Shelf Shop",
 
   "block.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
-  "item.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop"
+  "item.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
+  "gui.spudaciousshops.nbt_unchecked_warn_header": "§c Product NBT is unchecked!",
+  "gui.spudaciousshops.nbt_unchecked_warn_line1": "Purchased item NBT may differ",
+  "gui.spudaciousshops.nbt_unchecked_warn_line2": "from what is displayed",
+  "gui.spudaciousshops.select_style_info_header": "§c Selectable shop style enabled!",
+  "gui.spudaciousshops.select_style_info_line1": "Product item will be used only as a display fallback.",
+  "gui.spudaciousshops.select_style_info_line2": "Every stack in storage will be purchasable for the same price."
 }

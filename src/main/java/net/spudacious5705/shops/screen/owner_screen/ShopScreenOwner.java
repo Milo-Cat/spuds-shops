@@ -21,6 +21,9 @@ import net.spudacious5705.shops.screen.networking.NetworkHelper;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ScreenResources.*;
@@ -56,6 +59,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     TradeItemWidget PaymentItemWidget;
     TradeItemWidget ProductItemWidget;
+
+    NotificationWidget NotifShopStyleSelectOn;
+    NotificationWidget NotifNBTMatchOFF;
 
     TabWidget SellerTabButton;
     TabWidget SettingsTabButton;
@@ -123,6 +129,16 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         posY = SETTINGS.ignoreNBTButtonY()+topPos;
         ToggleIgnoreNBT = new ToggleWidget(posX, posY, ToggleButtonID.IgnoreNBTToggle, NBT_IGNORE, NBT_CHECK, IGNORE_NBT_TOGGLE_TOOLTIP);
 
+        posX = 2+leftPos;
+        posY = 78+topPos;
+        NotifShopStyleSelectOn = new NotificationWidget(posX, posY, SELECT_STYLE_INFO,
+                () -> menu.getStateOfSetting(ToggleButtonID.SelectableTradeToggle));
+
+        posX = 168+leftPos;
+        posY = 127+topPos;
+        NotifNBTMatchOFF = new NotificationWidget(posX, posY, PRODUCT_NBT_UNCHECKED_WARN,
+                () -> menu.getStateOfSetting(ToggleButtonID.IgnoreNBTToggle)&&!menu.getStateOfSetting(ToggleButtonID.SelectableTradeToggle));
+
     }
 
     //region rendering
@@ -151,6 +167,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
                 PaymentItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
                 ProductItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
+
+                NotifShopStyleSelectOn.renderWidget(context,mouseX,mouseY,partialTick, font);
             }
             case SETTINGS_TAB -> {
 
@@ -177,8 +195,9 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             }
             case CUSTOMER_TAB -> {
 
-
                 renderScreenGenerics(context,mouseX,mouseY,partialTick);
+
+                NotifNBTMatchOFF.renderWidget(context,mouseX,mouseY,partialTick, font);
             }
             case WARNING_TAB -> {
                 WarningCancel.renderWidget(context,mouseX,mouseY,partialTick);
@@ -469,10 +488,28 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             minecraft.gameMode.handleInventoryMouseClick(menu.containerId, slot.index, button, ClickType.PICKUP, minecraft.player);
         }
 
-        @Override
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
+    }
 
+    static class NotificationWidget extends CustomClickableWidget {
+        private final List<Component> tooltip;
+
+        private final Supplier<Boolean> renderToggle;
+
+        public NotificationWidget(int pX, int pY, List<Component> tooltip, Supplier<Boolean> renderToggle) {
+            super(pX, pY, 16, 16, Component.literal(""));
+            this.tooltip = tooltip;
+            this.renderToggle = renderToggle;
         }
+        protected void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float d, Font font) {
+            if(!renderToggle.get())return;
+            int x = this.getX();
+            int y = this.getY();
 
+            graphics.blit(NOTIFICATION_ICON,x,y,32,32,0f,0f,32,32,32,32);
+
+            if(isHovered(mouseX,mouseY)){
+                graphics.renderTooltip(font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
+            }
+        }
     }
 }
