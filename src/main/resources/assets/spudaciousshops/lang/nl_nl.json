@@ -73,39 +73,6 @@
   "block.spudaciousshops.crate_shop": "Handelaar's Krat",
   "item.spudaciousshops.crate_shop": "Handelaar's Krat",
 
-  "item.spudaciousshops.contract_scroll": "Contract Roll",
-
-  "gui.spudaciousshops.owner": "EIGENAAR",
-  "gui.spudaciousshops.manager": "MANAGER",
-  "gui.spudaciousshops.supervisor": "TOEZICHTHOUDER",
-  "gui.spudaciousshops.clerk": "VAKKENVULLER",
-
-  "gui.spudaciousshops.delete_warn_title": "VERWIJDER JE CONTRACT",
-  "gui.spudaciousshops.delete_warn_message_line1": "Je staat op het punt je contract the verwijderen",
-  "gui.spudaciousshops.delete_warn_message_line2": "en all je machtiging weg te halen.",
-  "gui.spudaciousshops.cancel": "ANNULEREN",
-  "gui.spudaciousshops.delete": "VERWIJDEREN",
-
-  "gui.spudaciousshops.text_permissions": "Permissions",
-  "gui.spudaciousshops.text_import_items": "Importeer Voorwerp",
-  "gui.spudaciousshops.text_take_items": "Pak Voorwerp",
-  "gui.spudaciousshops.text_edit_perms": "Verander Machtigingen Van",
-  "gui.spudaciousshops.text_change_trade": "Verander Winkelhandel",
-  "gui.spudaciousshops.text_break_shop": "Sloop Winkel",
-  "gui.spudaciousshops.text_yes": "JA",
-  "gui.spudaciousshops.text_no": "NEE",
-  "gui.spudaciousshops.text_all": "ALLE",
-  "gui.spudaciousshops.text_supervisor_and_lower": "Toezichthouder en lager",
-  "gui.spudaciousshops.text_none": "GEEN",
-
-  "gui.spudaciousshops.toggle_creative": "Creatieve winkelmodus in- of uitschakelen",
-  "gui.spudaciousshops.toggle_effects": "Pictogrammen en deeltjes in- of uitschakelen",
-
-  "gui.spudaciousshops.toggle_ignore_nbt": "Negeer NBT in- of uitschakelen",
-  "gui.spudaciousshops.toggle_shop_style": "--shop style msg--",
-  "gui.spudaciousshops.payment_empty_tooltip": "Voeg hier je betaalitem toe!",
-  "gui.spudaciousshops.product_empty_tooltip": "Voeg hier je productitem toe!",
-
   "block.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
   "item.spudaciousshops.shelf_shop_acacia": "Acaciahouten Plank Winkel",
 
@@ -141,33 +108,93 @@
 
   "block.spudaciousshops.rug_shop_white": "Tapijtwinkel Wit",
   "item.spudaciousshops.rug_shop_white": "Tapijtwinkel Wit",
+
   "block.spudaciousshops.rug_shop_orange": "Tapijtwinkel Oranje",
   "item.spudaciousshops.rug_shop_orange": "Tapijtwinkel Oranje",
+
   "block.spudaciousshops.rug_shop_magenta": "Tapijtwinkel Magenta",
   "item.spudaciousshops.rug_shop_magenta": "Tapijtwinkel Magenta",
+
   "block.spudaciousshops.rug_shop_light_blue": "Tapijtwinkel Lichtblauw",
   "item.spudaciousshops.rug_shop_light_blue": "Tapijtwinkel Lichtblauw",
+
   "block.spudaciousshops.rug_shop_yellow": "Tapijtwinkel Geel",
   "item.spudaciousshops.rug_shop_yellow": "Tapijtwinkel Geel",
+
   "block.spudaciousshops.rug_shop_lime": "Tapijtwinkel Limoengroen",
   "item.spudaciousshops.rug_shop_lime": "Tapijtwinkel Limoengroen",
+
   "block.spudaciousshops.rug_shop_pink": "Tapijtwinkel Roze",
   "item.spudaciousshops.rug_shop_pink": "Tapijtwinkel Roze",
+
   "block.spudaciousshops.rug_shop_gray": "Tapijtwinkel Grijs",
   "item.spudaciousshops.rug_shop_gray": "Tapijtwinkel Grijs",
+
   "block.spudaciousshops.rug_shop_light_gray": "Tapijtwinkel Lichtgrijs",
   "item.spudaciousshops.rug_shop_light_gray": "Tapijtwinkel Lichtgrijs",
+
   "block.spudaciousshops.rug_shop_cyan": "Tapijtwinkel Cyaan",
   "item.spudaciousshops.rug_shop_cyan": "Tapijtwinkel Cyaan",
+
   "block.spudaciousshops.rug_shop_purple": "Tapijtwinkel Paars",
   "item.spudaciousshops.rug_shop_purple": "Tapijtwinkel Paars",
+
   "block.spudaciousshops.rug_shop_blue": "Tapijtwinkel Blauw",
   "item.spudaciousshops.rug_shop_blue": "Tapijtwinkel Blauw",
+
   "block.spudaciousshops.rug_shop_brown": "Tapijtwinkel Bruin",
   "item.spudaciousshops.rug_shop_brown": "Tapijtwinkel Bruin",
+
   "block.spudaciousshops.rug_shop_green": "Tapijtwinkel Groen",
   "item.spudaciousshops.rug_shop_green": "Tapijtwinkel Groen",
+
   "block.spudaciousshops.rug_shop_black": "Tapijtwinkel Zwart",
   "item.spudaciousshops.rug_shop_black": "Tapijtwinkel Zwart",
-  "gui.spudaciousshops.currency_type": "€"
+
+  "item.spudaciousshops.contract_scroll": "Contract Scroll",
+
+  "gui.spudaciousshops.currency_type": "€",
+
+  "gui.spudaciousshops.owner": "EIGENAAR",
+  "gui.spudaciousshops.manager": "MANAGER",
+  "gui.spudaciousshops.supervisor": "TOEZICHTHOUDER",
+  "gui.spudaciousshops.clerk": "VAKKENVULLER",
+
+  "gui.spudaciousshops.delete_warn_title": "VERWIJDER JE CONTRACT",
+  "gui.spudaciousshops.delete_warn_message_line1": "Je staat op het punt je contract the verwijderen",
+  "gui.spudaciousshops.delete_warn_message_line2": "en all je machtiging weg te halen.",
+  "gui.spudaciousshops.cancel": "ANNULEREN",
+  "gui.spudaciousshops.delete": "VERWIJDEREN",
+
+  "gui.spudaciousshops.text_permissions": "Permissions",
+  "gui.spudaciousshops.text_import_items": "Importeer Voorwerp",
+  "gui.spudaciousshops.text_take_items": "Pak Voorwerp",
+  "gui.spudaciousshops.text_edit_perms": "Verander Machtigingen Van",
+  "gui.spudaciousshops.text_change_trade": "Verander Winkelhandel",
+  "gui.spudaciousshops.text_break_shop": "Sloop Winkel",
+  "gui.spudaciousshops.text_yes": "JA",
+  "gui.spudaciousshops.text_no": "NEE",
+  "gui.spudaciousshops.text_all": "ALLE",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Toezichthouder en lager",
+  "gui.spudaciousshops.text_none": "GEEN",
+
+  "gui.spudaciousshops.toggle_creative": "Creatieve winkelmodus in- of uitschakelen",
+  "gui.spudaciousshops.toggle_effects": "Pictogrammen en deeltjes in- of uitschakelen",
+
+  "gui.spudaciousshops.toggle_ignore_nbt": "Negeer NBT in- of uitschakelen",
+  "gui.spudaciousshops.toggle_shop_style": "Schakel handelsstijl van winkel in- of uitschakelen",
+  "gui.spudaciousshops.payment_empty_tooltip": "Voeg hier je betaalitem toe!",
+  "gui.spudaciousshops.product_empty_tooltip": "Voeg hier je productitem toe!",
+
+  "gui.spudaciousshops.stock": "Voorraad",
+  "gui.spudaciousshops.register": "Kassa",
+  "gui.spudaciousshops.payment": "Betaling",
+  "gui.spudaciousshops.product": "Product",
+
+  "gui.spudaciousshops.nbt_unchecked_warn_header": "§c Het NBT van het product is niet gecontroleerd!",
+  "gui.spudaciousshops.nbt_unchecked_warn_line1": "Het NBT van het gekochte item kan afwijken",
+  "gui.spudaciousshops.nbt_unchecked_warn_line2": "van wat er wordt weergegeven",
+  "gui.spudaciousshops.select_style_info_header": "§c Selecteerbare winkelstijl ingeschakeld!",
+  "gui.spudaciousshops.select_style_info_line1": "Het productitem wordt alleen als visuele weergave gebruikt.",
+  "gui.spudaciousshops.select_style_info_line2": "Elke stapel in de opslag kan voor dezelfde prijs worden gekocht."
 }

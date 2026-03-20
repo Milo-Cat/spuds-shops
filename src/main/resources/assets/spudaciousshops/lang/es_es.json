@@ -115,44 +115,8 @@
   "block.spudaciousshops.rug_shop_black": "Tienda de Alfombra Negra",
   "item.spudaciousshops.rug_shop_black": "Tienda de Alfombra Negra",
 
-
   "block.spudaciousshops.crate_shop": "Caja del Mercader",
   "item.spudaciousshops.crate_shop": "Caja del Mercader",
-
-  "item.spudaciousshops.contract_scroll": "Contrato de Trabajo",
-
-  "gui.spudaciousshops.currency_type": "€",
-
-  "gui.spudaciousshops.owner": "Propietario",
-  "gui.spudaciousshops.manager": "Manager",
-  "gui.spudaciousshops.supervisor": "Supervisor",
-  "gui.spudaciousshops.clerk": "Empleado",
-
-  "gui.spudaciousshops.delete_warn_title": "QUITA UN CONTRATO",
-  "gui.spudaciousshops.delete_warn_message_line1": "Estás a punto de quitar tu contrato",
-  "gui.spudaciousshops.delete_warn_message_line2": "y revocarte todos tus permisos.",
-  "gui.spudaciousshops.cancel": "CANCELAR",
-  "gui.spudaciousshops.delete": "QUITAR",
-
-  "gui.spudaciousshops.text_permissions": "Permisos",
-  "gui.spudaciousshops.text_import_items": "Importar Items",
-  "gui.spudaciousshops.text_take_items": "Coger Items",
-  "gui.spudaciousshops.text_edit_perms": "Editar permisos de",
-  "gui.spudaciousshops.text_change_trade": "Cambiar Tradeo de Tienda",
-  "gui.spudaciousshops.text_break_shop": "Romper Tienda",
-  "gui.spudaciousshops.text_yes": "Sí",
-  "gui.spudaciousshops.text_no": "NO",
-  "gui.spudaciousshops.text_all": "TODO",
-  "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor y Empleado",
-  "gui.spudaciousshops.text_none": "NINGUNO",
-
-  "gui.spudaciousshops.toggle_creative": "Activar o desactivar el modo de tienda creativa",
-  "gui.spudaciousshops.toggle_effects": "Alternar iconos y partículas",
-
-  "gui.spudaciousshops.toggle_ignore_nbt": "Alternar ignorar NBT",
-  "gui.spudaciousshops.toggle_shop_style": "--shop style msg--",
-  "gui.spudaciousshops.payment_empty_tooltip": "¡Añade tu objeto de pago aquí!",
-  "gui.spudaciousshops.product_empty_tooltip": "¡Añade tu objeto de producto aquí!",
 
   "block.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",
   "item.spudaciousshops.shelf_shop_acacia": "Tienda de Estantería de Acacia",
@@ -185,5 +149,52 @@
   "item.spudaciousshops.shelf_shop_warped": "Tienda de Estantería Distorsionada",
 
   "block.spudaciousshops.shelf_shop_jungle": "Tienda de Estantería de Jungla",
-  "item.spudaciousshops.shelf_shop_jungle": "Tienda de Estantería de Jungla"
+  "item.spudaciousshops.shelf_shop_jungle": "Tienda de Estantería de Jungla",
+
+  "item.spudaciousshops.contract_scroll": "Contrato de Trabajo",
+
+  "gui.spudaciousshops.currency_type": "€",
+
+  "gui.spudaciousshops.owner": "Propietario",
+  "gui.spudaciousshops.manager": "Manager",
+  "gui.spudaciousshops.supervisor": "Supervisor",
+  "gui.spudaciousshops.clerk": "Empleado",
+
+  "gui.spudaciousshops.delete_warn_title": "QUITA UN CONTRATO",
+  "gui.spudaciousshops.delete_warn_message_line1": "Estás a punto de quitar tu contrato",
+  "gui.spudaciousshops.delete_warn_message_line2": "y revocarte todos tus permisos.",
+  "gui.spudaciousshops.cancel": "CANCELAR",
+  "gui.spudaciousshops.delete": "QUITAR",
+
+  "gui.spudaciousshops.text_permissions": "Permisos",
+  "gui.spudaciousshops.text_import_items": "Importar Items",
+  "gui.spudaciousshops.text_take_items": "Coger Items",
+  "gui.spudaciousshops.text_edit_perms": "Editar permisos de",
+  "gui.spudaciousshops.text_change_trade": "Cambiar Tradeo de Tienda",
+  "gui.spudaciousshops.text_break_shop": "Romper Tienda",
+  "gui.spudaciousshops.text_yes": "Sí",
+  "gui.spudaciousshops.text_no": "NO",
+  "gui.spudaciousshops.text_all": "TODO",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor y Empleado",
+  "gui.spudaciousshops.text_none": "NINGUNO",
+
+  "gui.spudaciousshops.toggle_creative": "Activar o desactivar el modo de tienda creativa",
+  "gui.spudaciousshops.toggle_effects": "Alternar iconos y partículas",
+
+  "gui.spudaciousshops.toggle_ignore_nbt": "Alternar ignorar NBT",
+  "gui.spudaciousshops.toggle_shop_style": "Alternar estilo de comercio de la tienda",
+  "gui.spudaciousshops.payment_empty_tooltip": "¡Añade tu objeto de pago aquí!",
+  "gui.spudaciousshops.product_empty_tooltip": "¡Añade tu objeto de producto aquí!",
+
+  "gui.spudaciousshops.stock": "Inventario",
+  "gui.spudaciousshops.register": "Caja",
+  "gui.spudaciousshops.payment": "Pago",
+  "gui.spudaciousshops.product": "Producto",
+
+  "gui.spudaciousshops.nbt_unchecked_warn_header": "§c ¡El NBT del producto no está comprobado!",
+  "gui.spudaciousshops.nbt_unchecked_warn_line1": "El NBT del artículo comprado puede diferir",
+  "gui.spudaciousshops.nbt_unchecked_warn_line2": "de lo que se muestra",
+  "gui.spudaciousshops.select_style_info_header": "§c ¡Estilo de tienda seleccionable activado!",
+  "gui.spudaciousshops.select_style_info_line1": "El objeto de producto se usará solo como respaldo visual.",
+  "gui.spudaciousshops.select_style_info_line2": "Cada pila en el almacenamiento podrá comprarse al mismo precio."
 }

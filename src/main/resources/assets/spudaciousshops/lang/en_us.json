@@ -115,49 +115,8 @@
   "block.spudaciousshops.rug_shop_black": "Rug Shop Black",
   "item.spudaciousshops.rug_shop_black": "Rug Shop Black",
 
-
   "block.spudaciousshops.crate_shop": "Merchant's Crate",
   "item.spudaciousshops.crate_shop": "Merchant's Crate",
-
-  "item.spudaciousshops.contract_scroll": "Contract Scroll",
-
-  "gui.spudaciousshops.currency_type": "£",
-
-  "gui.spudaciousshops.owner": "OWNER",
-  "gui.spudaciousshops.manager": "MANAGER",
-  "gui.spudaciousshops.supervisor": "SUPERVISOR",
-  "gui.spudaciousshops.clerk": "CLERK",
-
-  "gui.spudaciousshops.delete_warn_title": "DELETE YOUR CONTRACT",
-  "gui.spudaciousshops.delete_warn_message_line1": "You are about to delete your contract",
-  "gui.spudaciousshops.delete_warn_message_line2": "and remove all your permissions!",
-  "gui.spudaciousshops.cancel": "CANCEL",
-  "gui.spudaciousshops.delete": "DELETE",
-
-  "gui.spudaciousshops.text_permissions": "Permissions",
-  "gui.spudaciousshops.text_import_items": "Import Items",
-  "gui.spudaciousshops.text_take_items": "Take Items",
-  "gui.spudaciousshops.text_edit_perms": "Edit Permissions Of",
-  "gui.spudaciousshops.text_change_trade": "Change Shop Trade",
-  "gui.spudaciousshops.text_break_shop": "Break Shop",
-  "gui.spudaciousshops.text_yes": "YES",
-  "gui.spudaciousshops.text_no": "NO",
-  "gui.spudaciousshops.text_all": "ALL",
-  "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor and Lower",
-  "gui.spudaciousshops.text_none": "NONE",
-
-  "gui.spudaciousshops.toggle_creative": "Toggle creative shop mode",
-  "gui.spudaciousshops.toggle_effects": "Toggle icons and particles",
-
-  "gui.spudaciousshops.stock": "Stock",
-  "gui.spudaciousshops.register": "Register",
-  "gui.spudaciousshops.payment": "Payment",
-  "gui.spudaciousshops.product": "Product",
-
-  "gui.spudaciousshops.toggle_ignore_nbt": "Toggle matching product item NBT",
-  "gui.spudaciousshops.toggle_shop_style": "Toggle shop trade style",
-  "gui.spudaciousshops.payment_empty_tooltip": "Add your payment item here!",
-  "gui.spudaciousshops.product_empty_tooltip": "Add your product item here!",
 
   "block.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
   "item.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
@@ -191,6 +150,47 @@
 
   "block.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
   "item.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
+
+  "item.spudaciousshops.contract_scroll": "Contract Scroll",
+
+  "gui.spudaciousshops.currency_type": "£",
+
+  "gui.spudaciousshops.owner": "OWNER",
+  "gui.spudaciousshops.manager": "MANAGER",
+  "gui.spudaciousshops.supervisor": "SUPERVISOR",
+  "gui.spudaciousshops.clerk": "CLERK",
+
+  "gui.spudaciousshops.delete_warn_title": "DELETE YOUR CONTRACT",
+  "gui.spudaciousshops.delete_warn_message_line1": "You are about to delete your contract",
+  "gui.spudaciousshops.delete_warn_message_line2": "and remove all your permissions!",
+  "gui.spudaciousshops.cancel": "CANCEL",
+  "gui.spudaciousshops.delete": "DELETE",
+
+  "gui.spudaciousshops.text_permissions": "Permissions",
+  "gui.spudaciousshops.text_import_items": "Import Items",
+  "gui.spudaciousshops.text_take_items": "Take Items",
+  "gui.spudaciousshops.text_edit_perms": "Edit Permissions Of",
+  "gui.spudaciousshops.text_change_trade": "Change Shop Trade",
+  "gui.spudaciousshops.text_break_shop": "Break Shop",
+  "gui.spudaciousshops.text_yes": "YES",
+  "gui.spudaciousshops.text_no": "NO",
+  "gui.spudaciousshops.text_all": "ALL",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Supervisor and Lower",
+  "gui.spudaciousshops.text_none": "NONE",
+
+  "gui.spudaciousshops.toggle_creative": "Toggle creative shop mode",
+  "gui.spudaciousshops.toggle_effects": "Toggle icons and particles",
+
+  "gui.spudaciousshops.toggle_ignore_nbt": "Toggle matching product item NBT",
+  "gui.spudaciousshops.toggle_shop_style": "Toggle shop trade style",
+  "gui.spudaciousshops.payment_empty_tooltip": "Add your payment item here!",
+  "gui.spudaciousshops.product_empty_tooltip": "Add your product item here!",
+
+  "gui.spudaciousshops.stock": "Stock",
+  "gui.spudaciousshops.register": "Register",
+  "gui.spudaciousshops.payment": "Payment",
+  "gui.spudaciousshops.product": "Product",
+
   "gui.spudaciousshops.nbt_unchecked_warn_header": "§c Product NBT is unchecked!",
   "gui.spudaciousshops.nbt_unchecked_warn_line1": "Purchased item NBT may differ",
   "gui.spudaciousshops.nbt_unchecked_warn_line2": "from what is displayed",
