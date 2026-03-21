@@ -269,13 +269,14 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     //item slots
     @Override
     public void clicked(int pSlotId, int pButton, @NotNull ClickType pClickType, @NotNull Player pPlayer) {
-        if(pSlotId == PaymentSlot.index){
-            tradeWindowPress(PaymentSlot, pButton);
-        } else if(pSlotId == VendingSlot.index){
-            tradeWindowPress(VendingSlot, pButton);
-        } else {
-            super.clicked(pSlotId, pButton, pClickType, pPlayer);//locked down slots handled in super
+        if(pClickType != ClickType.QUICK_MOVE) {
+            if (pSlotId == PaymentSlot.index) {
+                tradeWindowPress(PaymentSlot, pButton); return;
+            } else if (pSlotId == VendingSlot.index) {
+                tradeWindowPress(VendingSlot, pButton); return;
+            }
         }
+        super.clicked(pSlotId, pButton, pClickType, pPlayer);//locked down slots handled in super
     }
 
     void tradeWindowPress(shop_trade_slot slot, int button){
