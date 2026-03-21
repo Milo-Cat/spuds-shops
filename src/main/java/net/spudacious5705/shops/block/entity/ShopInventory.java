@@ -117,6 +117,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
 
     private int displayIndex = -1;
     public ItemStack getDisplayStack() {
+        if(!selectableTrade.get()) return get(VENDING_SLOT).copy();
         displayIndex++;
         if(displayIndex>STOCK_END){
             displayIndex = -1;
@@ -170,8 +171,7 @@ public class ShopInventory extends NonNullList<ItemStack> {
     }
 
     public boolean tradeNonFunctional() {
-        boolean bl = get(PAYMENT_SLOT).isEmpty()  ||  get(VENDING_SLOT).isEmpty();
-        return bl;
+        return get(PAYMENT_SLOT).isEmpty()  ||  get(VENDING_SLOT).isEmpty();
     }
 
     public static void ItemScatterer(Level world, BlockPos pos, ItemStack itemStack){
