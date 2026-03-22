@@ -114,11 +114,6 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
         ContainerHelper.loadAllItems(donorTag, shopInventoryTop, holder);
     }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return saveCustomOnly(registries);
-    }
     
     
 }
