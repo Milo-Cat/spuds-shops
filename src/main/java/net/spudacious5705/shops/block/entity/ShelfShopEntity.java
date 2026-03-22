@@ -4,6 +4,8 @@ package net.spudacious5705.shops.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -92,37 +94,27 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
-        ListTag nbtList = new ListTag();
 
-        for (int i = 0; i < shopInventoryTop.size(); i++) {
-            ItemStack itemStack = shopInventoryTop.get(i);
-            if (!itemStack.isEmpty()) {
-                CompoundTag compoundtag = new CompoundTag();
-                compoundtag.putByte("SlotTwo", (byte)i);
-                itemStack.save(compoundtag);
-                nbtList.add(compoundtag);
-            }
-        }
+        CompoundTag donorTag = new CompoundTag();
+        ContainerHelper.saveAllItems(donorTag, shopInventoryTop);
 
-        if (!nbtList.isEmpty()) {
-            tag.put("ItemsTwo", nbtList);
-        }
+        ListTag inventoryTwo = donorTag.getList("Items", Tag.TAG_COMPOUND);
+
+        tag.put("ItemsTwo", inventoryTwo);
+
         super.saveAdditional(tag);
     }
 
     @Override
-    public void load(@NotNull CompoundTag nbt) {
-        ListTag nbtList = nbt.getList("ItemsTwo", 10);
+    public void load(@NotNull CompoundTag tag) {
+        super.load(tag);
 
+        CompoundTag donorTag = new CompoundTag();
+        ListTag inventoryTwo = tag.getList("ItemsTwo", Tag.TAG_COMPOUND);
+        donorTag.put("Items", inventoryTwo);
 
-        for (int i = 0; i < nbtList.size(); i++) {
-            CompoundTag nbtCompound = nbtList.getCompound(i);
-            int j = nbtCompound.getByte("SlotTwo") & 255;
-            if (j < shopInventoryTop.size()) {
-                shopInventoryTop.set(j, ItemStack.of(nbtCompound));
-            }
-        }
-        super.load(nbt);
+        ContainerHelper.loadAllItems(donorTag, shopInventoryTop);
+
     }
     
     
