@@ -1,7 +1,0 @@
-{
-  "parent": "spudaciousshops:block/shelf/shelf_shop",
-  "textures": {
-    "all": "spudaciousshops:block/shelf/shelf_spruce",
-    "particle": "minecraft:block/spruce_planks"
-  }
-}

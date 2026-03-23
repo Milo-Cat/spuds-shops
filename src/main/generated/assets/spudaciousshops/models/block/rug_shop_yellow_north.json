@@ -1,7 +1,0 @@
-{
-  "parent": "spudaciousshops:block/rug_shop/rug_shop_north",
-  "textures": {
-    "all": "spudaciousshops:block/rug/yellow",
-    "particle": "spudaciousshops:block/rug/yellow"
-  }
-}
