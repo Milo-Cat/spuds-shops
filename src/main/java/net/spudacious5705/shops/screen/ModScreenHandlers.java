@@ -8,8 +8,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -20,10 +18,9 @@ import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 import static net.spudacious5705.shops.SpudaciousShops.id;
 
-@EventBusSubscriber(modid = MOD_ID)
+
 public class ModScreenHandlers {
 
     public static final DeferredRegister<MenuType<?>> MENUS =
@@ -55,7 +52,6 @@ public class ModScreenHandlers {
     }
 
     @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent // on the mod event bus only on the physical client
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(SHOP_SCREEN_HANDLER_OWNER.get(), ShopScreenOwner::new);
         event.register(SHOP_SCREEN_HANDLER_CUSTOMER.get(), ShopScreenCustomer::new);

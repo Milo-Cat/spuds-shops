@@ -7,11 +7,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.renderer.*;
 import net.spudacious5705.shops.block.resources.CushionModel;
 import net.spudacious5705.shops.block.resources.CushionResources;
 import net.spudacious5705.shops.block.resources.CushionTextures;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
 
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
@@ -43,5 +45,10 @@ public class SpudaciousShopsClient{
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(CushionModel.LAYER_LOCATION, CushionModel::getTexturedModelData);
+    }
+
+    @SubscribeEvent // on the mod event bus only on the physical client
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        ModScreenHandlers.registerScreens(event);
     }
 }
