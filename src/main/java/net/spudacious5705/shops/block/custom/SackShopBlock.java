@@ -28,11 +28,10 @@ import net.spudacious5705.shops.block.entity.RugShopEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 import static net.spudacious5705.shops.block.ModBlocks.settingsCarpet;
 
 
-public class SackShopBlock extends AbstractShopBlock{
+public class SackShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape BASE_SHAPE = createCuboidShape(0, 0, 0, 16, 14, 16);
 
@@ -70,7 +69,7 @@ public class SackShopBlock extends AbstractShopBlock{
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new RugShopEntity(pos,state);
+        return new RugShopEntity(pos, state);
     }
 
     @Override
@@ -79,13 +78,12 @@ public class SackShopBlock extends AbstractShopBlock{
     }
 
 
-
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {//todo change to sack entity
+        if (ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {//todo change to sack entity
             return level.isClientSide
-                    ? (lvl, pos, st, be) -> ((RugShopEntity)be).renderTick()
-                    : (lvl, pos, st, be) -> ((RugShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((RugShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((RugShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;

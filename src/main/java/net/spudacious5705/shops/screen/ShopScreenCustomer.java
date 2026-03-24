@@ -14,19 +14,20 @@ import static net.spudacious5705.shops.screen.ScreenResources.PRODUCT_NBT_UNCHEC
 public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandlerCustomer> {
 
 
+    ShopScreenOwner.NotificationWidget NotifNBTMatchOFF;
+
     public ShopScreenCustomer(ShopScreenHandlerCustomer handler, Inventory playerInventory, Component title) {
         super(handler, playerInventory, title);
         imageWidth = 228;
         imageHeight = 256;
     }
 
-    ShopScreenOwner.NotificationWidget NotifNBTMatchOFF;
     @Override
     protected void init() {
         super.init();
 
-        leftPos = (width - imageWidth)/2;
-        topPos = (height - imageHeight)/2;
+        leftPos = (width - imageWidth) / 2;
+        topPos = (height - imageHeight) / 2;
 
         NotifNBTMatchOFF = new ShopScreenOwner.NotificationWidget(168 + leftPos, 127 + topPos, PRODUCT_NBT_UNCHECKED_WARN,
                 menu::showNBToffNotif);
@@ -47,7 +48,7 @@ public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandle
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        NotifNBTMatchOFF.renderWidget(guiGraphics,mouseX,mouseY,partialTick, font);
+        NotifNBTMatchOFF.renderWidget(guiGraphics, mouseX, mouseY, partialTick, font);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 }

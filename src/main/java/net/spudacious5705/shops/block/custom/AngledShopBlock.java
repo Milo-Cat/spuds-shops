@@ -23,13 +23,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.util.PostRegAssigner;
-import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AngledShopEntity;
+import net.spudacious5705.shops.block.resources.CushionResources;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.item.custom.ShopItem;
 import net.spudacious5705.shops.properties.Colour;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
-import net.spudacious5705.shops.block.resources.CushionResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,47 +48,46 @@ public class AngledShopBlock extends AbstractShopBlock {
             createCuboidShape(0.0, 6.0, 2.0, 16.0, 12.0, 16.0),
             BASE
     );
-    public static final VoxelShape BASE_EAST = Shapes.or(
-            createCuboidShape(0.0, 6.0, 0.0, 14.0, 12.0, 16.0),
-            BASE
-    );
-    public static final VoxelShape BASE_SOUTH = Shapes.or(
-            createCuboidShape(0.0, 6.0, 0.0, 16.0, 12.0, 14.0),
-            BASE
-    );
-    public static final VoxelShape BASE_WEST = Shapes.or(
-            createCuboidShape(2.0, 6.0, 0.0, 16.0, 12.0, 16.0),
-            BASE
-    );
-
     public static final VoxelShape NORTH_SHAPE = Shapes.or(
             createCuboidShape(1.0, 12, 3.0, 15.0, 15.0, 12.0),
             createCuboidShape(1.0, 15.0, 8.0, 15.0, 17.5, 15.0),
             BASE_NORTH
+    );
+    public static final VoxelShape BASE_EAST = Shapes.or(
+            createCuboidShape(0.0, 6.0, 0.0, 14.0, 12.0, 16.0),
+            BASE
     );
     public static final VoxelShape EAST_SHAPE = Shapes.or(
             createCuboidShape(4.0, 12, 1.0, 13.0, 15.0, 15.0),
             createCuboidShape(1.0, 15.0, 1.0, 8.0, 17.5, 15.0),
             BASE_EAST
     );
+    public static final VoxelShape BASE_SOUTH = Shapes.or(
+            createCuboidShape(0.0, 6.0, 0.0, 16.0, 12.0, 14.0),
+            BASE
+    );
     public static final VoxelShape SOUTH_SHAPE = Shapes.or(
             createCuboidShape(1.0, 12, 4.0, 15.0, 15.0, 13.0),
             createCuboidShape(1.0, 15.0, 1.0, 15.0, 17.5, 8.0),
             BASE_SOUTH
+    );
+    public static final VoxelShape BASE_WEST = Shapes.or(
+            createCuboidShape(2.0, 6.0, 0.0, 16.0, 12.0, 16.0),
+            BASE
     );
     public static final VoxelShape WEST_SHAPE = Shapes.or(
             createCuboidShape(3.0, 12, 1.0, 12.0, 15.0, 15),
             createCuboidShape(8.0, 15.0, 1.0, 15, 17.5, 15),
             BASE_WEST
     );
-
-    public Item WOOD_TYPE;
     public final VariantResources.wood_variant VARIANT;
+    private final Map<Colour, ShopItem> dropMap = new HashMap<>();
+    public Item WOOD_TYPE;
 
     public AngledShopBlock(BlockBehaviour.Properties settings, PostRegAssigner<Item> woodTypeAssigner, VariantResources.wood_variant variant) {
         super(settings);
 
-        woodTypeAssigner.assignTo(o-> WOOD_TYPE=o);
+        woodTypeAssigner.assignTo(o -> WOOD_TYPE = o);
 
         VARIANT = variant;
     }
@@ -105,7 +104,7 @@ public class AngledShopBlock extends AbstractShopBlock {
 
     @Override
     public void setPlacedBy(@NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
-        if(placer != null) {
+        if (placer != null) {
             if (placer instanceof Player player) {
                 BlockEntity blockEntity = world.getBlockEntity(pos);
                 if (blockEntity instanceof AngledShopEntity shopEntity) {
@@ -119,7 +118,6 @@ public class AngledShopBlock extends AbstractShopBlock {
         super.setPlacedBy(world, pos, state, placer, stack);
     }
 
-
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new AngledShopEntity(pos, state);
@@ -130,19 +128,18 @@ public class AngledShopBlock extends AbstractShopBlock {
             @NotNull BlockState state, @NotNull HitResult target,
             LevelReader level, @NotNull BlockPos pos, @NotNull Player player
     ) {
-       Colour colour = Colour.RED;
-        if(level.getBlockEntity(pos) instanceof AngledShopEntity shopEntity) {
+        Colour colour = Colour.RED;
+        if (level.getBlockEntity(pos) instanceof AngledShopEntity shopEntity) {
             colour = shopEntity.getCushionColour();
         }
         return getColouredShopItem(colour).getDefaultInstance();
     }
 
-
     @Override
     public @NotNull VoxelShape getShape(
             @NotNull BlockState state, @NotNull BlockGetter pLevel,
             @NotNull BlockPos pPos, @NotNull CollisionContext pContext
-    ){
+    ) {
         return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_SHAPE;
             case SOUTH -> SOUTH_SHAPE;
@@ -156,25 +153,28 @@ public class AngledShopBlock extends AbstractShopBlock {
     public @NotNull VoxelShape getCollisionShape(
             @NotNull BlockState state, @NotNull BlockGetter level,
             @NotNull BlockPos pos, @NotNull CollisionContext context
-    ){
+    ) {
         return switch (state.getValue(FACING)) {
-        case NORTH -> BASE_NORTH;
-        case SOUTH -> BASE_SOUTH;
-        case EAST -> BASE_EAST;
-        case WEST -> BASE_WEST;
-        default -> CULLING_SHAPE;
-    };}
+            case NORTH -> BASE_NORTH;
+            case SOUTH -> BASE_SOUTH;
+            case EAST -> BASE_EAST;
+            case WEST -> BASE_WEST;
+            default -> CULLING_SHAPE;
+        };
+    }
+
     @Override
     public @NotNull VoxelShape getOcclusionShape(
             @NotNull BlockState state, @NotNull BlockGetter level,
             @NotNull BlockPos pos
-    ){return CULLING_SHAPE;}
+    ) {
+        return CULLING_SHAPE;
+    }
 
     @Override
     protected VoxelShape getGenericShape(BlockState state) {
         return BASE;
     }
-
 
     @Override
     protected boolean isStateReplacedValid(BlockState newShopState) {
@@ -188,7 +188,7 @@ public class AngledShopBlock extends AbstractShopBlock {
                 if (CushionResources.DYE_MAP.containsKey(item)) {
                     CushionResources.cushionColourGroup group = CushionResources.DYE_MAP.get(item);
                     if (shopEntity.getCushionColour() != group.colour()) {
-                        if(!player.isCreative())stack.shrink(1);
+                        if (!player.isCreative()) stack.shrink(1);
                         shopEntity.setCushionColour(group.colour());
                         world.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS);
                         world.sendBlockUpdated(pos, state, state, 3);
@@ -200,7 +200,7 @@ public class AngledShopBlock extends AbstractShopBlock {
                     Colour originalColour = shopEntity.getCushionColour();
                     if (originalColour != group.colour()) {
                         shopEntity.setCushionColour(group.colour());
-                        if(!player.isCreative()) {
+                        if (!player.isCreative()) {
                             stack.shrink(1);
                             group = CushionResources.COLOUR_MAP.get(originalColour);
                             ItemStack releaseStack = new ItemStack(group.wool(), 1);
@@ -214,7 +214,7 @@ public class AngledShopBlock extends AbstractShopBlock {
                 } else if (ANGLED.containsKey(item)) {
                     if (WOOD_TYPE != item) {
                         AngledShopBlock block = ANGLED.get(item);
-                        if(!player.isCreative()) {
+                        if (!player.isCreative()) {
                             stack.shrink(1);
                             ItemEntity droppedItem = new ItemEntity(
                                     world,
@@ -227,7 +227,7 @@ public class AngledShopBlock extends AbstractShopBlock {
                             world.addFreshEntity(droppedItem);
                         }
                         world.playSound(null, pos, SoundEvents.WOOD_STEP, SoundSource.BLOCKS);//TODO add this to fabric
-                        world.setBlockAndUpdate(pos, copyValues(block.defaultBlockState(), state,FACING));
+                        world.setBlockAndUpdate(pos, copyValues(block.defaultBlockState(), state, FACING));
                         shopEntity.forceUpdateClient();
                         return true;
                     }
@@ -237,20 +237,16 @@ public class AngledShopBlock extends AbstractShopBlock {
         return false;
     }
 
-
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.ANGLED_SHOP_ENTITY.get() == type) {
+        if (ModBlockEntities.ANGLED_SHOP_ENTITY.get() == type) {
             return level.isClientSide
-                            ? (lvl, pos, st, be) -> ((AngledShopEntity)be).renderTick()
-                            : (lvl, pos, st, be) -> ((AngledShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((AngledShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((AngledShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;
     }
-
-
-    private final Map<Colour, ShopItem> dropMap = new HashMap<>();
 
     public void addDropItem(ShopItem shopItem, Colour colour) {
         dropMap.put(colour, shopItem);

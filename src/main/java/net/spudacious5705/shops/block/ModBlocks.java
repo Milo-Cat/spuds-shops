@@ -26,42 +26,34 @@ import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 import static net.spudacious5705.shops.block.resources.VariantResources.*;
 import static net.spudacious5705.shops.block.resources.VariantResources.wood_variant.*;
 
-public class ModBlocks{
+public class ModBlocks {
 
     public static final List<Runnable> postRegistryTasks = new ArrayList<>();
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MOD_ID);
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
-
+    public static final BlockBehaviour.Properties settingsCarpet = shopSettings(Blocks.RED_CARPET);
+    public static final List<DeferredBlock<? extends AbstractShopBlock>> ALL_SHOPS = new ArrayList<>();
+    public static final List<DeferredBlock<? extends AbstractShopBlock>> BASIC_SHOPS = new ArrayList<>();
+    public static final List<DeferredBlock<AngledShopBlock>> ALL_ORIGINAL_SHOPS = new ArrayList<>(11);
+    public static final List<DeferredBlock<ShelfShopBlock>> ALL_SHELF_SHOPS = new ArrayList<>(11);
+    public static final List<DeferredBlock<WindowSillShopBlock>> ALL_WINDOW_SHOPS = new ArrayList<>(2);
+    public static final List<DeferredBlock<RugShopBlock>> ALL_RUG_SHOPS = new ArrayList<>(11);
     private static final BlockBehaviour.Properties settingsChain = shopSettings(Blocks.CHAIN);
-
+    public static final DeferredBlock<HookShopBlock> SHOP_BLOCK_HOOK = registerBasic("hook_shop", () -> new HookShopBlock(settingsChain));
     private static final BlockBehaviour.Properties settingsWood = shopSettings(Blocks.OAK_PLANKS);
-
+    //region ANGLED
+    public static final DeferredBlock<AngledShopBlock> SHOP_BLOCK_ANGLED_OAK = registerAngledShopBlock(OAK, new PostRegAssigner<>(() -> Items.OAK_PLANKS));
+    public static final DeferredBlock<CrateShopBlock> SHOP_BLOCK_CRATE = registerBasic("crate_shop", () -> new CrateShopBlock(settingsWood));
     private static final BlockBehaviour.Properties settingsStone = shopSettings(Blocks.STONE);
 
-    public static final BlockBehaviour.Properties settingsCarpet = shopSettings(Blocks.RED_CARPET);
-
-    private static BlockBehaviour.Properties shopSettings(Block example){
+    private static BlockBehaviour.Properties shopSettings(Block example) {
         return BlockBehaviour.Properties.ofFullCopy(example)
                 .noOcclusion()
                 .strength(2f, Float.MAX_VALUE);
     }
-
-    public static final List<DeferredBlock<? extends AbstractShopBlock>> ALL_SHOPS = new ArrayList<>();
-    public static final List<DeferredBlock<? extends AbstractShopBlock>> BASIC_SHOPS = new ArrayList<>();
-
-    public static final List<DeferredBlock<AngledShopBlock>> ALL_ORIGINAL_SHOPS = new ArrayList<>(11);
-
-    public static final List<DeferredBlock<ShelfShopBlock>> ALL_SHELF_SHOPS = new ArrayList<>(11);
-
-    public static final List<DeferredBlock<WindowSillShopBlock>> ALL_WINDOW_SHOPS = new ArrayList<>(2);
-
-
-    public static final List<DeferredBlock<RugShopBlock>> ALL_RUG_SHOPS = new ArrayList<>(11);
-
-    //region ANGLED
-    public static final DeferredBlock<AngledShopBlock> SHOP_BLOCK_ANGLED_OAK = registerAngledShopBlock(OAK, new PostRegAssigner<>(() -> Items.OAK_PLANKS));
+    //endregion
 
     private static void registerOriginal() {
         registerAngledShopBlock(ACACIA, new PostRegAssigner<>(() -> Items.ACACIA_PLANKS));
@@ -75,9 +67,10 @@ public class ModBlocks{
         registerAngledShopBlock(WARPED, new PostRegAssigner<>(() -> Items.WARPED_PLANKS));
         registerAngledShopBlock(JUNGLE, new PostRegAssigner<>(() -> Items.JUNGLE_PLANKS));
     }
+    //endregion
 
     private static DeferredBlock<AngledShopBlock> registerAngledShopBlock(wood_variant variant, PostRegAssigner<Item> woodType) {
-        String name = "shop_"+variant.name;
+        String name = "shop_" + variant.name;
 
         DeferredBlock<AngledShopBlock> block = BLOCKS.register(
                 name,
@@ -86,10 +79,10 @@ public class ModBlocks{
 
         ALL_ORIGINAL_SHOPS.add(block);
 
-        VariantResources.putItem(ANGLED,woodType, block);
+        VariantResources.putItem(ANGLED, woodType, block);
 
 
-        for(Colour colour : Colour.values()) {
+        for (Colour colour : Colour.values()) {
 
             DeferredItem<ShopItem> item = registerShopBlockItem(name, block, colour);
 
@@ -107,16 +100,12 @@ public class ModBlocks{
         );
         return block;
     }
-    //endregion
 
     //region WINDOW SILL
     private static void registerWindowSill() {
         registerWindowShopBlock("calcite", new PostRegAssigner<>(() -> Items.CALCITE));
         registerWindowShopBlock("andesite", new PostRegAssigner<>(() -> Items.ANDESITE));
     }
-    //endregion
-
-    public static final DeferredBlock<HookShopBlock> SHOP_BLOCK_HOOK = registerBasic("hook_shop",()->new HookShopBlock(settingsChain));
 
     //region RUG
     public static void registerRugs() {
@@ -138,30 +127,27 @@ public class ModBlocks{
         registerRug("black", new PostRegAssigner<>(() -> Items.BLACK_CARPET), new PostRegAssigner<>(() -> Items.BLACK_DYE));
     }
 
+    private static void registerRug(String colour, PostRegAssigner<Item> carpet, PostRegAssigner<Item> dye) {
 
-    private static void registerRug(String colour, PostRegAssigner<Item> carpet, PostRegAssigner<Item> dye){
-
-        DeferredBlock<RugShopBlock> rug = registerBasic("rug_shop_"+colour,()->new RugShopBlock(carpet,colour));
+        DeferredBlock<RugShopBlock> rug = registerBasic("rug_shop_" + colour, () -> new RugShopBlock(carpet, colour));
         ALL_RUG_SHOPS.add(rug);
 
         VariantResources.putItem(RUGS_CARPET, carpet, rug);
         VariantResources.putItem(RUGS_DYE, dye, rug);
 
     }
+    //endregion
 
-    private static void registerRugLegacy(){
+    private static void registerRugLegacy() {
         String name = "rug_shop";
 
-        DeferredBlock<RugShopBlock> rug = registerBasic(name,()->new RugShopBlock(new PostRegAssigner<>(() -> Items.RED_CARPET), "red"));
+        DeferredBlock<RugShopBlock> rug = registerBasic(name, () -> new RugShopBlock(new PostRegAssigner<>(() -> Items.RED_CARPET), "red"));
         ALL_RUG_SHOPS.add(rug);
 
-        VariantResources.putItem(RUGS_CARPET,new PostRegAssigner<>(() -> Items.RED_CARPET), rug);
+        VariantResources.putItem(RUGS_CARPET, new PostRegAssigner<>(() -> Items.RED_CARPET), rug);
         VariantResources.putItem(RUGS_DYE, new PostRegAssigner<>(() -> Items.RED_DYE), rug);
 
     }
-    //endregion
-
-    public static final DeferredBlock<CrateShopBlock> SHOP_BLOCK_CRATE = registerBasic("crate_shop",()->new CrateShopBlock(settingsWood));
 
     //region SHELF
     private static void registerShelf() {
@@ -178,13 +164,13 @@ public class ModBlocks{
         registerShelf(JUNGLE, new PostRegAssigner<>(() -> Blocks.JUNGLE_SLAB));
     }
 
-    private static void registerShelf(wood_variant variant, PostRegAssigner<Block> slab){
-        
-        String name = "shelf_shop_"+variant.name;
-        
-        DeferredBlock<ShelfShopBlock> shop = BLOCKS.register(name, () -> new ShelfShopBlock(settingsWood,slab,variant));
+    private static void registerShelf(wood_variant variant, PostRegAssigner<Block> slab) {
 
-        
+        String name = "shelf_shop_" + variant.name;
+
+        DeferredBlock<ShelfShopBlock> shop = BLOCKS.register(name, () -> new ShelfShopBlock(settingsWood, slab, variant));
+
+
         ITEMS.register(name, () ->
                 new BlockItem(shop.get(), new Item.Properties())//ERROR ON THIS LINE
         );
@@ -199,7 +185,7 @@ public class ModBlocks{
     //endregion
 
 
-    private static <S extends AbstractShopBlock> DeferredBlock<S> registerBasic(String name, Supplier<S> shop){
+    private static <S extends AbstractShopBlock> DeferredBlock<S> registerBasic(String name, Supplier<S> shop) {
 
         DeferredBlock<S> block = addToBasicShops(
                 addToAllShops(
@@ -212,7 +198,7 @@ public class ModBlocks{
     }
 
     private static void registerWindowShopBlock(String name, PostRegAssigner<Item> stoneType) {
-        DeferredBlock<WindowSillShopBlock> shop = registerBasic("shop_window_"+name,() -> new WindowSillShopBlock(settingsStone, stoneType));
+        DeferredBlock<WindowSillShopBlock> shop = registerBasic("shop_window_" + name, () -> new WindowSillShopBlock(settingsStone, stoneType));
         ALL_WINDOW_SHOPS.add(shop);
         VariantResources.putItem(WINDOW_SILL, stoneType, shop);
     }
@@ -229,7 +215,7 @@ public class ModBlocks{
 
     private static DeferredItem<ShopItem> registerShopBlockItem(String name, DeferredBlock<AngledShopBlock> block, Colour colour) {
         name = name + "_" + colour.asString();
-        return ITEMS.register(name, () -> new ShopItem(block.get(),new Item.Properties(), colour));
+        return ITEMS.register(name, () -> new ShopItem(block.get(), new Item.Properties(), colour));
 
     }
 
@@ -244,7 +230,7 @@ public class ModBlocks{
         //postRegistryTasks is called in SpudaciousShops.commonSetup()
     }
 
-    public static List<DeferredBlock<? extends AbstractShopBlock>> getAllShops(){
+    public static List<DeferredBlock<? extends AbstractShopBlock>> getAllShops() {
         return ALL_SHOPS;
     }
 

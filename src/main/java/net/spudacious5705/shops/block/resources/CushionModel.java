@@ -24,26 +24,26 @@ public class CushionModel extends Model {
             id("cushion_model"), "main");
 
 
-	private final ModelPart main;
+    private final ModelPart main;
 
-	public CushionModel(ModelPart root) {
+    public CushionModel(ModelPart root) {
         super(RenderType::entityCutoutNoCull);
         this.main = root.getChild("main");
-	}
+    }
 
-	public static LayerDefinition getTexturedModelData() {
-		MeshDefinition modelData = new MeshDefinition();
-		PartDefinition modelPartData = modelData.getRoot();
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
         PartDefinition main = modelPartData.addOrReplaceChild("main", CubeListBuilder.create(), PartPose.offsetAndRotation(8.0F, -5.0F, 12.0F, 0.0F, 3.1416F, 0.0F));
-		main.addOrReplaceChild("cussion_r1", CubeListBuilder.create().addBox(-13.0F, 4.0F, -10.0F, 10.0F, 1.0F, 7.0F), PartPose.offsetAndRotation(8.0F, 13.0F, 8.0F, 0.3927F, 0.0F, 0.0F));
+        main.addOrReplaceChild("cussion_r1", CubeListBuilder.create().addBox(-13.0F, 4.0F, -10.0F, 10.0F, 1.0F, 7.0F), PartPose.offsetAndRotation(8.0F, 13.0F, 8.0F, 0.3927F, 0.0F, 0.0F));
 
-		return LayerDefinition.create(modelData, 32, 32);
-	}
+        return LayerDefinition.create(modelData, 32, 32);
+    }
 
 
-	public void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
+    public void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
         renderToBuffer(matrices, vertices, light, overlay, 1);
-	}
+    }
 
     @Override
     public void renderToBuffer(@NotNull PoseStack matrices, @NotNull VertexConsumer vertices, int light, int overlay, int unknown) {

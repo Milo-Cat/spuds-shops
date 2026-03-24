@@ -27,13 +27,13 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
         final RugShopEntity.RendererData data = shop.rendererData();
         final RugShopEntity.RugRenderData furtherData = shop.furtherData();
         Font font = this.context.getFont();
-        if(data == null){
+        if (data == null) {
             return;
         }
 
         long currentNanoTime = System.nanoTime();
-        float delta = (currentNanoTime-shop.lastNanoTime)*0.00000004f;
-        shop.lastNanoTime=currentNanoTime;
+        float delta = (currentNanoTime - shop.lastNanoTime) * 0.00000004f;
+        shop.lastNanoTime = currentNanoTime;
 
         data.frameAccumulator();
 
@@ -58,21 +58,20 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
 
             float foo = furtherData.itemHeight;
 
-            float rand = (float)(Math.random() * 0.02f);
-            foo = (foo + delta*(0.02f+rand)) % 6.28318530718f ;
+            float rand = (float) (Math.random() * 0.02f);
+            foo = (foo + delta * (0.02f + rand)) % 6.28318530718f;
 
 
-
-            matrices.translate(0f, Math.sin(foo)*0.15f, 0f);
+            matrices.translate(0f, Math.sin(foo) * 0.15f, 0f);
 
             furtherData.itemHeight = foo;
 
-            rand = (float)(Math.random() * 0.03);
+            rand = (float) (Math.random() * 0.03);
 
             foo = furtherData.itemRotationY;
-            if(furtherData.rotateDirectionY) {
+            if (furtherData.rotateDirectionY) {
                 foo = (foo + delta * (0.2f + rand)) % 360;
-            } else{
+            } else {
                 foo = (foo - delta * (0.2f + rand)) % 360;
             }
 
@@ -80,12 +79,12 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
 
             furtherData.itemRotationY = foo;
 
-            rand = (float)(Math.random()*0.05f);
+            rand = (float) (Math.random() * 0.05f);
             foo = furtherData.itemRotationX;
 
-            if(furtherData.rotateDirectionX) {
+            if (furtherData.rotateDirectionX) {
                 foo = (foo + delta * (1.25f + rand)) % 360;
-            } else{
+            } else {
                 foo = (foo - delta * (1.25f + rand)) % 360;
             }
 
@@ -94,10 +93,10 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             furtherData.itemRotationX = foo;
 
             foo = furtherData.itemRotationSpeedZ;
-            foo = (float) clamp(foo+((Math.random())-0.5f)*delta*0.05f,-0.3f,0.3f);
+            foo = (float) clamp(foo + ((Math.random()) - 0.5f) * delta * 0.05f, -0.3f, 0.3f);
             furtherData.itemRotationSpeedZ = foo;
 
-            foo = (furtherData.itemRotationZ+foo)%360f;
+            foo = (furtherData.itemRotationZ + foo) % 360f;
 
             matrices.mulPose(Axis.ZP.rotationDegrees(foo));
 
@@ -118,10 +117,10 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
 
             //render price (count of currency)
             matrices.pushPose();
-            matrices.translate(-0.27f,-0.178f,-0.37f);
+            matrices.translate(-0.27f, -0.178f, -0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(-135f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            float textSize = data.useSmallTextPrice()?0.012f:0.019f;
+            float textSize = data.useSmallTextPrice() ? 0.012f : 0.019f;
             matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
@@ -139,7 +138,7 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             matrices.popPose();
 
             matrices.pushPose();
-            matrices.translate(0.27f,-0.178f,0.37f);
+            matrices.translate(0.27f, -0.178f, 0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(45f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
             matrices.scale(textSize, textSize, textSize);
@@ -163,10 +162,10 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
 
 
             matrices.pushPose();
-            matrices.translate(0.37f,-0.178f,-0.37f);
+            matrices.translate(0.37f, -0.178f, -0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(135f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            textSize = data.useSmallTextProduct()?0.012f:0.019f;
+            textSize = data.useSmallTextProduct() ? 0.012f : 0.019f;
             matrices.scale(textSize, textSize, textSize);
 
             font.drawInBatch(
@@ -183,7 +182,7 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             );
             matrices.popPose();
             matrices.pushPose();
-            matrices.translate(-0.37f,-0.178f,0.37f);
+            matrices.translate(-0.37f, -0.178f, 0.37f);
             matrices.mulPose(Axis.YP.rotationDegrees(-45f));
             matrices.mulPose(Axis.XP.rotationDegrees(90f));
             matrices.scale(textSize, textSize, textSize);
@@ -202,16 +201,16 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             );
             matrices.popPose();
 
-            matrices.translate(-0.39f,-0.178f,-0.23f);
+            matrices.translate(-0.39f, -0.178f, -0.23f);
 
             float scale;
             boolean oppType;
-            if(data.currencyDisplayType()){
+            if (data.currencyDisplayType()) {
                 //for block item
                 mode = ItemDisplayContext.NONE;
                 scale = 0.16f;
                 oppType = true;
-            }else{
+            } else {
                 //for normal item
                 mode = ItemDisplayContext.GUI;
                 oppType = false;
@@ -219,7 +218,7 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             }
             //render currency type
             matrices.pushPose();
-            if(oppType){
+            if (oppType) {
                 matrices.mulPose(Axis.YP.rotationDegrees(-45f));
             } else {
                 matrices.mulPose(Axis.XP.rotationDegrees(90f));
@@ -241,7 +240,7 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
             matrices.translate(0.39f, 0.3f, 0.23f);
             matrices.mulPose(Axis.YP.rotationDegrees(180f));
             matrices.translate(-0.39f, -0.3f, -0.23f);
-            if(oppType){
+            if (oppType) {
                 matrices.mulPose(Axis.YP.rotationDegrees(-45f));
             } else {
                 matrices.mulPose(Axis.XP.rotationDegrees(90f));

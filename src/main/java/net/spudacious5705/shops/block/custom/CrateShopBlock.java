@@ -14,13 +14,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.CrateShopEntity;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CrateShopBlock extends AbstractShopBlock{
+public class CrateShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);
 
@@ -56,16 +56,16 @@ public class CrateShopBlock extends AbstractShopBlock{
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new CrateShopEntity(pos,state);
+        return new CrateShopEntity(pos, state);
     }
 
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.CRATE_SHOP_ENTITY.get() == type) {
+        if (ModBlockEntities.CRATE_SHOP_ENTITY.get() == type) {
             return level.isClientSide
-                    ? (lvl, pos, st, be) -> ((CrateShopEntity)be).renderTick()
-                    : (lvl, pos, st, be) -> ((CrateShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((CrateShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((CrateShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;
@@ -88,7 +88,7 @@ public class CrateShopBlock extends AbstractShopBlock{
     }
 
     @Override
-    protected VoxelShape getGenericShape(BlockState state){
+    protected VoxelShape getGenericShape(BlockState state) {
         return switch (state.getValue(FACING)) {
             case EAST -> SHAPE_EAST;
             case SOUTH -> SHAPE_SOUTH;

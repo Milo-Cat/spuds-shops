@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.block.entity.ShopInventory.ItemScatterer;
 
-public class ShelfShopEntity extends AbstractShopEntity{
+public class ShelfShopEntity extends AbstractShopEntity {
 
     private final ShopInventory shopInventoryTop;
 
@@ -25,17 +25,25 @@ public class ShelfShopEntity extends AbstractShopEntity{
     protected ShelfRenderData furtherDataTop;
     @OnlyIn(Dist.CLIENT)
     protected ShelfRenderData furtherDataBottom;
+    @OnlyIn(Dist.CLIENT)
+    protected RendererData rendererDataTop;
+
+    public ShelfShopEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.SHELF_SHOP_ENTITY.get(), pos, state, -0.3f);
+        this.shopInventoryTop = ShopInventory.create(toggleSettings);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            createRendererDataForShelf();
+        }
+    }
 
     @OnlyIn(Dist.CLIENT)
-    public ShelfRenderData furtherDataBottom(){return furtherDataBottom;}
+    public ShelfRenderData furtherDataBottom() {
+        return furtherDataBottom;
+    }
 
     @OnlyIn(Dist.CLIENT)
-    public ShelfRenderData furtherDataTop(){return furtherDataTop;}
-
-    @OnlyIn(Dist.CLIENT)
-    public static class ShelfRenderData {
-        public final float itemLrotation = (float) ((Math.random() * 90) + 80f);
-        public final float itemRrotation = (float) ((Math.random() * 90) + 80f);
+    public ShelfRenderData furtherDataTop() {
+        return furtherDataTop;
     }
 
     @Override
@@ -63,14 +71,6 @@ public class ShelfShopEntity extends AbstractShopEntity{
         this.rendererDataTop.onTick();
     }
 
-    public ShelfShopEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.SHELF_SHOP_ENTITY.get(), pos, state, -0.3f);
-        this.shopInventoryTop = ShopInventory.create(toggleSettings);
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            createRendererDataForShelf();
-        }
-    }
-
     @OnlyIn(Dist.CLIENT)
     protected void createRendererDataForShelf() {
         this.furtherDataTop = new ShelfRenderData();
@@ -79,16 +79,13 @@ public class ShelfShopEntity extends AbstractShopEntity{
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected RendererData rendererDataTop;
-
-
-    @OnlyIn(Dist.CLIENT)
-    public RendererData rendererDataTop(){return  rendererDataTop;}
-
+    public RendererData rendererDataTop() {
+        return rendererDataTop;
+    }
 
     @Override
     protected boolean hasTrade() {
-        return shopInventory.tradeFunctional()||shopInventoryTop.tradeFunctional();
+        return shopInventory.tradeFunctional() || shopInventoryTop.tradeFunctional();
     }
 
     @Override
@@ -114,6 +111,12 @@ public class ShelfShopEntity extends AbstractShopEntity{
 
         ContainerHelper.loadAllItems(donorTag, shopInventoryTop, holder);
     }
-    
-    
+
+    @OnlyIn(Dist.CLIENT)
+    public static class ShelfRenderData {
+        public final float itemLrotation = (float) ((Math.random() * 90) + 80f);
+        public final float itemRrotation = (float) ((Math.random() * 90) + 80f);
+    }
+
+
 }

@@ -9,13 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CushionResources {
-    public static final Map<Colour, cushionColourGroup> COLOUR_MAP  = new HashMap<>();
+    public static final Map<Colour, cushionColourGroup> COLOUR_MAP = new HashMap<>();
     public static final Map<Item, cushionColourGroup> DYE_MAP = new HashMap<>();
     public static final Map<Item, cushionColourGroup> WOOL_MAP = new HashMap<>();
 
 
-    static void registerColourGroups()
-    {
+    static void registerColourGroups() {
         registerColourGroup(Colour.RED, Items.RED_DYE, Items.RED_WOOL);
         registerColourGroup(Colour.WHITE, Items.WHITE_DYE, Items.WHITE_WOOL);
         registerColourGroup(Colour.BLUE, Items.BLUE_DYE, Items.BLUE_WOOL);
@@ -34,19 +33,19 @@ public class CushionResources {
         registerColourGroup(Colour.PINK, Items.PINK_DYE, Items.PINK_WOOL);
     }
 
-    public static cushionColourGroup registerColourGroup(Colour colour, Item dye, Item wool){
-        cushionColourGroup group = new cushionColourGroup(colour,dye,wool);
-        COLOUR_MAP.put(colour,group);
-        DYE_MAP.put(dye,group);
-        WOOL_MAP.put(wool,group);
+    public static cushionColourGroup registerColourGroup(Colour colour, Item dye, Item wool) {
+        cushionColourGroup group = new cushionColourGroup(colour, dye, wool);
+        COLOUR_MAP.put(colour, group);
+        DYE_MAP.put(dye, group);
+        WOOL_MAP.put(wool, group);
         return group;
     }
 
-    public static void initialise(){
+    public static void initialise() {
         registerColourGroups();
     }
 
-    public record cushionColourGroup(Colour colour , Item dye, Item wool){
+    public record cushionColourGroup(Colour colour, Item dye, Item wool) {
 
     }
 }

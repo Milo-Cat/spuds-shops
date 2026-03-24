@@ -77,8 +77,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         this.imageWidth = 228;
         this.imageHeight = 256;
         this.SETTINGS = menu.getSettings();
-        this.leftPos = (width - imageWidth)/2;
-        this.topPos = (height - imageHeight)/2;
+        this.leftPos = (width - imageWidth) / 2;
+        this.topPos = (height - imageHeight) / 2;
 
         menu.updateTabSelection();
     }
@@ -158,51 +158,49 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         Font font = Minecraft.getInstance().font;
 
 
-        switch (menu.getActiveTab()){
+        switch (menu.getActiveTab()) {
             case SELLER_TAB -> {
-                renderStorageHeaders(context,font,leftPos,topPos);
+                renderStorageHeaders(context, font, leftPos, topPos);
 
-                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+                renderScreenGenerics(context, mouseX, mouseY, partialTick);
 
-                PaymentItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
-                ProductItemWidget.renderWidget(context,mouseX,mouseY,partialTick,font);
+                PaymentItemWidget.renderWidget(context, mouseX, mouseY, partialTick, font);
+                ProductItemWidget.renderWidget(context, mouseX, mouseY, partialTick, font);
 
-                NotifShopStyleSelectOn.renderWidget(context,mouseX,mouseY,partialTick, font);
+                NotifShopStyleSelectOn.renderWidget(context, mouseX, mouseY, partialTick, font);
             }
             case SETTINGS_TAB -> {
 
                 //toggleButtons.forEach();
 
-                if(menu.isPlayerCreative()) {
+                if (menu.isPlayerCreative()) {
                     ToggleCreative.renderWidget(context, mouseX, mouseY, partialTick);
                 }
 
-                ToggleIconsEffects.renderWidget(context,mouseX,mouseY,partialTick);
+                ToggleIconsEffects.renderWidget(context, mouseX, mouseY, partialTick);
 
-                ToggleIgnoreNBT.renderWidget(context,mouseX,mouseY,partialTick);
+                ToggleIgnoreNBT.renderWidget(context, mouseX, mouseY, partialTick);
 
-                ToggleShopStyle.renderWidget(context,mouseX,mouseY,partialTick);
-
-
+                ToggleShopStyle.renderWidget(context, mouseX, mouseY, partialTick);
 
 
-                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
-                    ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
+                for (ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS) {
+                    ttt.render(context, font, mouseX, mouseY, leftPos, topPos);
                 }
 
-                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+                renderScreenGenerics(context, mouseX, mouseY, partialTick);
             }
             case CUSTOMER_TAB -> {
 
-                renderScreenGenerics(context,mouseX,mouseY,partialTick);
+                renderScreenGenerics(context, mouseX, mouseY, partialTick);
 
-                NotifNBTMatchOFF.renderWidget(context,mouseX,mouseY,partialTick, font);
+                NotifNBTMatchOFF.renderWidget(context, mouseX, mouseY, partialTick, font);
             }
             case WARNING_TAB -> {
-                WarningCancel.renderWidget(context,mouseX,mouseY,partialTick);
-                WarningProceed.renderWidget(context,mouseX,mouseY,partialTick);
+                WarningCancel.renderWidget(context, mouseX, mouseY, partialTick);
+                WarningProceed.renderWidget(context, mouseX, mouseY, partialTick);
 
-                renderWarnPopupTextBody(context,font,leftPos,topPos);
+                renderWarnPopupTextBody(context, font, leftPos, topPos);
 
             }
             default -> throw new IllegalStateException("Unexpected value: " + menu.getActiveTab());
@@ -212,14 +210,14 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     }
 
     private void renderScreenGenerics(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
-        SellerTabButton.renderWidget(context,mouseX,mouseY,partialTick);
-        SettingsTabButton.renderWidget(context,mouseX,mouseY,partialTick);
-        ShopFrontTabButton.renderWidget(context,mouseX,mouseY,partialTick);
+        SellerTabButton.renderWidget(context, mouseX, mouseY, partialTick);
+        SettingsTabButton.renderWidget(context, mouseX, mouseY, partialTick);
+        ShopFrontTabButton.renderWidget(context, mouseX, mouseY, partialTick);
     }
     //endregion rendering
 
     //region interaction
-    private void WarnPopupContinue(){
+    private void WarnPopupContinue() {
         PacketDistributor.sendToServer(new ShopSelfDemotePkt());
         menu.close();
     }
@@ -228,44 +226,43 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
 
-            if(switch (menu.getActiveTab()) {
-                case SETTINGS_TAB -> tryClickWidgets(mouseX,mouseY,button,
-                        ToggleCreative, ToggleIconsEffects, ToggleIgnoreNBT, ToggleShopStyle,
-                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
-                        );
+        if (switch (menu.getActiveTab()) {
+            case SETTINGS_TAB -> tryClickWidgets(mouseX, mouseY, button,
+                    ToggleCreative, ToggleIconsEffects, ToggleIgnoreNBT, ToggleShopStyle,
+                    SettingsTabButton, SellerTabButton, ShopFrontTabButton
+            );
 
-                case WARNING_TAB -> tryClickWidgets(mouseX,mouseY,button,
-                        WarningCancel,
-                        WarningProceed
-                );
+            case WARNING_TAB -> tryClickWidgets(mouseX, mouseY, button,
+                    WarningCancel,
+                    WarningProceed
+            );
 
-                case SELLER_TAB -> tryClickWidgets(mouseX,mouseY,button,
-                        SettingsTabButton, SellerTabButton, ShopFrontTabButton,
-                        ProductItemWidget, PaymentItemWidget
-                );
+            case SELLER_TAB -> tryClickWidgets(mouseX, mouseY, button,
+                    SettingsTabButton, SellerTabButton, ShopFrontTabButton,
+                    ProductItemWidget, PaymentItemWidget
+            );
 
-                default -> tryClickWidgets(mouseX,mouseY,button,
-                        SettingsTabButton, SellerTabButton, ShopFrontTabButton
+            default -> tryClickWidgets(mouseX, mouseY, button,
+                    SettingsTabButton, SellerTabButton, ShopFrontTabButton
+            );
+        }) {
+            //click success
+            var player = Minecraft.getInstance().player;
+            if (player != null) {
+                player.playSound(
+                        SoundEvents.UI_BUTTON_CLICK.value()
                 );
-            }){
-                //click success
-                var player = Minecraft.getInstance().player;
-                if(player != null){
-                    player.playSound(
-                            SoundEvents.UI_BUTTON_CLICK.value()
-                    );
-                }
-                return true;
             }
-
+            return true;
+        }
 
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private boolean tryClickWidgets(double mouseX, double mouseY, int button, CustomClickableWidget... widgets) {
-        for(CustomClickableWidget widget : widgets){
-            if(widget.attemptClick(mouseX,mouseY,button))return true;
+        for (CustomClickableWidget widget : widgets) {
+            if (widget.attemptClick(mouseX, mouseY, button)) return true;
         }
         return false;
     }
@@ -278,21 +275,21 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             super(pX, pY, pWidth, pHeight, pMessage);
         }
 
-        public boolean attemptClick(double X, double Y, int button){
-            if( isHovered(X,Y) ){
-                onClick(X,Y, button);
+        public boolean attemptClick(double X, double Y, int button) {
+            if (isHovered(X, Y)) {
+                onClick(X, Y, button);
                 return true;
             }
             return false;
         }
 
-        public void onClick(double X, double Y, int button){
-            if(button==0) {
+        public void onClick(double X, double Y, int button) {
+            if (button == 0) {
                 onClick(X, Y);
             }
         }
 
-        public boolean isHovered(double X, double Y){
+        public boolean isHovered(double X, double Y) {
             X -= this.getX();
             Y -= this.getY();
             return X >= 0 && X < this.width
@@ -301,10 +298,36 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         @Override
-        protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {}
+        protected void renderWidget(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        }
 
         @Override
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {}
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {
+        }
+    }
+
+    public static class NotificationWidget extends CustomClickableWidget {
+        private final List<Component> tooltip;
+
+        private final Supplier<Boolean> renderToggle;
+
+        public NotificationWidget(int pX, int pY, List<Component> tooltip, Supplier<Boolean> renderToggle) {
+            super(pX, pY, 16, 16, Component.literal(""));
+            this.tooltip = tooltip;
+            this.renderToggle = renderToggle;
+        }
+
+        public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float d, Font font) {
+            if (!renderToggle.get()) return;
+            int x = this.getX();
+            int y = this.getY();
+
+            graphics.blit(NOTIFICATION_ICON, x, y, 32, 32, 0f, 0f, 32, 32, 32, 32);
+
+            if (isHovered(mouseX, mouseY)) {
+                graphics.renderTooltip(font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
+            }
+        }
     }
 
     private class TabWidget extends CustomClickableWidget {
@@ -321,16 +344,16 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         @Override
         protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
-            int x = this.getX()-3;
-            int y = this.getY()-6;
-            if(menu.getActiveTab() == relatedState){
-                context.blit(TAB_SELECTED,x,y,32,32,0f,0f,32,32,32,32);
-            }else if(isHovered(pMouseX,pMouseY)){
-                context.blit(TAB_HOVER,x,y,32,32,0f,0f,32,32,32,32);
-            }else{
-                context.blit(TAB_DESELECTED,x,y,32,32,0f,0f,32,32,32,32);
+            int x = this.getX() - 3;
+            int y = this.getY() - 6;
+            if (menu.getActiveTab() == relatedState) {
+                context.blit(TAB_SELECTED, x, y, 32, 32, 0f, 0f, 32, 32, 32, 32);
+            } else if (isHovered(pMouseX, pMouseY)) {
+                context.blit(TAB_HOVER, x, y, 32, 32, 0f, 0f, 32, 32, 32, 32);
+            } else {
+                context.blit(TAB_DESELECTED, x, y, 32, 32, 0f, 0f, 32, 32, 32, 32);
             }
-            context.blit(ICON_TEXTURE,x+6,y+9,16,16,0f,0f,16,16,16,16);
+            context.blit(ICON_TEXTURE, x + 6, y + 9, 16, 16, 0f, 0f, 16, 16, 16, 16);
         }
 
         public void onClick(double mouseX, double mouseY) {
@@ -339,7 +362,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-    private class ToggleWidget extends CustomClickableWidget{
+    private class ToggleWidget extends CustomClickableWidget {
 
         private final ResourceLocation TEXTURE_ON;
         private final ResourceLocation TEXTURE_OFF;
@@ -364,11 +387,11 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
             boolean toggle = menu.getStateOfSetting(BUTTON_ID);
 
-            context.blit(SETTINGS.BUTTON_BACKGROUND(),x-3,y-3,64,64,0f,0f,64,64,64,64);
-            context.blit(toggle ? TEXTURE_ON : TEXTURE_OFF ,x,y,32,32,0f,0f,32,32,32,32);
+            context.blit(SETTINGS.BUTTON_BACKGROUND(), x - 3, y - 3, 64, 64, 0f, 0f, 64, 64, 64, 64);
+            context.blit(toggle ? TEXTURE_ON : TEXTURE_OFF, x, y, 32, 32, 0f, 0f, 32, 32, 32, 32);
 
-            if(isHovered(mouseX,mouseY)){
-                context.renderTooltip(Minecraft.getInstance().font, tooltip,mouseX,mouseY);
+            if (isHovered(mouseX, mouseY)) {
+                context.renderTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
             }
         }
 
@@ -378,7 +401,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
     }
 
-    private class ButtonWidget extends CustomClickableWidget{
+    private class ButtonWidget extends CustomClickableWidget {
 
         private final Runnable FUNCTION;
         private final ResourceLocation TEXTURE;
@@ -393,8 +416,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             this.FUNCTION = function;
             this.TEXTURE = texture;
             this.TEXTURE_HOVERED = textureHovered;
-            this.textX = 32+x;
-            this.textY = 13+y;
+            this.textX = 32 + x;
+            this.textY = 13 + y;
             this.TEXT = text;
             this.textColour = colour;
         }
@@ -402,22 +425,22 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         @Override
         protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick) {
             int x = this.getX();
-            int y = this.getY()-16;
+            int y = this.getY() - 16;
             int tx = textX;
 
-            if(isHovered(pMouseX,pMouseY)){
+            if (isHovered(pMouseX, pMouseY)) {
 
-                context.blit(TEXTURE_HOVERED,x,y,64,64,0f,0f,64,64,64,64);
+                context.blit(TEXTURE_HOVERED, x, y, 64, 64, 0f, 0f, 64, 64, 64, 64);
 
                 tx++;
 
-            }else{
+            } else {
 
-                context.blit(TEXTURE,x,y,64,64,0f,0f,64,64,64,64);
+                context.blit(TEXTURE, x, y, 64, 64, 0f, 0f, 64, 64, 64, 64);
 
             }
 
-            renderCentredText(context, font, TEXT, tx,textY,textColour, false);
+            renderCentredText(context, font, TEXT, tx, textY, textColour, false);
         }
 
 
@@ -428,7 +451,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-    private class TradeItemWidget extends CustomClickableWidget{
+    private class TradeItemWidget extends CustomClickableWidget {
 
         private final ShopScreenHandlerOwner.shop_trade_slot slot;
         private final MutableComponent emptyStackTooltip;
@@ -442,18 +465,17 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         protected void renderWidget(@NotNull GuiGraphics context, int pMouseX, int pMouseY, float pPartialTick, Font font) {
 
-            int x = this.getX()+leftPos;
-            int y = this.getY()+topPos;
+            int x = this.getX() + leftPos;
+            int y = this.getY() + topPos;
 
             ItemStack stack = slot.getItem();
 
 
-
             context.pose().pushPose();
             context.pose().translate(0.0F, 0.0F, 150.0F);
-            if (isHovered(pMouseX,pMouseY)) {//hovered?
+            if (isHovered(pMouseX, pMouseY)) {//hovered?
                 context.fill(x, y, x + 16, y + 16, -2130706433);
-                if(stack.isEmpty()){
+                if (stack.isEmpty()) {
                     context.renderTooltip(font, emptyStackTooltip, pMouseX, pMouseY);
                 } else {
                     context.renderTooltip(font, stack, pMouseX, pMouseY);
@@ -469,14 +491,14 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
         @Override
         public boolean isHovered(double X, double Y) {
-            return super.isHovered(X-leftPos, Y-topPos);
+            return super.isHovered(X - leftPos, Y - topPos);
         }
 
         @Override
         public void onClick(double mouseX, double mouseY, int button) {
 
 
-            if(!menu.perms.canEditTrades()){
+            if (!menu.perms.canEditTrades()) {
                 playWarnSound(menu.playerInventory.player);
                 return;
             }
@@ -487,28 +509,5 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             minecraft.gameMode.handleInventoryMouseClick(menu.containerId, slot.index, button, ClickType.PICKUP, minecraft.player);
         }
 
-    }
-
-    public static class NotificationWidget extends CustomClickableWidget {
-        private final List<Component> tooltip;
-
-        private final Supplier<Boolean> renderToggle;
-
-        public NotificationWidget(int pX, int pY, List<Component> tooltip, Supplier<Boolean> renderToggle) {
-            super(pX, pY, 16, 16, Component.literal(""));
-            this.tooltip = tooltip;
-            this.renderToggle = renderToggle;
-        }
-        public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float d, Font font) {
-            if(!renderToggle.get())return;
-            int x = this.getX();
-            int y = this.getY();
-
-            graphics.blit(NOTIFICATION_ICON,x,y,32,32,0f,0f,32,32,32,32);
-
-            if(isHovered(mouseX,mouseY)){
-                graphics.renderTooltip(font, tooltip, java.util.Optional.empty(), mouseX, mouseY);
-            }
-        }
     }
 }

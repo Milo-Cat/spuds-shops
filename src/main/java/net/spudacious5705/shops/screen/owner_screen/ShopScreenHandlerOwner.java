@@ -19,13 +19,18 @@ import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.permission.PermissionManager;
-import net.spudacious5705.shops.screen.*;
+import net.spudacious5705.shops.screen.AShopScreenHandler;
+import net.spudacious5705.shops.screen.ModScreenHandlers;
+import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.ShopTabSyncPkt;
 import net.spudacious5705.shops.screen.networking.ToggleSyncPkt;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static net.spudacious5705.shops.block.entity.ShopInventory.PAYMENT_SLOT;
 import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
@@ -36,33 +41,94 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //region variables
 
+    @MagicConstant
+    static final int SELLER_TAB = 1;
+    @MagicConstant
+    static final int SETTINGS_TAB = 2;
+    @MagicConstant
+    static final int CUSTOMER_TAB = 3;
+    @MagicConstant
+    static final int WARNING_TAB = 4;
     private static final int profit_itemStacks_start = 54;
     private static final int EXPECTED_CONTAINER_SIZE = 78;
-    @MagicConstant static final int SELLER_TAB = 1;
-    @MagicConstant static final int SETTINGS_TAB = 2;
-    @MagicConstant static final int CUSTOMER_TAB = 3;
-    @MagicConstant static final int WARNING_TAB = 4;
-
-    private final PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate ID_RECORDS_DELEGATE;
     final PermissionLevel perms;
-
-
-    private final List<TogglableSlot> tabSellerSlots = new ArrayList<>();
     final List<TogglableSlot> tabSettingsSlots = new ArrayList<>();
-    private int activeTab = SELLER_TAB;
+    private final PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate ID_RECORDS_DELEGATE;
+    private final List<TogglableSlot> tabSellerSlots = new ArrayList<>();
+    shop_trade_slot PaymentSlot;
 
 
     //endregion variables
 
     //region utilities
+    shop_trade_slot VendingSlot;
+    shop_trade_slot[] TradeDefSlots;
+    private int activeTab = SELLER_TAB;
+    private int playerInvEnd;
+    private int shopInvEnd;
+    private int tradeInvEnd;
+    private int contractsInvEnd;
+
+    public ShopScreenHandlerOwner(int syncId, Inventory playerInventory, BlockPos pos, boolean openTop, AbstractShopEntity shop) {//clientInit
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId, playerInventory, openTop, shop);
+        Player player = playerInventory.player;
+
+        this.perms = shopInventory.checkPermissions();
+
+        ID_RECORDS_DELEGATE = shop.getRecordsDelegate(player);
+
+        finishSetup();
+    }
+
+    //endregion utilities
+
+    //region menu open/setup/close
+
+    public ShopScreenHandlerOwner(
+            int syncId,
+            Inventory playerInventory,
+            AbstractShopEntity shop,
+            AbstractShopEntity.InventoryDelegate inventoryDelegate,
+            PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate recordsDelegate,
+            AbstractShopEntity.settings_Delegate settingsDelegate
+    ) {//serverInit
+        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId, inventoryDelegate, settingsDelegate, playerInventory, null);
+        checkContainerSize(shopInventory, EXPECTED_CONTAINER_SIZE);
+        this.perms = shopInventory.checkPermissions();
+        this.ID_RECORDS_DELEGATE = recordsDelegate;
+
+        finishSetup();
+    }
+
+    public static void playWarnSound(@NotNull Player player) {
+        player.playNotifySound(
+                SoundEvents.NOTE_BLOCK_GUITAR.value(),
+                SoundSource.MASTER,
+                32.0F,
+                0.3F
+        );
+    }
+
+    public static ShopScreenHandlerOwner create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
+        BlockPos pos = buf.readBlockPos();
+        boolean openTop = buf.readBoolean();
+
+        Player player = playerInv.player;
+        if (player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
+            return new ShopScreenHandlerOwner(syncId, playerInv, pos, openTop, shop);
+        }
+
+        Minecraft.getInstance().setScreen(null);
+        return null;
+    }
 
     public void selfDemotePlayer(Player player) {
-        if(activeTab==WARNING_TAB){
+        if (activeTab == WARNING_TAB) {
             ID_RECORDS_DELEGATE.selfDemote(player);
         }
     }
 
-    public int getActiveTab(){
+    public int getActiveTab() {
         return activeTab;
     }
 
@@ -71,12 +137,11 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     }
 
     public ResourceLocation getBackgroundTexture() {
-        return switch (activeTab){
+        return switch (activeTab) {
             case SETTINGS_TAB -> SCREEN_SETTINGS.SETTINGS().textureID();
-            case CUSTOMER_TAB ->
-                SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) ?
-                        SCREEN_SETTINGS.CUSTOMER_MULTI().textureID() :
-                        SCREEN_SETTINGS.CUSTOMER().textureID();
+            case CUSTOMER_TAB -> SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) ?
+                    SCREEN_SETTINGS.CUSTOMER_MULTI().textureID() :
+                    SCREEN_SETTINGS.CUSTOMER().textureID();
             case WARNING_TAB -> WARNING_TEXTURE;
             default -> SCREEN_SETTINGS.SELLER().textureID(); //SELLER or ERROR
         };
@@ -91,8 +156,8 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         return SETTINGS_DELEGATE.getState(button);
     }
 
-    private void openWarnScreen(@NotNull Player player){//called when player removes their own contract
-        if(player.level().isClientSide) {
+    private void openWarnScreen(@NotNull Player player) {//called when player removes their own contract
+        if (player.level().isClientSide) {
             playWarnSound(player);
             PacketDistributor.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
         } else {
@@ -100,81 +165,23 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         }
     }
 
-    public static void playWarnSound(@NotNull Player player){
-        player.playNotifySound(
-                SoundEvents.NOTE_BLOCK_GUITAR.value(),
-                SoundSource.MASTER,
-                32.0F,
-                0.3F
-        );
-    }
-
-    //endregion utilities
-
-    //region menu open/setup/close
-
-    public static ShopScreenHandlerOwner create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
-        BlockPos pos = buf.readBlockPos();
-        boolean openTop = buf.readBoolean();
-
-        Player player = playerInv.player;
-        if(player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
-            return new ShopScreenHandlerOwner(syncId, playerInv, pos, openTop, shop);
-        }
-
-        Minecraft.getInstance().setScreen(null);
-        return null;
-    }
-
-    public ShopScreenHandlerOwner(int syncId, Inventory playerInventory, BlockPos pos, boolean openTop, AbstractShopEntity shop) {//clientInit
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId, playerInventory, openTop, shop);
-        Player player = playerInventory.player;
-
-        this.perms = shopInventory.checkPermissions();
-
-        ID_RECORDS_DELEGATE = shop.getRecordsDelegate(player);
-
-        finishSetup();
-    }
-
-    public ShopScreenHandlerOwner(
-            int syncId,
-            Inventory playerInventory,
-            AbstractShopEntity shop,
-            AbstractShopEntity.InventoryDelegate inventoryDelegate,
-            PermissionManager<AbstractShopEntity>.player_ID_Records_Delegate recordsDelegate,
-            AbstractShopEntity.settings_Delegate settingsDelegate
-    ) {//serverInit
-        super(ModScreenHandlers.SHOP_SCREEN_HANDLER_OWNER.get(), syncId, inventoryDelegate, settingsDelegate, playerInventory, null);
-        checkContainerSize(shopInventory, EXPECTED_CONTAINER_SIZE );
-        this.perms = shopInventory.checkPermissions();
-        this.ID_RECORDS_DELEGATE = recordsDelegate;
-
-        finishSetup();
-    }
-
-    private int playerInvEnd;
-    private int shopInvEnd;
-    private int tradeInvEnd;
-    private int contractsInvEnd;
     private void finishSetup() {
 
 
         addPlayerInventory(playerInventory, 33, 174);
         playerInventory.startOpen(playerInventory.player);
-        playerInvEnd = slots.size()-1;
+        playerInvEnd = slots.size() - 1;
 
         addShopInventory();
-        shopInvEnd = slots.size()-1;
+        shopInvEnd = slots.size() - 1;
 
         addShopTrades();
-        tradeInvEnd = slots.size()-1;
+        tradeInvEnd = slots.size() - 1;
 
         addContractSlots();
-        contractsInvEnd = slots.size()-1;
+        contractsInvEnd = slots.size() - 1;
 
         activeTab = SELLER_TAB;
-
 
 
     }
@@ -183,16 +190,12 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         int offsetx = 81;
         int offsety = 69;
 
-        for(int y = 0; y<4; y++) {
-            for (int i = 0; i<6; ++i){
-                new contract_slot(ID_RECORDS_DELEGATE,y*6+i,offsetx+i*23,offsety+y*23);
+        for (int y = 0; y < 4; y++) {
+            for (int i = 0; i < 6; ++i) {
+                new contract_slot(ID_RECORDS_DELEGATE, y * 6 + i, offsetx + i * 23, offsety + y * 23);
             }
         }
     }
-
-    shop_trade_slot PaymentSlot;
-    shop_trade_slot VendingSlot;
-    shop_trade_slot[] TradeDefSlots;
 
     private void addShopTrades() {
         int x = 25;
@@ -230,36 +233,34 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         playerInventory.player.closeContainer();
     }
 
-    private void addShopInventory(){
+    private void addShopInventory() {
         int offsetx = 59;
         int offsety = 15;
 
-        for (int i = 0; i<6; ++i){
-            for (int j = 0; j<9; ++j){
-                createShopInvSlot(j+i*9,offsetx + j*18,offsety + i*18);
+        for (int i = 0; i < 6; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                createShopInvSlot(j + i * 9, offsetx + j * 18, offsety + i * 18);
             }
         }
         offsetx -= 44;
         offsety += 110;
 
-        for (int i = 0; i<11; ++i){
-            createShopInvSlot(profit_itemStacks_start+i,offsetx+i*18,offsety);
+        for (int i = 0; i < 11; ++i) {
+            createShopInvSlot(profit_itemStacks_start + i, offsetx + i * 18, offsety);
         }
         offsety += 18;
 
-        for (int i = 0; i<11; ++i){
-            createShopInvSlot(profit_itemStacks_start+11+i,offsetx+i*18,offsety);
+        for (int i = 0; i < 11; ++i) {
+            createShopInvSlot(profit_itemStacks_start + 11 + i, offsetx + i * 18, offsety);
         }
 
     }
 
-    private void createShopInvSlot(int slotIndex, int x, int y){
+    private void createShopInvSlot(int slotIndex, int x, int y) {
         TogglableSlot slot = new TogglableSlot(shopInventory, slotIndex, x, y);
         tabSellerSlots.add(slot);
         addSlot(slot);
     }
-
-
 
 
     //endregion menu open/setup/close
@@ -269,27 +270,29 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     //item slots
     @Override
     public void clicked(int pSlotId, int pButton, @NotNull ClickType pClickType, @NotNull Player pPlayer) {
-        if(pClickType != ClickType.QUICK_MOVE) {
+        if (pClickType != ClickType.QUICK_MOVE) {
             if (pSlotId == PaymentSlot.index) {
-                tradeWindowPress(PaymentSlot, pButton); return;
+                tradeWindowPress(PaymentSlot, pButton);
+                return;
             } else if (pSlotId == VendingSlot.index) {
-                tradeWindowPress(VendingSlot, pButton); return;
+                tradeWindowPress(VendingSlot, pButton);
+                return;
             }
         }
         super.clicked(pSlotId, pButton, pClickType, pPlayer);//locked down slots handled in super
 
     }
 
-    void tradeWindowPress(shop_trade_slot slot, int button){
-        if(!perms.canEditTrades()) return;
+    void tradeWindowPress(shop_trade_slot slot, int button) {
+        if (!perms.canEditTrades()) return;
 
         ItemStack itemstack = getCarried();
         if (itemstack.isEmpty()) {
 
-            if(slot.hasItem()){
+            if (slot.hasItem()) {
                 int count = slot.getItem().getCount();
-                if(count > 0){
-                    if(button == 1) {
+                if (count > 0) {
+                    if (button == 1) {
                         count = (slot.getItem().getCount() + 1) / 2;
                     }
                     slot.remove(count);
@@ -298,14 +301,14 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
 
         } else {
-            if(itemstack.getItem() == slot.getItem().getItem()){
+            if (itemstack.getItem() == slot.getItem().getItem()) {
                 int count = slot.getItem().getCount() + itemstack.getCount();
                 int maxCount = itemstack.getMaxStackSize() * ConfigHandler.stackSizeMultiplier;
-                count = Math.min(maxCount,count);
+                count = Math.min(maxCount, count);
 
                 slot.set(itemstack.copyWithCount(count));
 
-            } else if(slot.getItem().isEmpty()){
+            } else if (slot.getItem().isEmpty()) {
                 slot.set(itemstack.copy());
             } else {
                 slot.set(ItemStack.EMPTY);
@@ -320,20 +323,20 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int invSlot) {
-        if(activeTab==CUSTOMER_TAB){
-            if(!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex){
-                    //do a bunch of trades
-                    int tradeCount = 0;
-                    while(tradeCount<64 & shopInventory.canTrade(player)) {
-                        shopInventory.trade(playerInventory);
-                        tradeCount++;
-                    }
-                    return ItemStack.EMPTY;
+        if (activeTab == CUSTOMER_TAB) {
+            if (!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex) {
+                //do a bunch of trades
+                int tradeCount = 0;
+                while (tradeCount < 64 & shopInventory.canTrade(player)) {
+                    shopInventory.trade(playerInventory);
+                    tradeCount++;
+                }
+                return ItemStack.EMPTY;
 
             }
-            if(invSlot <= playerInvEnd){
+            if (invSlot <= playerInvEnd) {
                 //quickmove within player inv
-                if(invSlot <9){
+                if (invSlot < 9) {
                     //from hotbar
                     return executeQuickMove(invSlot, 9, playerInvEnd);
                 } else {
@@ -344,16 +347,18 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
             return ItemStack.EMPTY;
         }
-        if(activeTab!=SELLER_TAB){return ItemStack.EMPTY;}
+        if (activeTab != SELLER_TAB) {
+            return ItemStack.EMPTY;
+        }
 
-        if(invSlot > shopInvEnd){
+        if (invSlot > shopInvEnd) {
             //do not quick move from protected slots
             return ItemStack.EMPTY;
         }
 
         //quick move between player and shop inventory
-        if(invSlot<=playerInvEnd){
-            return executeQuickMove(invSlot, playerInvEnd+1, shopInvEnd);
+        if (invSlot <= playerInvEnd) {
+            return executeQuickMove(invSlot, playerInvEnd + 1, shopInvEnd);
         }
 
         return executeQuickMove(invSlot, 0, playerInvEnd);
@@ -361,23 +366,23 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //tab/screen
     @OnlyIn(Dist.CLIENT)
-    public void updateTabSelectionClientside(int tab){
+    public void updateTabSelectionClientside(int tab) {
         activeTab = tab;
         PacketDistributor.sendToServer(new ShopTabSyncPkt(activeTab));
         updateTabSelection();
     }
 
-    public void updateTabSelectionServerside(int tab){
+    public void updateTabSelectionServerside(int tab) {
         activeTab = tab;
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void updateTabSelectionResponse(int tab){
+    public void updateTabSelectionResponse(int tab) {
         activeTab = tab;
         updateTabSelection();
     }
 
-    public void updateTabSelection(){
+    public void updateTabSelection() {
         switch (activeTab) {
             case SETTINGS_TAB -> {
                 tabSettingsSlots.forEach(TogglableSlot::enable);
@@ -412,7 +417,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     //settings buttons
     public boolean toggleButtonServersideUpdate(ToggleButtonID button, boolean state) {
         //SpudaciousShops.LOGGER.debug("packet received: {} - {}", button.getSerialised(), state);
-        if(SETTINGS_DELEGATE.attemptSetState(button,state)){
+        if (SETTINGS_DELEGATE.attemptSetState(button, state)) {
             shopInventory.setChanged();
         }
         return SETTINGS_DELEGATE.getState(button);
@@ -420,14 +425,14 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     @OnlyIn(Dist.CLIENT)
     public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
-        SETTINGS_DELEGATE.attemptSetState(button,state);
+        SETTINGS_DELEGATE.attemptSetState(button, state);
     }
 
     @OnlyIn(Dist.CLIENT)
     public void handleToggleButtonInput(ToggleButtonID button) {
         boolean state = !SETTINGS_DELEGATE.getState(button);
-        if(SETTINGS_DELEGATE.attemptSetState(button,state)){
-            PacketDistributor.sendToServer(new ToggleSyncPkt(button,state));
+        if (SETTINGS_DELEGATE.attemptSetState(button, state)) {
+            PacketDistributor.sendToServer(new ToggleSyncPkt(button, state));
         }
     }
 
@@ -453,7 +458,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public boolean mayPlace(@NotNull ItemStack stack) {
-            if(checkAction(stack, this.getSlotIndex())){
+            if (checkAction(stack, this.getSlotIndex())) {
                 return this.getItem().isEmpty();
             }
             return false;
@@ -461,12 +466,12 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public @NotNull ItemStack safeInsert(@NotNull ItemStack stack) {
-            return this.safeInsert(stack,0);
+            return this.safeInsert(stack, 0);
         }
 
         @Override
         public @NotNull ItemStack safeInsert(ItemStack stack, int count) {
-            if (!stack.isEmpty()&&stack.getItem() == ModItems.CONTRACT_SCROLL.get()) {
+            if (!stack.isEmpty() && stack.getItem() == ModItems.CONTRACT_SCROLL.get()) {
 
                 return ((PermissionManager.player_ID_Records_Delegate) container).insertContract(stack, this.getSlotIndex());
             }
@@ -475,7 +480,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public @NotNull ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(contract_delegate.belongsToInteractor(this.getItem())){
+            if (contract_delegate.belongsToInteractor(this.getItem())) {
                 openWarnScreen(pPlayer);
                 return ItemStack.EMPTY;
             }
@@ -484,7 +489,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(contract_delegate.belongsToInteractor(this.getItem())){
+            if (contract_delegate.belongsToInteractor(this.getItem())) {
                 openWarnScreen(pPlayer);
 
                 return Optional.empty();
@@ -504,7 +509,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public boolean mayPickup(@NotNull Player player) {
-            if(contract_delegate.belongsToInteractor(this.getItem())){
+            if (contract_delegate.belongsToInteractor(this.getItem())) {
                 return true;
             }
             return contract_delegate.canEditThat(this.getSlotIndex());
@@ -527,7 +532,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public int getMaxStackSize(@NotNull ItemStack pStack) {
-            return pStack.getMaxStackSize()*ConfigHandler.stackSizeMultiplier;
+            return pStack.getMaxStackSize() * ConfigHandler.stackSizeMultiplier;
         }
 
         /*

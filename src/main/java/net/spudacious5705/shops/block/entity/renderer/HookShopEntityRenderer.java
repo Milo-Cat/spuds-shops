@@ -22,7 +22,7 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
         ItemDisplayContext mode;
         final HookShopEntity.RendererData data = shop.rendererData();
         Font font = this.context.getFont();
-        if(data == null){
+        if (data == null) {
             return;
         }
         data.frameAccumulator();
@@ -34,12 +34,12 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             matrices.pushPose();
             matrices.translate(0.5f, 0.5f, 0.5f);
             matrices.mulPose(Axis.YP.rotationDegrees(
-                            switch (data.direction()) {
-                                case EAST -> 270f;
-                                case SOUTH -> 180f;
-                                case WEST -> 90f;
-                                default -> 0f;
-                            }));//used to have centre 0,0,0
+                    switch (data.direction()) {
+                        case EAST -> 270f;
+                        case SOUTH -> 180f;
+                        case WEST -> 90f;
+                        default -> 0f;
+                    }));//used to have centre 0,0,0
 
 
             //render item being sold
@@ -59,7 +59,6 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             }
 
 
-
             this.context.getItemRenderer().render(data.displayItem(), mode,
                     false,
                     matrices,
@@ -77,7 +76,7 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
 
             matrices.pushPose();
-            float textSize = data.useSmallTextPrice()?0.012f:0.016f;
+            float textSize = data.useSmallTextPrice() ? 0.012f : 0.016f;
             matrices.scale(textSize, textSize, -textSize);
             font.drawInBatch(
                     data.text(),
@@ -117,7 +116,7 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             //render currency type
             float r;
             float scaleFactor;
-            if(data.currencyDisplayType()){
+            if (data.currencyDisplayType()) {
                 //a block is being rendered
                 scaleFactor = 0.16f;
                 r = -0.06f;
@@ -145,7 +144,7 @@ public class HookShopEntityRenderer implements BlockEntityRenderer<HookShopEntit
             matrices.popPose();
             matrices.pushPose();
             matrices.scale(scaleFactor, scaleFactor, scaleFactor);
-            this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,                    false,
+            this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI, false,
                     matrices,
                     vertexConsumers,
                     light,

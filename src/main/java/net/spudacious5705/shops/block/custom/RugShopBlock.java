@@ -26,9 +26,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.util.PostRegAssigner;
-import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.RugShopEntity;
+import net.spudacious5705.shops.block.resources.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ import java.util.function.Function;
 import static net.spudacious5705.shops.block.ModBlocks.settingsCarpet;
 
 
-public class RugShopBlock extends AbstractShopBlock{
+public class RugShopBlock extends AbstractShopBlock {
 
     public static final BooleanProperty CONNECTED_NORTH = BooleanProperty.create("north");
     public static final BooleanProperty CONNECTED_EAST = BooleanProperty.create("east");
@@ -45,9 +45,8 @@ public class RugShopBlock extends AbstractShopBlock{
     public static final BooleanProperty CONNECTED_WEST = BooleanProperty.create("west");
 
     public static final VoxelShape SHAPE = createCuboidShape(0, 0, 0, 16, 1, 16);
-
-    public Item CARPET;
     public final String COLOUR;
+    public Item CARPET;
 
     public RugShopBlock(PostRegAssigner<Item> carpetAssigner, String colour) {
         super(settingsCarpet);
@@ -78,14 +77,14 @@ public class RugShopBlock extends AbstractShopBlock{
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new RugShopEntity(pos,state);
+        return new RugShopEntity(pos, state);
     }
 
     @Override
     protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         Item item = stack.getItem();
-        if(item != this.CARPET) {
-            if(world.getBlockEntity(pos) instanceof RugShopEntity shopEntity) {
+        if (item != this.CARPET) {
+            if (world.getBlockEntity(pos) instanceof RugShopEntity shopEntity) {
                 if (VariantResources.RUGS_CARPET.containsKey(item)) {
                     RugShopBlock newRug = VariantResources.RUGS_CARPET.get(item);
 
@@ -117,19 +116,18 @@ public class RugShopBlock extends AbstractShopBlock{
                     return true;
                 }
             }
-            }
+        }
 
         return false;
     }
 
 
-
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {
+        if (ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {
             return level.isClientSide
-                    ? (lvl, pos, st, be) -> ((RugShopEntity)be).renderTick()
-                    : (lvl, pos, st, be) -> ((RugShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((RugShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((RugShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;
@@ -143,7 +141,7 @@ public class RugShopBlock extends AbstractShopBlock{
 
         BlockPos attachedPos = pos.relative(Direction.DOWN);
         BlockState attachedState = world.getBlockState(attachedPos);
-        if(!attachedState.isFaceSturdy(world, attachedPos, Direction.UP))return null;
+        if (!attachedState.isFaceSturdy(world, attachedPos, Direction.UP)) return null;
 
 
         BlockState state = this.defaultBlockState();
@@ -157,7 +155,7 @@ public class RugShopBlock extends AbstractShopBlock{
                 .setValue(CONNECTED_WEST, getValForDir.apply(Direction.WEST));
     }
 
-    private boolean matchingCarpet(Level world, BlockPos pos, BlockState state, Direction dir){
+    private boolean matchingCarpet(Level world, BlockPos pos, BlockState state, Direction dir) {
         return world.getBlockState(pos.relative(dir)).getBlock() == state.getBlock();
     }
 
@@ -175,7 +173,7 @@ public class RugShopBlock extends AbstractShopBlock{
     @Override
     public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
 
-        BooleanProperty CONNECTION = switch(direction){
+        BooleanProperty CONNECTION = switch (direction) {
             case NORTH -> CONNECTED_NORTH;
             case SOUTH -> CONNECTED_SOUTH;
             case EAST -> CONNECTED_EAST;
@@ -183,13 +181,12 @@ public class RugShopBlock extends AbstractShopBlock{
             default -> null;
         };
 
-        if(CONNECTION == null)return state;
+        if (CONNECTION == null) return state;
 
         boolean targetValue = neighborState.getBlock() == state.getBlock();
 
-        return state.setValue(CONNECTION,targetValue);
+        return state.setValue(CONNECTION, targetValue);
     }
-
 
 
     @Override

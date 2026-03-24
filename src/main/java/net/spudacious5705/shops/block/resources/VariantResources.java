@@ -4,8 +4,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.spudacious5705.shops.SpudaciousShops;
-import net.spudacious5705.shops.util.PostRegAssigner;
 import net.spudacious5705.shops.block.custom.*;
+import net.spudacious5705.shops.util.PostRegAssigner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,13 +13,19 @@ import java.util.function.Supplier;
 
 
 public class VariantResources {
+    public static final Map<Item, RugShopBlock> RUGS_DYE = new HashMap<>();
+    public static final Map<Item, RugShopBlock> RUGS_CARPET = new HashMap<>();
+    public static final Map<Item, WindowSillShopBlock> WINDOW_SILL = new HashMap<>();
+    public static final Map<Item, ShelfShopBlock> SHELF = new HashMap<>();
+    public static final Map<Item, AngledShopBlock> ANGLED = new HashMap<>();
+
     public static <T extends AbstractShopBlock> void putItem(
             Map<Item, T> map,
             PostRegAssigner<Item> assigner,
             Supplier<T> shopGetter
-    ){
-        assigner.copy().assignTo(key ->{
-            map.put(key,shopGetter.get());
+    ) {
+        assigner.copy().assignTo(key -> {
+            map.put(key, shopGetter.get());
         });
     }
 
@@ -27,38 +33,29 @@ public class VariantResources {
             Map<Item, T> map,
             PostRegAssigner<Block> assigner,
             Supplier<T> shopGetter
-    ){
-        assigner.copy().assignTo(key ->{
-            map.put(key.asItem(),shopGetter.get());
+    ) {
+        assigner.copy().assignTo(key -> {
+            map.put(key.asItem(), shopGetter.get());
         });
     }
 
-    public static final Map<Item, RugShopBlock> RUGS_DYE = new HashMap<>();
+    public static void register() {
+    }
 
-    public static final Map<Item, RugShopBlock> RUGS_CARPET = new HashMap<>();
-
-    public static final Map<Item, WindowSillShopBlock> WINDOW_SILL = new HashMap<>();
-
-    public static final Map<Item, ShelfShopBlock> SHELF = new HashMap<>();
-
-    public static final Map<Item, AngledShopBlock> ANGLED = new HashMap<>();
-
-    public static void register(){}
-    
     public enum wood_variant {
-        
-        ACACIA("acacia",11141290),
-        BAMBOO("bamboo",11141290),
-        BIRCH("birch",11141290),
-        CHERRY("cherry",0),
-        CRIMSON("crimson",0),
-        DARK_OAK("dark_oak",11141290),
-        MANGROVE("mangrove",0),
-        OAK("oak",11141290),
-        SPRUCE("spruce",11141290),
-        WARPED("warped",0),
-        JUNGLE("jungle",11141290);
-        
+
+        ACACIA("acacia", 11141290),
+        BAMBOO("bamboo", 11141290),
+        BIRCH("birch", 11141290),
+        CHERRY("cherry", 0),
+        CRIMSON("crimson", 0),
+        DARK_OAK("dark_oak", 11141290),
+        MANGROVE("mangrove", 0),
+        OAK("oak", 11141290),
+        SPRUCE("spruce", 11141290),
+        WARPED("warped", 0),
+        JUNGLE("jungle", 11141290);
+
         public final String name;
         public final ResourceLocation trade;
         public final ResourceLocation trade_multi;
@@ -78,14 +75,14 @@ public class VariantResources {
             settings_text_colour = text_colour;
         }
 
-        private static ResourceLocation[] GUIid(String texture){
+        private static ResourceLocation[] GUIid(String texture) {
 
             return new ResourceLocation[]{
-                    SpudaciousShops.id("textures/gui/wood_gui/trade_"+texture+".png"),
-                    SpudaciousShops.id("textures/gui/wood_gui/trade_multi_"+texture+".png"),
-                    SpudaciousShops.id("textures/gui/wood_gui/settings_"+texture+".png"),
-                    SpudaciousShops.id("textures/gui/wood_gui/storage_"+texture+".png"),
-                    SpudaciousShops.id("textures/gui/wood_gui/button_back_"+texture+".png")
+                    SpudaciousShops.id("textures/gui/wood_gui/trade_" + texture + ".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/trade_multi_" + texture + ".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/settings_" + texture + ".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/storage_" + texture + ".png"),
+                    SpudaciousShops.id("textures/gui/wood_gui/button_back_" + texture + ".png")
             };
 
         }

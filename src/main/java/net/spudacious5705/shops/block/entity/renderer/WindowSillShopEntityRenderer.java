@@ -23,7 +23,7 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
         ItemDisplayContext mode;
         final WindowSillShopEntity.RendererData data = shop.rendererData();
         Font font = this.context.getFont();
-        if(data == null){
+        if (data == null) {
             return;
         }
         data.frameAccumulator();
@@ -58,7 +58,6 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
             }
 
 
-
             this.context.getItemRenderer().render(
                     data.displayItem(),
                     mode,
@@ -74,22 +73,22 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
             //render price (count of currency)
             matrices.pushPose();
 
-            matrices.translate(0.5f,0.0f,0.5f);
+            matrices.translate(0.5f, 0.0f, 0.5f);
             matrices.mulPose(Axis.YP.rotationDegrees(
-                            switch (data.direction()) {
-                                case EAST -> 270f;
-                                case SOUTH -> 180f;
-                                case WEST -> 90f;
-                                default -> 0f;
-                            }));
-            matrices.translate(-0.5f,0.0f,-0.5f);
+                    switch (data.direction()) {
+                        case EAST -> 270f;
+                        case SOUTH -> 180f;
+                        case WEST -> 90f;
+                        default -> 0f;
+                    }));
+            matrices.translate(-0.5f, 0.0f, -0.5f);
 
             matrices.translate(0.30125f, 0.22f, 0.9167f);
 
             matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
             matrices.mulPose(Axis.XP.rotationDegrees(-22.5f));
 
-            float tSc = data.useSmallTextPrice()?0.014f:0.018f;
+            float tSc = data.useSmallTextPrice() ? 0.014f : 0.018f;
             matrices.scale(tSc, tSc, -tSc);
 
             font.drawInBatch(
@@ -110,22 +109,22 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
             //render amount being sold
             matrices.pushPose();
 
-            matrices.translate(0.5f,0.0f,0.5f);
+            matrices.translate(0.5f, 0.0f, 0.5f);
             matrices.mulPose(Axis.YP.rotationDegrees(
-                            switch (data.direction()) {
-                                case EAST -> 270f;
-                                case SOUTH -> 180f;
-                                case WEST -> 90f;
-                                default -> 0f;
-                            }));
-            matrices.translate(-0.5f,0.0f,-0.5f);
+                    switch (data.direction()) {
+                        case EAST -> 270f;
+                        case SOUTH -> 180f;
+                        case WEST -> 90f;
+                        default -> 0f;
+                    }));
+            matrices.translate(-0.5f, 0.0f, -0.5f);
 
             matrices.mulPose(Axis.ZP.rotationDegrees(180.0f));
             matrices.mulPose(Axis.XP.rotationDegrees(-90f));
 
             matrices.translate(-0.15f, -0.126f, -0.15f);
 
-            float sQs = data.useSmallTextProduct()? 0.020f : 0.025f;
+            float sQs = data.useSmallTextProduct() ? 0.020f : 0.025f;
             matrices.scale(sQs, sQs, sQs);
 
             font.drawInBatch(
@@ -148,12 +147,12 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
 
             matrices.translate(0.5f, 0f, 0.5f);
             matrices.mulPose(Axis.YP.rotationDegrees(
-                            switch (data.direction()) {
-                                case EAST -> 270f;
-                                case SOUTH -> 180f;
-                                case WEST -> 90f;
-                                default -> 0f;
-                            }));
+                    switch (data.direction()) {
+                        case EAST -> 270f;
+                        case SOUTH -> 180f;
+                        case WEST -> 90f;
+                        default -> 0f;
+                    }));
             matrices.translate(-0.5f, 0f, -0.5f);
 
             matrices.translate(0.13125f, 0.22f, 0.9167f);
@@ -162,7 +161,7 @@ public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowS
             matrices.mulPose(Axis.XP.rotationDegrees(157.5f));
 
             matrices.scale(0.18f, 0.18f, 0.18f);
-            
+
             this.context.getItemRenderer().render(data.paymentItem(), ItemDisplayContext.GUI,
                     false,
                     matrices,

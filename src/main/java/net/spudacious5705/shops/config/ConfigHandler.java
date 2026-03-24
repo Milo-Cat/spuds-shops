@@ -10,11 +10,9 @@ import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
 public class ConfigHandler {
 
-    private static final File CONFIG_PATH = new File("config/"+MOD_ID+".toml");
     public static final FileConfig config;
-
     public static final int stackSizeMultiplier;
-
+    private static final File CONFIG_PATH = new File("config/" + MOD_ID + ".toml");
     private static final EnumMap<ToggleButtonID, Boolean> toggleSettingsStates;
 
 
@@ -52,7 +50,7 @@ public class ConfigHandler {
         //ugly but ensures all values are covered
         for (ToggleButtonID value : ToggleButtonID.values()) {
             tss.put(value,
-                    switch (value){
+                    switch (value) {
                         case CreativeToggle -> false;
                         case SelectableTradeToggle -> false;
                         case IgnoreNBTToggle -> false;
@@ -62,9 +60,11 @@ public class ConfigHandler {
         }
         return tss;
     }
+
     public static Boolean getDefaultToggleSetting(ToggleButtonID ID) {
-        return toggleSettingsStates.getOrDefault(ID,false);
+        return toggleSettingsStates.getOrDefault(ID, false);
     }
 
-    public static void initialise(){}
+    public static void initialise() {
+    }
 }

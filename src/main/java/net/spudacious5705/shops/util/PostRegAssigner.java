@@ -20,11 +20,20 @@ public class PostRegAssigner<T> {
      * new PostRegAssigner<>(() -> Items.WHITE_DYE);
      **/
     public PostRegAssigner(Supplier<T> supplier) {
-        if(locked){
+        if (locked) {
             throw new IllegalStateException("Cannot create new PostRegAssigner after call for assigners to be executed");
         }
         this.supplier = supplier;
         assigners.add(this);
+    }
+
+    public static void runAllAssigners() {
+        if (locked) {
+            throw new IllegalStateException("PostRegAssigner.runAllAssigners called more than once");
+        }
+        locked = true;
+        assigners.forEach(PostRegAssigner::runAssignment);
+        assigners.clear();
     }
 
     /**
@@ -41,16 +50,7 @@ public class PostRegAssigner<T> {
         }
     }
 
-    public PostRegAssigner<T> copy(){
+    public PostRegAssigner<T> copy() {
         return new PostRegAssigner<>(supplier);
-    }
-
-    public static void runAllAssigners() {
-        if(locked){
-            throw new IllegalStateException("PostRegAssigner.runAllAssigners called more than once");
-        }
-        locked=true;
-        assigners.forEach(PostRegAssigner::runAssignment);
-        assigners.clear();
     }
 }

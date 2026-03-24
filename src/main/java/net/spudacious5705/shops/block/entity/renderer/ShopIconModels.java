@@ -8,7 +8,7 @@ public class ShopIconModels {
     static ItemStack REG_FULL = new ItemStack(ModItems.PAYMENT_WARNING.get());
     static ItemStack NO_STOCK = new ItemStack(ModItems.STOCK_WARNING.get());
 
-    public static void initialise(){
+    public static void initialise() {
 
     }
 }

@@ -19,8 +19,10 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, SpudaciousShops.MOD_ID);
 
-
-    public static final Supplier<BlockEntityType<AngledShopEntity>> ANGLED_SHOP_ENTITY =
+    public static void registerBlockEntities(IEventBus modEventBus) {
+        SpudaciousShops.LOGGER.info("Registering block entities for" + SpudaciousShops.MOD_ID);
+        BLOCK_ENTITIES.register(modEventBus);
+    }    public static final Supplier<BlockEntityType<AngledShopEntity>> ANGLED_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e",
                     () -> BlockEntityType.Builder.of(AngledShopEntity::new,
                             ModBlocks.ALL_ORIGINAL_SHOPS.stream().map(Supplier::get).toArray(AngledShopBlock[]::new)
@@ -66,8 +68,4 @@ public class ModBlockEntities {
 
 
 
-    public static void registerBlockEntities(IEventBus modEventBus) {
-        SpudaciousShops.LOGGER.info("Registering block entities for" + SpudaciousShops.MOD_ID);
-        BLOCK_ENTITIES.register(modEventBus);
-    }
 }

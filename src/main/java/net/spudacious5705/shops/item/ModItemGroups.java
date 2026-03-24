@@ -25,9 +25,9 @@ public final class ModItemGroups {
                             (params, entries) -> {
                                 entries.accept(ModItems.CONTRACT_SCROLL.get());
                                 ModBlocks.ALL_SHOPS.forEach(shop -> entries.accept(shop.get()));
-                    }
+                            }
                     ).build());
-    
+
 
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TABS.register(eventBus);

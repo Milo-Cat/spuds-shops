@@ -13,25 +13,23 @@ import static net.spudacious5705.shops.SpudaciousShops.id;
 public record ShopSelfDemotePkt() implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ShopSelfDemotePkt> TYPE = new CustomPacketPayload.Type<>(id("self_demote"));
+    public static final StreamCodec<ByteBuf, ShopSelfDemotePkt> STREAM_CODEC = new StreamCodec<>() {
+        public @NotNull ShopSelfDemotePkt decode(ByteBuf b) {
+            return new ShopSelfDemotePkt();
+        }
 
+        public void encode(@NotNull ByteBuf b, @NotNull ShopSelfDemotePkt de) {
+        }
+    };
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-
-    public static final StreamCodec<ByteBuf, ShopSelfDemotePkt> STREAM_CODEC = new StreamCodec<>() {
-            public @NotNull ShopSelfDemotePkt decode(ByteBuf b) {
-                return new ShopSelfDemotePkt();
-            }
-
-            public void encode(@NotNull ByteBuf b, @NotNull ShopSelfDemotePkt de) {}
-        };
-
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if(
+            if (
                     ctx.player() instanceof ServerPlayer player
                             &&
                             player.containerMenu instanceof ShopScreenHandlerOwner screenHandler

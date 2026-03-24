@@ -40,28 +40,56 @@ import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.permission.PermissionManager;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ShopScreenHandlerCustomer;
-import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import net.spudacious5705.shops.screen.ToggleButtonID;
+import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.UUID;
 
 import static net.spudacious5705.shops.block.custom.AbstractShopBlock.BREAKABLE;
 import static net.spudacious5705.shops.block.entity.ShopInventory.*;
 
 public abstract class AbstractShopEntity extends BlockEntity implements IBlockPermissions<AbstractShopEntity> {
 
+    protected static final int hourInTicks = 72000;
     protected final EnumMap<ToggleButtonID, Boolean> toggleSettings = new EnumMap<>(ToggleButtonID.class);
 
+    //region INVENTORY
     protected final PermissionManager<AbstractShopEntity> permissionManager = new PermissionManager<>(
             this,
-            () -> toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false)
+            () -> toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false)
     );
-
-    //region INVENTORY
-
     protected final ShopInventory shopInventory;
+    final float particleOffset;
+    private final boolean isClient;
+    protected int decayTimer = -1;
+    protected int checkIntervalTimer = 200;//short initial check interval for server restarts
+    protected int breakableTicks = -1;
+
+    //endregion
+
+
+    //region IDENTIFICATION
+    @OnlyIn(Dist.CLIENT)
+    protected RendererData rendererData;
+    private boolean decayed = false;
+    private boolean shouldRenderParticles = false;
+
+    public <SHOP extends AbstractShopEntity> AbstractShopEntity(BlockEntityType<SHOP> type, BlockPos pos, BlockState state, float particleOffset) {
+        super(type, pos, state);
+        this.shopInventory = ShopInventory.create(toggleSettings);
+        this.particleOffset = particleOffset;
+
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            createRendererData();
+            isClient = true;
+        } else {
+            isClient = false;
+        }
+    }
 
     @NotNull
     public InventoryDelegate getInventoryDelegate(Player player) {
@@ -69,10 +97,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
     public void itemScatter(Level world, BlockPos pos) {
-        ItemScatterer(world,pos, shopInventory.prepForItemScatterer());
-        int contractsCount = permissionManager.contractCount()-1;
-        if(contractsCount>0){
-            ItemScatterer(world,pos,new ItemStack(ModItems.CONTRACT_SCROLL.get(),contractsCount));
+        ItemScatterer(world, pos, shopInventory.prepForItemScatterer());
+        int contractsCount = permissionManager.contractCount() - 1;
+        if (contractsCount > 0) {
+            ItemScatterer(world, pos, new ItemStack(ModItems.CONTRACT_SCROLL.get(), contractsCount));
         }
     }
 
@@ -80,291 +108,28 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         return ((AbstractShopBlock) this.getBlockState().getBlock()).getScreenSettings();
     }
 
-    public final class InventoryDelegate implements Container {
-        private final ShopInventory inventory;
-        private final PermissionLevel permissions;
-        private final UUID reciever_UUID;
-
-        public InventoryDelegate(Player player, ShopInventory items) {
-            this.permissions = permissionManager.userSignIn(player);
-            this.reciever_UUID = player.getUUID();
-            this.inventory = items;
-        }
-
-        public PermissionLevel checkPermissions(){
-            return permissions;
-        }
-
-        @Override
-        public int getContainerSize() {
-            return inventory.size();
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return inventory.isEmpty();
-        }
-
-        @Override
-        public @NotNull ItemStack removeItemNoUpdate(int pSlot) {
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public void setChanged() {
-            assert level != null;
-            level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),3);
-            isShopFunctional();
-            AbstractShopEntity.this.setChanged();
-        }
-
-
-        @Override
-        public @NotNull ItemStack getItem(int slot) {
-            if(slot>this.getContainerSize()||slot<0) return ItemStack.EMPTY;
-
-            /*if(slot>PROFIT_END) {
-                return inventory.get(slot);
-            }
-
-            //if(permissions.canViewShopScreen())*/
-            return inventory.get(slot);
-
-            //return ItemStack.EMPTY;
-        }
-
-
-        public void trade(Inventory playerInv){
-            if(toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle,false))return;//not using the correct style
-
-            NonNullList<ItemStack> vendList;
-            boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
-            if(tradeCreative) {
-                vendList = NonNullList.create();
-                vendList.addFirst(inventory.getVendingStack().copy());
-            } else {
-                vendList = takeItems(inventory.getVendingStack().getCount(), inventory::canUseAsProduct,
-                        inventory::get, 0, STOCK_END);
-            }
-            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
-                    inventory::canUseAsPayment, playerInv::getItem,0,36);
-
-            if(tradeCreative){
-                payList.forEach((ItemStack::copyAndClear));//todo incase I want to remove can-trade
-            } else {
-                acceptPayment(payList);
-            }
-
-
-            int ptr = vendList.size()-1;
-            boolean success = true;
-            while(success && ptr >= 0){
-                success = playerInv.add(vendList.get(ptr));
-                ptr--;
-            }
-
-            Player player = playerInv.player;
-            ItemScatterer(player.level(),player.getOnPos(),vendList);
-
-        }
-
-        public void tradeWithSelection(Inventory playerInv, int index){
-            if(!toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle,false))return;//not using the correct style
-
-            if(index>STOCK_END||index<0){
-                return;//not within bounds??
-            }
-            ItemStack product = inventory.get(index);
-            if(product.isEmpty()){
-                return;//No Item??
-            }
-            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
-                    inventory::canUseAsPayment, playerInv::getItem,0,36);
-
-            boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
-
-            if(tradeCreative){
-                product = product.copy();
-                payList.forEach((ItemStack::copyAndClear));
-            } else {
-                acceptPayment(payList);
-            }
-
-            playerInv.add(product.copyAndClear());
-            if(!product.isEmpty()){
-                Player player = playerInv.player;
-                ItemScatterer(player.level(),player.getOnPos(),product);
-            }
-
-
-        }
-
-        public boolean canTrade(Player playerEntity) {
-            if(!toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false)) {
-                if (inventory.outOfStock()) {
-                    errorMessage("Shop is out of stock", playerEntity);
-                    return false;
-                }
-                if (inventory.paymentRegisterFull()) {
-                    errorMessage("Shop cannot store any more currency", playerEntity);
-                    return false;
-                }
-            }
-            if (inventory.isPlayerPoor(playerEntity)) {
-                errorMessage("You do not have enough currency", playerEntity);
-                return false;
-            }
-            return true;
-        }
-
-        private void acceptPayment(NonNullList<ItemStack> payList) {
-            //place players payment into register
-            ItemStack storageStack;
-            int space;
-            int ptr = 0;
-            for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
-                storageStack = inventory.get(i);
-                if (inventory.canUseAsPayment(storageStack) || storageStack.isEmpty()) {
-                    while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxStackSize())) {
-                        space = getAvailableSpace(storageStack);
-                        if (storageStack.isEmpty()) {
-                            storageStack = payList.get(ptr).copyAndClear();
-                        } else {
-                            storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
-                        }
-                        inventory.set(i, storageStack);
-                        if (payList.get(ptr).isEmpty()) {
-                            ptr++;
-                        }
-                    }
-                }
-            }
-
-        }
-
-
-        private void errorMessage(String message, Player player){
-            if(player.level().isClientSide()) {
-                player.displayClientMessage(Component.literal(message), true);
-            }
-        }
-
-        @Override
-        public void clearContent() {
-
-        }
-
-        private interface miniDelegate{
-            ItemStack getStack(int index);
-        }
-
-        private interface IStackQuery {
-            boolean checkCanUse_(ItemStack stack);
-        }
-
-        private NonNullList<ItemStack> takeItems(int quantityRequired, IStackQuery stackQueryType, miniDelegate inventory, int start, int end){
-            NonNullList<ItemStack> list = NonNullList.create();
-            for (int i = start; i <= end; i++) {
-                ItemStack stack = inventory.getStack(i);
-                if(stackQueryType.checkCanUse_(stack)){
-                    if(stack.getCount()>=quantityRequired){
-                        addToList(list,stack.split(quantityRequired));//todo incase I want to remove can-trade, just reference the stack.
-                        break;
-                    }
-                    quantityRequired -= stack.getCount();
-                    addToList(list,stack);
-                }
-            }
-            return list;
-        }
-
-        private static void addToList(NonNullList<ItemStack> list, ItemStack stack){
-            if(list.isEmpty()){
-                list.add(stack.copyAndClear());
-                return;
-            }
-            int end = list.size()-1;
-            ItemStack listEnd = list.get(end);
-            int space = getAvailableSpace(listEnd);
-            ItemStack split = stack.split(space);
-            list.set(end,
-                    split.copyWithCount(
-                            listEnd.getCount()+
-                                    split.getCount()
-                    ));
-            if(!split.isEmpty()){
-                list.add(stack.copyAndClear());
-            }
-        }
-
-        private static int getAvailableSpace(ItemStack stack){
-            return Math.max(stack.getMaxStackSize()-stack.getCount(), 0);
-        }
-
-        @Override
-        public @NotNull ItemStack removeItem(int slot, int amount) {
-
-            if(slot>this.getContainerSize()||slot<0) return ItemStack.EMPTY;
-
-            if(slot<PAYMENT_SLOT){
-                if(permissions.canTakeItems()) return inventory.split(slot, amount);
-            } else if(permissions.canEditTrades()){
-                inventory.split(slot, amount);
-            }
-
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public void setItem(int slot, @NotNull ItemStack stack) {
-            if(slot>=PAYMENT_SLOT){
-                if(this.permissions.canEditTrades()){
-                    inventory.set(slot, stack);
-                }
-            } else if(this.permissions.canImportStock()){
-                inventory.set(slot, stack);
-            }
-        }
-
-        @Override
-        public boolean stillValid(Player player) {
-            return player.getUUID().compareTo(reciever_UUID) == 0;
-        }
-
-
-        public Item getPaymentType() {
-            return inventory.getPaymentType();
-        }
-
-        public int getPrice() {
-            return inventory.getPrice();
-        }
-
-        public Item getDisplayItem() {
-            return inventory.getDisplayItem();
-        }
-    }
-
-    //FIXME: these 2 methods are a bit of a hack. Need to create an extension of ScreenHandlers
-    @Nullable
-    public final InventoryDelegate getOtherInventoryDelegate(Player player){
-        ShopInventory inv = otherInventory();
-
-        if(inv != null){
-            return new InventoryDelegate(player,inv);
-        }
-
-        return null;
-    }
-    @Nullable
-    protected ShopInventory otherInventory(){
-        return null;
-    }
 
     //endregion
 
 
-    //region IDENTIFICATION
+    //region NBT
+
+    //FIXME: these 2 methods are a bit of a hack. Need to create an extension of ScreenHandlers
+    @Nullable
+    public final InventoryDelegate getOtherInventoryDelegate(Player player) {
+        ShopInventory inv = otherInventory();
+
+        if (inv != null) {
+            return new InventoryDelegate(player, inv);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    protected ShopInventory otherInventory() {
+        return null;
+    }
 
     public settings_Delegate getSettingsDelegate(Player player) {
         return new settings_Delegate(
@@ -373,65 +138,21 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         );
     }
 
-    public settings_Delegate getSettingsReader(){
+    public settings_Delegate getSettingsReader() {
         return new settings_Delegate();
-    }
-
-
-
-    public final class settings_Delegate {
-        private final boolean isCreative;
-        private final boolean canEditSettings;
-
-        private settings_Delegate(PermissionLevel perms, Player player){
-            isCreative = player.isCreative();
-            canEditSettings = perms.canEditTrades();
-        }
-
-        private settings_Delegate(){
-            isCreative = false;
-            canEditSettings = false;
-        }
-
-        public boolean getState(@NotNull ToggleButtonID ID){
-            return toggleSettings.getOrDefault(ID, ConfigHandler.getDefaultToggleSetting(ID));
-        }
-
-        public boolean attemptSetState(@NotNull ToggleButtonID ID, @NotNull Boolean state){
-            if(
-                    canEditSettings
-                            &&
-                            (
-                                    ID != ToggleButtonID.CreativeToggle
-                                            ||
-                                            isCreative
-                            )
-            ){
-                toggleSettings.put(ID,state);
-                setChanged();
-                checkShouldRenderParticles();
-                return true;
-            }
-
-            return false;
-        }
-
-
-        public boolean isPlayerCreative() {
-            return isCreative;
-        }
     }
 
     public boolean isUnbreakable(Player player) {
         return !permissionManager.canBreakBlock(player, decayed);
     }
 
-
     public Component cantBreakMessage() {
         return permissionManager.cantBreakMessage();
     }
 
-    public PermissionLevel userSignIn(Player player){
+    //endregion
+
+    public PermissionLevel userSignIn(Player player) {
         return permissionManager.userSignIn(player);
     }
 
@@ -440,17 +161,11 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
 
-
-
-
-    //endregion
-
-
-    //region NBT
+    //region STATE LOGIC
 
     @Override
     public void setChanged() {
-        if(isClient) {
+        if (isClient) {
             forceUpdateRenderData();
         }
         super.setChanged();
@@ -463,7 +178,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
     public void forceUpdateClient() {
-        if(level instanceof ServerLevel server) {
+        if (level instanceof ServerLevel server) {
             BlockPos pos = this.getBlockPos();
             server.getChunkSource().blockChanged(pos);
             Packet<ClientGamePacketListener> packet = getUpdatePacket();
@@ -476,7 +191,6 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
         }
     }
-
 
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
@@ -520,26 +234,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         super.saveAdditional(tag, holder);
     }
 
-
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
         return saveWithoutMetadata(registries);
-    }
-
-    //endregion
-
-
-    public <SHOP extends AbstractShopEntity>AbstractShopEntity(BlockEntityType<SHOP> type, BlockPos pos, BlockState state, float particleOffset) {
-        super(type, pos, state);
-        this.shopInventory = ShopInventory.create(toggleSettings);
-        this.particleOffset = particleOffset;
-
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            createRendererData();
-            isClient = true;
-        } else {
-            isClient = false;
-        }
     }
 
     @NotNull
@@ -557,7 +254,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 PermissionLevel perms = permissionManager.userSignIn(player);
 
 
-                InventoryDelegate inventoryDelegate = openTop?getOtherInventoryDelegate(player):getInventoryDelegate(player);
+                InventoryDelegate inventoryDelegate = openTop ? getOtherInventoryDelegate(player) : getInventoryDelegate(player);
                 settings_Delegate set_del = new settings_Delegate(perms, player);
 
 
@@ -577,23 +274,15 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         };
     }
 
-
-
-    //region STATE LOGIC
-
-    private final boolean isClient;
-
     @OnlyIn(Dist.CLIENT)
-    protected void createRendererData(){
+    protected void createRendererData() {
         this.rendererData = new RendererData(shopInventory);
     }
 
-    private boolean decayed = false;
-    private boolean shouldRenderParticles = false;
-    private void checkShouldRenderParticles(){
+    private void checkShouldRenderParticles() {
         shouldRenderParticles = toggleSettings.getOrDefault(ToggleButtonID.EffectsToggle, false)
                 &&
-                !toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
+                !toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false);
     }
 
     protected void editBreakability(ServerLevel level, BlockPos pos, BlockState state, boolean breakable) {
@@ -602,7 +291,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
     public void serverTick(ServerLevel world, BlockPos pos, BlockState shopState) {
 
-        if(decayTimer > -1) {
+        if (decayTimer > -1) {
             if (decayTimer > hourInTicks) {
 
                 if (shouldRenderParticles && world.random.nextFloat() < 0.05f) {
@@ -621,7 +310,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                     decayed = true;
 
                     permissionManager.clearPermissions();
-                    editBreakability(world, pos,shopState, true);
+                    editBreakability(world, pos, shopState, true);
                     shopState.trySetValue(BREAKABLE, true);
                     breakableTicks = 140;
 
@@ -632,13 +321,13 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         checkIntervalTimer--;
-        if(checkIntervalTimer<0){
-            checkIntervalTimer=6000;
+        if (checkIntervalTimer < 0) {
+            checkIntervalTimer = 6000;
             //intervaled functionality check in case of bug and for startup.
             checkShouldRenderParticles();
             if (isShopFunctional()) {
-                if(decayTimer<0){
-                    decayTimer=0;
+                if (decayTimer < 0) {
+                    decayTimer = 0;
                     //start decay timer if not already started
                 }
             } else {
@@ -646,10 +335,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 decayed = false;
             }
         }
-        if(!shopState.getValue(BREAKABLE))return;
+        if (!shopState.getValue(BREAKABLE)) return;
 
         if (breakableTicks > 0) {
-            if(!decayed) {
+            if (!decayed) {
                 breakableTicks--;
             }
             return;
@@ -659,45 +348,35 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             // Shop has become breakable; start the countdown (140 ticks)
             breakableTicks = 140;
         } else {
-            editBreakability(world, pos,shopState, false);
+            editBreakability(world, pos, shopState, false);
             breakableTicks = -1; // Reset
         }
     }
 
-
-    protected int decayTimer = -1;
-
-    protected static final int hourInTicks = 72000;
-
-    public boolean isShopFunctional(){
-        if(managementFunctional()&&hasTrade()){
+    public boolean isShopFunctional() {
+        if (managementFunctional() && hasTrade()) {
             decayTimer = -1;
             decayed = false;
             return true;
         }
-        if(decayTimer < 0){
+        if (decayTimer < 0) {
             decayTimer = 0;//starts decay timer.
         }
         return false;
     }
 
-    public boolean managementFunctional(){
-        if(level != null) {
+    public boolean managementFunctional() {
+        if (level != null) {
             return !permissionManager.containsNoPermissions();
         }
         return false;
     }
 
-    protected boolean hasTrade(){
+    protected boolean hasTrade() {
         return shopInventory.tradeFunctional();
     }
 
-    protected int checkIntervalTimer = 200;//short initial check interval for server restarts
-
-    protected int breakableTicks = -1;
-
     //endregion
-
 
     //region RENDERING
     @OnlyIn(Dist.CLIENT)
@@ -706,32 +385,337 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected RendererData rendererData;
+    public RendererData rendererData() {
+        return rendererData;
+    }
 
-    @OnlyIn(Dist.CLIENT)
-    public RendererData rendererData(){return  rendererData;}
     //Only call from the CLIENT
     @OnlyIn(Dist.CLIENT)
     public void forceUpdateRenderData() {
         rendererData.update();
     }
 
-    final float particleOffset;
-
-    public Direction getCachedFacingDirection(){
+    public Direction getCachedFacingDirection() {
         return this.getBlockState().getValue(AbstractShopBlock.FACING);
     }
 
+    public final class InventoryDelegate implements Container {
+        private final ShopInventory inventory;
+        private final PermissionLevel permissions;
+        private final UUID reciever_UUID;
+
+        public InventoryDelegate(Player player, ShopInventory items) {
+            this.permissions = permissionManager.userSignIn(player);
+            this.reciever_UUID = player.getUUID();
+            this.inventory = items;
+        }
+
+        private static void addToList(NonNullList<ItemStack> list, ItemStack stack) {
+            if (list.isEmpty()) {
+                list.add(stack.copyAndClear());
+                return;
+            }
+            int end = list.size() - 1;
+            ItemStack listEnd = list.get(end);
+            int space = getAvailableSpace(listEnd);
+            ItemStack split = stack.split(space);
+            list.set(end,
+                    split.copyWithCount(
+                            listEnd.getCount() +
+                                    split.getCount()
+                    ));
+            if (!split.isEmpty()) {
+                list.add(stack.copyAndClear());
+            }
+        }
+
+        private static int getAvailableSpace(ItemStack stack) {
+            return Math.max(stack.getMaxStackSize() - stack.getCount(), 0);
+        }
+
+        public PermissionLevel checkPermissions() {
+            return permissions;
+        }
+
+        @Override
+        public int getContainerSize() {
+            return inventory.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return inventory.isEmpty();
+        }
+
+        @Override
+        public @NotNull ItemStack removeItemNoUpdate(int pSlot) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public void setChanged() {
+            assert level != null;
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            isShopFunctional();
+            AbstractShopEntity.this.setChanged();
+        }
+
+        @Override
+        public @NotNull ItemStack getItem(int slot) {
+            if (slot > this.getContainerSize() || slot < 0) return ItemStack.EMPTY;
+
+            /*if(slot>PROFIT_END) {
+                return inventory.get(slot);
+            }
+
+            //if(permissions.canViewShopScreen())*/
+            return inventory.get(slot);
+
+            //return ItemStack.EMPTY;
+        }
+
+        public void trade(Inventory playerInv) {
+            if (toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle, false))
+                return;//not using the correct style
+
+            NonNullList<ItemStack> vendList;
+            boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false);
+            if (tradeCreative) {
+                vendList = NonNullList.create();
+                vendList.addFirst(inventory.getVendingStack().copy());
+            } else {
+                vendList = takeItems(inventory.getVendingStack().getCount(), inventory::canUseAsProduct,
+                        inventory::get, 0, STOCK_END);
+            }
+            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
+                    inventory::canUseAsPayment, playerInv::getItem, 0, 36);
+
+            if (tradeCreative) {
+                payList.forEach((ItemStack::copyAndClear));//todo incase I want to remove can-trade
+            } else {
+                acceptPayment(payList);
+            }
+
+
+            int ptr = vendList.size() - 1;
+            boolean success = true;
+            while (success && ptr >= 0) {
+                success = playerInv.add(vendList.get(ptr));
+                ptr--;
+            }
+
+            Player player = playerInv.player;
+            ItemScatterer(player.level(), player.getOnPos(), vendList);
+
+        }
+
+        public void tradeWithSelection(Inventory playerInv, int index) {
+            if (!toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle, false))
+                return;//not using the correct style
+
+            if (index > STOCK_END || index < 0) {
+                return;//not within bounds??
+            }
+            ItemStack product = inventory.get(index);
+            if (product.isEmpty()) {
+                return;//No Item??
+            }
+            NonNullList<ItemStack> payList = takeItems(inventory.getPaymentStack().getCount(),
+                    inventory::canUseAsPayment, playerInv::getItem, 0, 36);
+
+            boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false);
+
+            if (tradeCreative) {
+                product = product.copy();
+                payList.forEach((ItemStack::copyAndClear));
+            } else {
+                acceptPayment(payList);
+            }
+
+            playerInv.add(product.copyAndClear());
+            if (!product.isEmpty()) {
+                Player player = playerInv.player;
+                ItemScatterer(player.level(), player.getOnPos(), product);
+            }
+
+
+        }
+
+        public boolean canTrade(Player playerEntity) {
+            if (!toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false)) {
+                if (inventory.outOfStock()) {
+                    errorMessage("Shop is out of stock", playerEntity);
+                    return false;
+                }
+                if (inventory.paymentRegisterFull()) {
+                    errorMessage("Shop cannot store any more currency", playerEntity);
+                    return false;
+                }
+            }
+            if (inventory.isPlayerPoor(playerEntity)) {
+                errorMessage("You do not have enough currency", playerEntity);
+                return false;
+            }
+            return true;
+        }
+
+        private void acceptPayment(NonNullList<ItemStack> payList) {
+            //place players payment into register
+            ItemStack storageStack;
+            int space;
+            int ptr = 0;
+            for (int i = STOCK_END + 1; i <= PROFIT_END; i++) {
+                storageStack = inventory.get(i);
+                if (inventory.canUseAsPayment(storageStack) || storageStack.isEmpty()) {
+                    while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxStackSize())) {
+                        space = getAvailableSpace(storageStack);
+                        if (storageStack.isEmpty()) {
+                            storageStack = payList.get(ptr).copyAndClear();
+                        } else {
+                            storageStack.setCount(payList.get(ptr).split(space).getCount() + storageStack.getCount());
+                        }
+                        inventory.set(i, storageStack);
+                        if (payList.get(ptr).isEmpty()) {
+                            ptr++;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        private void errorMessage(String message, Player player) {
+            if (player.level().isClientSide()) {
+                player.displayClientMessage(Component.literal(message), true);
+            }
+        }
+
+        @Override
+        public void clearContent() {
+
+        }
+
+        private NonNullList<ItemStack> takeItems(int quantityRequired, IStackQuery stackQueryType, miniDelegate inventory, int start, int end) {
+            NonNullList<ItemStack> list = NonNullList.create();
+            for (int i = start; i <= end; i++) {
+                ItemStack stack = inventory.getStack(i);
+                if (stackQueryType.checkCanUse_(stack)) {
+                    if (stack.getCount() >= quantityRequired) {
+                        addToList(list, stack.split(quantityRequired));//todo incase I want to remove can-trade, just reference the stack.
+                        break;
+                    }
+                    quantityRequired -= stack.getCount();
+                    addToList(list, stack);
+                }
+            }
+            return list;
+        }
+
+        @Override
+        public @NotNull ItemStack removeItem(int slot, int amount) {
+
+            if (slot > this.getContainerSize() || slot < 0) return ItemStack.EMPTY;
+
+            if (slot < PAYMENT_SLOT) {
+                if (permissions.canTakeItems()) return inventory.split(slot, amount);
+            } else if (permissions.canEditTrades()) {
+                inventory.split(slot, amount);
+            }
+
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public void setItem(int slot, @NotNull ItemStack stack) {
+            if (slot >= PAYMENT_SLOT) {
+                if (this.permissions.canEditTrades()) {
+                    inventory.set(slot, stack);
+                }
+            } else if (this.permissions.canImportStock()) {
+                inventory.set(slot, stack);
+            }
+        }
+
+        @Override
+        public boolean stillValid(Player player) {
+            return player.getUUID().compareTo(reciever_UUID) == 0;
+        }
+
+        public Item getPaymentType() {
+            return inventory.getPaymentType();
+        }
+
+        public int getPrice() {
+            return inventory.getPrice();
+        }
+
+        public Item getDisplayItem() {
+            return inventory.getDisplayItem();
+        }
+
+        private interface miniDelegate {
+            ItemStack getStack(int index);
+        }
+
+        private interface IStackQuery {
+            boolean checkCanUse_(ItemStack stack);
+        }
+    }
+
+    public final class settings_Delegate {
+        private final boolean isCreative;
+        private final boolean canEditSettings;
+
+        private settings_Delegate(PermissionLevel perms, Player player) {
+            isCreative = player.isCreative();
+            canEditSettings = perms.canEditTrades();
+        }
+
+        private settings_Delegate() {
+            isCreative = false;
+            canEditSettings = false;
+        }
+
+        public boolean getState(@NotNull ToggleButtonID ID) {
+            return toggleSettings.getOrDefault(ID, ConfigHandler.getDefaultToggleSetting(ID));
+        }
+
+        public boolean attemptSetState(@NotNull ToggleButtonID ID, @NotNull Boolean state) {
+            if (
+                    canEditSettings
+                            &&
+                            (
+                                    ID != ToggleButtonID.CreativeToggle
+                                            ||
+                                            isCreative
+                            )
+            ) {
+                toggleSettings.put(ID, state);
+                setChanged();
+                checkShouldRenderParticles();
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public boolean isPlayerCreative() {
+            return isCreative;
+        }
+    }
 
     @OnlyIn(Dist.CLIENT)
-    public class RendererData{
+    public class RendererData {
 
+        public final double doublePi = Math.PI * 2;
         protected final ShopInventory inventory;
         public double lastRotation = 0;
         public double targetRotation = 0;
         public double frameRotation = 0;
-        public final double doublePi = Math.PI*2;
         public String stockQuantity;
+        public boolean stockWarning = false;
+        public boolean paymentWarning = false;
         protected Direction direction = Direction.NORTH;
         protected int rotation;
         protected float width;
@@ -745,20 +729,18 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         protected boolean stockDisplayType = false;
         protected boolean currencyDisplayType = true;
         protected boolean shouldUpdate = true;
-        public boolean stockWarning = false;
-        public boolean paymentWarning = false;
         protected float qWidth;
 
-        public RendererData(@NotNull ShopInventory inv){
+        public RendererData(@NotNull ShopInventory inv) {
             this.inventory = inv;
         }
 
 
-        public void update(){
+        public void update() {
 
             this.shopFunctional = isShopFunctional() && inventory.tradeFunctional();
 
-            if(this.shopFunctional) {
+            if (this.shopFunctional) {
                 this.paymentItem = inventory.getPaymentStack();
 
                 boolean bl = stockWarning || paymentWarning;
@@ -766,8 +748,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 this.paymentWarning = inventory.paymentRegisterFull();
                 this.stockWarning = inventory.outOfStock();
 
-                if(!bl){
-                    if(stockWarning || paymentWarning){
+                if (!bl) {
+                    if (stockWarning || paymentWarning) {
                         //warnings have just been activated
                         this.targetRotation = ShopRenderUtils.calcTargetRotation(this);
                         this.lastRotation = this.targetRotation;
@@ -787,7 +769,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
                 getRotation();
 
-                if(paymentItem.getCount()>=100) {
+                if (paymentItem.getCount() >= 100) {
                     this.width = -10.5f;
                     this.smallTextPrice = true;
                 } else {
@@ -799,7 +781,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                     }
                 }
 
-                if(displayItem.getCount()>=100) {
+                if (displayItem.getCount() >= 100) {
                     this.qWidth = -10.5f;
                     this.smallTextProduct = true;
                 } else {
@@ -813,14 +795,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
                 Minecraft mc = Minecraft.getInstance();
 
-                if(displayItem.getItem() instanceof BlockItem){
+                if (displayItem.getItem() instanceof BlockItem) {
                     BakedModel model = mc.getItemRenderer().getModel(displayItem, null, null, 0);
                     stockDisplayType = model.isGui3d();
                 } else {
                     stockDisplayType = false;
                 }
 
-                if(paymentItem.getItem() instanceof BlockItem){
+                if (paymentItem.getItem() instanceof BlockItem) {
                     BakedModel model = mc.getItemRenderer().getModel(paymentItem, null, null, 0);
                     currencyDisplayType = model.isGui3d();
                 } else {
@@ -834,10 +816,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             }
         }
 
-        public void frameAccumulator(){//makes retrieving data periodic instead of on frame
+        public void frameAccumulator() {//makes retrieving data periodic instead of on frame
             if (this.frameAccumulation == 0) {
 
-                this.frameAccumulation += (int)(Math.random()*40);//adds some randomness so shops aren't all updating at the same time
+                this.frameAccumulation += (int) (Math.random() * 40);//adds some randomness so shops aren't all updating at the same time
 
                 shouldUpdate = true;
 
@@ -851,16 +833,18 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
         }
 
-        /** MAY BE REQUIRED FOR HIGHER/LOWER VERSIONS
+        /**
+         * MAY BE REQUIRED FOR HIGHER/LOWER VERSIONS
          * private int getLightLevel(World view, BlockPos pos) {
-         *    int bLight = view.getLightLevel(LightType.BLOCK, pos);
-         *    int sLight = view.getLightLevel(LightType.SKY, pos);
+         * int bLight = view.getLightLevel(LightType.BLOCK, pos);
+         * int sLight = view.getLightLevel(LightType.SKY, pos);
          * return LightmapTextureManager.pack(bLight, sLight);
          * }
-         * * */
+         * *
+         */
 
 
-        private void getRotation(){
+        private void getRotation() {
             this.rotation = switch (direction) {
                 case EAST -> 90;
                 case SOUTH -> 0;
@@ -923,12 +907,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         public boolean updateIconRotation() {
-            if(shouldUpdate){
-                shouldUpdate = false; return true;}
+            if (shouldUpdate) {
+                shouldUpdate = false;
+                return true;
+            }
             return false;
         }
 
-        public void onTick(){
+        public void onTick() {
             shouldUpdate = true;
         }
 

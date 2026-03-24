@@ -10,9 +10,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  **/
 public interface IBlockPermissions<T extends BlockEntity> {
     Component cantBreakMessage();
-    PermissionManager<T>.player_ID_Records_Delegate getRecordsDelegate(Player player);
-    PermissionLevel userSignIn(Player player);
 
+    PermissionManager<T>.player_ID_Records_Delegate getRecordsDelegate(Player player);
+
+    PermissionLevel userSignIn(Player player);
 
 
 }

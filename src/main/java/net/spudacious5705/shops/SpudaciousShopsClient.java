@@ -1,7 +1,6 @@
 package net.spudacious5705.shops;
 
 
-
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -18,16 +17,15 @@ import net.spudacious5705.shops.screen.ModScreenHandlers;
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 
 @EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
-public class SpudaciousShopsClient{
+public class SpudaciousShopsClient {
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event){
+    public static void onClientSetup(FMLClientSetupEvent event) {
 
 
         CushionTextures.initialiseCushionTextures();
         CushionResources.initialise();
 
-        
 
     }
 
@@ -40,7 +38,7 @@ public class SpudaciousShopsClient{
         event.registerBlockEntityRenderer(ModBlockEntities.CRATE_SHOP_ENTITY.get(), CrateShopEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SHELF_SHOP_ENTITY.get(), ShelfShopEntityRenderer::new);
     }
-    
+
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

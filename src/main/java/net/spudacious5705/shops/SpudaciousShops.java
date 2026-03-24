@@ -2,8 +2,13 @@ package net.spudacious5705.shops;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.spudacious5705.shops.block.*;
+import net.spudacious5705.shops.block.ModBlockEntities;
+import net.spudacious5705.shops.block.ModBlockTags;
+import net.spudacious5705.shops.block.ModBlocks;
 import net.spudacious5705.shops.block.entity.renderer.ShopIconModels;
 import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.config.ConfigHandler;
@@ -13,23 +18,20 @@ import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.util.PostRegAssigner;
 import org.slf4j.Logger;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
 
 import static net.spudacious5705.shops.block.ModBlocks.postRegistryTasks;
 
 //import net.spudacious5705.shops.command.DebugShopsStatesCommand;
 
 @Mod(SpudaciousShops.MOD_ID)
-public class SpudaciousShops{
-	public static final String MOD_ID = "spudaciousshops";
-	public static final Logger LOGGER = LogUtils.getLogger();
+public class SpudaciousShops {
+    public static final String MOD_ID = "spudaciousshops";
+    public static final Logger LOGGER = LogUtils.getLogger();
 
-	public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer) {
+    public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer) {
 
         ModItems.registerModItems(modEventBus);
-		ModBlocks.registerModBlocks(modEventBus);
+        ModBlocks.registerModBlocks(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -37,22 +39,21 @@ public class SpudaciousShops{
         ModBlockTags.initialise();
         ModProperties.registerModProperties();
 
-		ModBlockEntities.registerBlockEntities(modEventBus);
-		ModScreenHandlers.registerScreenHandlers(modEventBus);
+        ModBlockEntities.registerBlockEntities(modEventBus);
+        ModScreenHandlers.registerScreenHandlers(modEventBus);
 
-		ModItemGroups.register(modEventBus);
+        ModItemGroups.register(modEventBus);
 
-		//DebugShopsStatesCommand.register(); //for DEBUG purposes only
+        //DebugShopsStatesCommand.register(); //for DEBUG purposes only
 
-	}
+    }
 
 
     public static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("SETTING UP SPUD'S SHOPS...");
 

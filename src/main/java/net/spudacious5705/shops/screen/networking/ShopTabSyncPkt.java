@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.SpudaciousShops.id;
 
-public record ShopTabSyncPkt(int tab) implements CustomPacketPayload{
+public record ShopTabSyncPkt(int tab) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ShopTabSyncPkt> TYPE = new CustomPacketPayload.Type<>(id("shop_tab_sync"));
 
@@ -31,14 +31,14 @@ public record ShopTabSyncPkt(int tab) implements CustomPacketPayload{
 
     public void handleServerSide(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
-            if(
+            if (
                     ctx.player() instanceof ServerPlayer player
-                    &&
-                    player.containerMenu instanceof ShopScreenHandlerOwner screenHandler
+                            &&
+                            player.containerMenu instanceof ShopScreenHandlerOwner screenHandler
             ) {
                 screenHandler.updateTabSelectionServerside(tab);
 
-                PacketDistributor.sendToPlayer(player,new ShopTabSyncPkt(tab));
+                PacketDistributor.sendToPlayer(player, new ShopTabSyncPkt(tab));
 
             }
         });

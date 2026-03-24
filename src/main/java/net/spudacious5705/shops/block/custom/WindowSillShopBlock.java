@@ -17,18 +17,17 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.util.PostRegAssigner;
-import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
+import net.spudacious5705.shops.block.resources.VariantResources;
+import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WindowSillShopBlock extends AbstractShopBlock{
-
-    public Item STONE_TYPE;
+public class WindowSillShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape SHAPE = createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);
     public static final VoxelShape SHAPE_ROTATED = createCuboidShape(-1.0, -1.0, 0, 17.0, 2.0, 16.0);
+    public Item STONE_TYPE;
 
     public WindowSillShopBlock(BlockBehaviour.Properties properties, PostRegAssigner<Item> stoneTypeAssigner) {
         super(properties);
@@ -37,14 +36,14 @@ public class WindowSillShopBlock extends AbstractShopBlock{
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new WindowSillShopEntity(pos,state);
+        return new WindowSillShopEntity(pos, state);
     }
 
     @Override
     protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         Item item = stack.getItem();
-        if(item != this.STONE_TYPE) {
-            if(world.getBlockEntity(pos) instanceof WindowSillShopEntity shopEntity) {
+        if (item != this.STONE_TYPE) {
+            if (world.getBlockEntity(pos) instanceof WindowSillShopEntity shopEntity) {
                 if (VariantResources.WINDOW_SILL.containsKey(item)) {
                     BlockState newSill = VariantResources.WINDOW_SILL.get(item).defaultBlockState();
 
@@ -68,10 +67,10 @@ public class WindowSillShopBlock extends AbstractShopBlock{
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.WINDOW_SHOP_ENTITY.get() == type) {
+        if (ModBlockEntities.WINDOW_SHOP_ENTITY.get() == type) {
             return level.isClientSide
-                    ? (lvl, pos, st, be) -> ((WindowSillShopEntity)be).renderTick()
-                    : (lvl, pos, st, be) -> ((WindowSillShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((WindowSillShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((WindowSillShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;

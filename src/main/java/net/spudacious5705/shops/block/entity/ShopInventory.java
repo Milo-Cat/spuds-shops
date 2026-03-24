@@ -10,21 +10,25 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.function.Supplier;
 
 //todo BUGFIX:
 //toggling NBT match disables warning icon
 public class ShopInventory extends NonNullList<ItemStack> {
 
-    protected static final int INV_SIZE = 78;
     public static final int PAYMENT_SLOT = 76;
     public static final int VENDING_SLOT = 77;
+    protected static final int INV_SIZE = 78;
     protected static final int STOCK_END = 53;
     protected static final int PROFIT_END = 75;
 
     private final Supplier<Boolean> ignoreNBT;
     private final Supplier<Boolean> selectableTrade;
+    private int displayIndex = -1;
 
     protected ShopInventory(List<ItemStack> delegate, Supplier<Boolean> ignoreNBT, Supplier<Boolean> selectableTrade) {
         super(delegate, ItemStack.EMPTY);
@@ -32,17 +36,23 @@ public class ShopInventory extends NonNullList<ItemStack> {
         this.selectableTrade = selectableTrade;
     }
 
-    public static ShopInventory create(EnumMap<ToggleButtonID, Boolean> toggleSettings){
+    public static ShopInventory create(EnumMap<ToggleButtonID, Boolean> toggleSettings) {
 
 
-
-        List<ItemStack> stacks = new ArrayList<>(Collections.nCopies(INV_SIZE,ItemStack.EMPTY));
+        List<ItemStack> stacks = new ArrayList<>(Collections.nCopies(INV_SIZE, ItemStack.EMPTY));
         return new ShopInventory(stacks,
-                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle,true),
-                () -> toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle,true)
-                );
+                () -> toggleSettings.getOrDefault(ToggleButtonID.IgnoreNBTToggle, true),
+                () -> toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle, true)
+        );
     }
 
+    public static void ItemScatterer(Level world, BlockPos pos, ItemStack itemStack) {
+        Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), itemStack);
+    }
+
+    public static void ItemScatterer(Level world, BlockPos pos, NonNullList<ItemStack> inventory) {
+        Containers.dropContents(world, pos, inventory);
+    }
 
     public boolean canUseAsPayment(ItemStack stack) {
         ItemStack payment = this.getPaymentStack();
@@ -57,10 +67,10 @@ public class ShopInventory extends NonNullList<ItemStack> {
         return ItemStack.isSameItemSameComponents(product, stack);
     }
 
-    boolean outOfStock(){
-        if(selectableTrade.get()){//select trade
+    boolean outOfStock() {
+        if (selectableTrade.get()) {//select trade
             for (int i = 0; i <= STOCK_END; i++) {
-                if(!get(i).isEmpty())return false;
+                if (!get(i).isEmpty()) return false;
             }
             return true;
         }
@@ -69,27 +79,31 @@ public class ShopInventory extends NonNullList<ItemStack> {
         ItemStack stockStack;
         for (int i = 0; i <= STOCK_END; i++) {
             stockStack = get(i);
-            if(canUseAsProduct(stockStack)){
+            if (canUseAsProduct(stockStack)) {
                 stock += stockStack.getCount();
-                if(stock >= vend.getCount()){return false;}
+                if (stock >= vend.getCount()) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
-    boolean paymentRegisterFull(){
+    boolean paymentRegisterFull() {
         int space = 0;
         ItemStack paymentSlot;
         ItemStack paymentType = getPaymentStack();
         int price = paymentType.getCount();
-        for(int i = PROFIT_END; i > STOCK_END; i--) {
+        for (int i = PROFIT_END; i > STOCK_END; i--) {
             paymentSlot = get(i);
-            if(paymentSlot.isEmpty()){
+            if (paymentSlot.isEmpty()) {
                 space += paymentType.getMaxStackSize();
-            } else if(canUseAsPayment(paymentSlot)){
+            } else if (canUseAsPayment(paymentSlot)) {
                 space += paymentSlot.getMaxStackSize() - paymentSlot.getCount();
             }
-            if(space >= price){return false;}
+            if (space >= price) {
+                return false;
+            }
         }
         return true;
     }
@@ -99,9 +113,11 @@ public class ShopInventory extends NonNullList<ItemStack> {
         ItemStack payment = getPaymentStack();
         int money = 0;
         for (int i = 0; i <= 36; i++) {
-            if(canUseAsPayment(inv.getItem(i))){
+            if (canUseAsPayment(inv.getItem(i))) {
                 money += inv.getItem(i).getCount();
-                if(money >= payment.getCount()){return false;}
+                if (money >= payment.getCount()) {
+                    return false;
+                }
             }
         }
         return true;
@@ -113,21 +129,22 @@ public class ShopInventory extends NonNullList<ItemStack> {
         return this;
     }
 
-    public ItemStack getVendingStack() {return get(VENDING_SLOT).copy();}
+    public ItemStack getVendingStack() {
+        return get(VENDING_SLOT).copy();
+    }
 
-    private int displayIndex = -1;
     public ItemStack getDisplayStack() {
-        if(!selectableTrade.get()) return get(VENDING_SLOT).copy();
+        if (!selectableTrade.get()) return get(VENDING_SLOT).copy();
         displayIndex++;
-        if(displayIndex>STOCK_END){
+        if (displayIndex > STOCK_END) {
             displayIndex = -1;
             return get(VENDING_SLOT).copy();
         }
 
         ItemStack stack;
-        for(int i = displayIndex; i <= STOCK_END; i++){
+        for (int i = displayIndex; i <= STOCK_END; i++) {
             stack = get(i);
-            if(!stack.isEmpty()){
+            if (!stack.isEmpty()) {
                 displayIndex = i;
                 return stack.copy();
             }
@@ -137,7 +154,9 @@ public class ShopInventory extends NonNullList<ItemStack> {
         return get(VENDING_SLOT).copy();
     }
 
-    public ItemStack getPaymentStack() {return get(PAYMENT_SLOT).copy();}
+    public ItemStack getPaymentStack() {
+        return get(PAYMENT_SLOT).copy();
+    }
 
     @Override
     public int size() {
@@ -171,13 +190,6 @@ public class ShopInventory extends NonNullList<ItemStack> {
     }
 
     public boolean tradeNonFunctional() {
-        return get(PAYMENT_SLOT).isEmpty()  ||  get(VENDING_SLOT).isEmpty();
-    }
-
-    public static void ItemScatterer(Level world, BlockPos pos, ItemStack itemStack){
-        Containers.dropItemStack(world,pos.getX(),pos.getY(),pos.getZ(),itemStack);
-    }
-    public static void ItemScatterer(Level world, BlockPos pos, NonNullList<ItemStack> inventory){
-        Containers.dropContents(world,pos,inventory);
+        return get(PAYMENT_SLOT).isEmpty() || get(VENDING_SLOT).isEmpty();
     }
 }

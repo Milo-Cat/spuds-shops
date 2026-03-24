@@ -9,5 +9,6 @@ import net.spudacious5705.shops.SpudaciousShops;
 public class ModBlockTags {
     public static final TagKey<Block> SPUDS_SHOPS = TagKey.create(Registries.BLOCK, SpudaciousShops.id("spuds_shops"));
 
-    public static void initialise() {}
+    public static void initialise() {
+    }
 }

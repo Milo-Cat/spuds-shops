@@ -13,29 +13,15 @@ import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
 
 
-
-
 public class ShopScreenHandlerCustomer extends AShopScreenHandler {
 
 
-    private  static final int PAYMENT_SLOT = 76;
-    private  static final int VENDING_SLOT = 77;
+    private static final int PAYMENT_SLOT = 76;
+    private static final int VENDING_SLOT = 77;
     private static final int STOCK_END = 53;
     private static final int PROFIT_END = 75;
-
-
-
-    public static ShopScreenHandlerCustomer create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
-        BlockPos pos = buf.readBlockPos();
-        boolean openTop = buf.readBoolean();
-        Player player = playerInv.player;
-        if(player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
-            return new ShopScreenHandlerCustomer(syncId, playerInv, pos, openTop, shop);
-        }
-
-        Minecraft.getInstance().setScreen(null);
-        return null;
-    }
+    private int playerInvEnd;
+    private boolean lastState = false;
 
     public ShopScreenHandlerCustomer(int syncId, Inventory playerInventory, BlockPos pos, boolean openTop, AbstractShopEntity shop) {//clientInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), syncId, playerInventory, openTop, shop);
@@ -43,6 +29,7 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         finishSetup();
 
     }
+
 
     public ShopScreenHandlerCustomer(int syncId, Inventory playerInventory, AbstractShopEntity shop, AbstractShopEntity.InventoryDelegate inventoryDelegate) {//serverInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), syncId, inventoryDelegate, shop.getSettingsReader(), playerInventory, null);
@@ -54,15 +41,25 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         finishSetup();
     }
 
+    public static ShopScreenHandlerCustomer create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
+        BlockPos pos = buf.readBlockPos();
+        boolean openTop = buf.readBoolean();
+        Player player = playerInv.player;
+        if (player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
+            return new ShopScreenHandlerCustomer(syncId, playerInv, pos, openTop, shop);
+        }
 
-    private int playerInvEnd;
-    private void finishSetup(){
+        Minecraft.getInstance().setScreen(null);
+        return null;
+    }
+
+    private void finishSetup() {
 
         playerInventory.startOpen(playerInventory.player);
 
 
-        addPlayerInventory(playerInventory,33,174);
-        playerInvEnd = slots.size()-1;
+        addPlayerInventory(playerInventory, 33, 174);
+        playerInvEnd = slots.size() - 1;
         addCustomerInventory();
 
     }
@@ -101,19 +98,19 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int invSlot) {
-        if(!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex){
+        if (!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex) {
             //do a bunch of trades
             int tradeCount = 0;
-            while(tradeCount<64 & shopInventory.canTrade(player)) {
+            while (tradeCount < 64 & shopInventory.canTrade(player)) {
                 shopInventory.trade(playerInventory);
                 tradeCount++;
             }
             return ItemStack.EMPTY;
 
         }
-        if(invSlot <= playerInvEnd){
+        if (invSlot <= playerInvEnd) {
             //quickmove within player inv
-            if(invSlot <9){
+            if (invSlot < 9) {
                 //from hotbar
                 return executeQuickMove(invSlot, 9, playerInvEnd);
             } else {
@@ -125,16 +122,15 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         return ItemStack.EMPTY;
     }
 
-    private boolean lastState = false;
     public ResourceLocation getBackgroundTexture() {
         boolean state = SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
-        if(state != lastState){
+        if (state != lastState) {
             updateTradeSlots(true);
             lastState = state;
         }
         return state ?
-                            SCREEN_SETTINGS.CUSTOMER_MULTI().textureID() :
-                            SCREEN_SETTINGS.CUSTOMER().textureID();
+                SCREEN_SETTINGS.CUSTOMER_MULTI().textureID() :
+                SCREEN_SETTINGS.CUSTOMER().textureID();
     }
 
     public Boolean showNBToffNotif() {

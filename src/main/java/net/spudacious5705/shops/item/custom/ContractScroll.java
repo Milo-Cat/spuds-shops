@@ -22,35 +22,21 @@ import java.util.List;
 import java.util.UUID;
 
 public class ContractScroll extends Item {
+    public static final String NBTuuid = "player_uuid";
+    public static final String NBTname = "player_name";
+
     public ContractScroll(Item.Properties properties) {
         super(properties.rarity(Rarity.UNCOMMON).stacksTo(1));
     }
 
-    @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player user, @NotNull InteractionHand hand) {
-
-        ItemStack stack = user.getItemInHand(hand);
-
-        if (isSigned(stack)) {
-            return InteractionResultHolder.pass(stack);
-        }
-
-        writeData(stack,user);
-
-        BlockPos pos = user.getOnPos();
-        world.playSound(user, pos.getX(),pos.getY(),pos.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1f,1f);
-
-        return InteractionResultHolder.success(stack);
-    }
-
-    public static void writeData(ItemStack stack, Player user){
+    public static void writeData(ItemStack stack, Player user) {
         writeData(stack,
                 user.getName().getString(),
                 user.getUUID()
         );
     }
 
-    public static void writeData(ItemStack stack, String name, UUID uuid){
+    public static void writeData(ItemStack stack, String name, UUID uuid) {
         CompoundTag nbt = new CompoundTag();
 
         nbt.putString(NBTname, name);
@@ -58,16 +44,8 @@ public class ContractScroll extends Item {
 
         stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
-        stack.set(DataComponents.CUSTOM_NAME, Component.literal("Contract - "+name));
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal("Contract - " + name));
     }
-
-    @Override
-    public boolean isFoil(@NotNull ItemStack stack) {
-        return isSigned(stack);
-    }
-
-    public static final String NBTuuid = "player_uuid";
-    public static final String NBTname = "player_name";
 
     public static boolean isSigned(ItemStack stack) {
         return getUUID(stack) != null;
@@ -84,13 +62,35 @@ public class ContractScroll extends Item {
     }
 
     @Override
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, Player user, @NotNull InteractionHand hand) {
+
+        ItemStack stack = user.getItemInHand(hand);
+
+        if (isSigned(stack)) {
+            return InteractionResultHolder.pass(stack);
+        }
+
+        writeData(stack, user);
+
+        BlockPos pos = user.getOnPos();
+        world.playSound(user, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1f, 1f);
+
+        return InteractionResultHolder.success(stack);
+    }
+
+    @Override
+    public boolean isFoil(@NotNull ItemStack stack) {
+        return isSigned(stack);
+    }
+
+    @Override
     public void appendHoverText(
             ItemStack stack, @NotNull TooltipContext context,
             @NotNull List<Component> tooltip, @NotNull TooltipFlag flag) {
         CustomData data = stack.get(DataComponents.CUSTOM_DATA);
         if (data != null) {
             CompoundTag tag = data.copyTag();
-            if(tag.hasUUID(NBTuuid)) {
+            if (tag.hasUUID(NBTuuid)) {
                 tooltip.add(Component.literal("Signed by - " + tag.getString(NBTname)));
             }
         }

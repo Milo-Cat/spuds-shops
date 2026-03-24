@@ -1,7 +1,6 @@
 package net.spudacious5705.shops.screen;
 
 
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
@@ -34,8 +33,6 @@ public class ModScreenHandlers {
     public static final Supplier<MenuType<ShopScreenHandlerCustomer>> SHOP_SCREEN_HANDLER_CUSTOMER =
             MENUS.register("shop_gui_customer",
                     () -> IMenuTypeExtension.create(ShopScreenHandlerCustomer::create));
-
-
 
 
     public static final Map<Character, ResourceLocation> CURRENCY_IMG_MAP = Map.of(

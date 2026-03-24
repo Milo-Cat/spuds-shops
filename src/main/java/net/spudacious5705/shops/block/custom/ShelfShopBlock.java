@@ -26,18 +26,18 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
-import net.spudacious5705.shops.util.PostRegAssigner;
-import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
+import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
+import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ShelfShopBlock extends AbstractShopBlock{
+public class ShelfShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(2, 0, 2, 14.0, 14.0, 14.0);
 
@@ -52,28 +52,23 @@ public class ShelfShopBlock extends AbstractShopBlock{
             createCuboidShape(8.0, 0.0, 0.5, 16.0, 6.0, 15.5),//WEST
             createCuboidShape(0.5, 0.0, 0.0, 15.5, 6.0, 8.0),//SOUTH
             createCuboidShape(0.0, 0.0, 0.5, 8.0, 6.0, 15.5)};//EAST
-
-    private static VoxelShape[] initShapes_double(){
-        VoxelShape[] SHAPES = new VoxelShape[4];
-        for(int i = 0; i<4; i++){
-            SHAPES[i] = Shapes.or(SHAPES_TOP[i],SHAPES_BOTTOM[i]);
-        }
-        return SHAPES;
-    }
-
     public static final VoxelShape[] SHAPES_DOUBLE = initShapes_double();
-
     public static final EnumProperty<SlabType> SHELVES_ENABLED = EnumProperty.create("type", SlabType.class);
-
-    public Block SlabWoodType;
     public final VariantResources.wood_variant VARIANT;
-
+    public Block SlabWoodType;
     public ShelfShopBlock(Properties properties, PostRegAssigner<Block> slabAssigner, VariantResources.wood_variant variant) {
         super(properties);
         slabAssigner.assignTo(o -> SlabWoodType = o);
         this.VARIANT = variant;
     }
 
+    private static VoxelShape[] initShapes_double() {
+        VoxelShape[] SHAPES = new VoxelShape[4];
+        for (int i = 0; i < 4; i++) {
+            SHAPES[i] = Shapes.or(SHAPES_TOP[i], SHAPES_BOTTOM[i]);
+        }
+        return SHAPES;
+    }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -85,7 +80,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
         return ScreenSettingsGroup.createBasicWood(VARIANT);
     }
 
-    protected void registerDefaultStateTemplate(){
+    protected void registerDefaultStateTemplate() {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(BREAKABLE, false)
@@ -138,14 +133,14 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new ShelfShopEntity(pos,state);
+        return new ShelfShopEntity(pos, state);
     }
 
     @Override
     protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         Item item = stack.getItem();
-        if(item != this.SlabWoodType.asItem()) {
-            if(world.getBlockEntity(pos) instanceof ShelfShopEntity shopEntity) {
+        if (item != this.SlabWoodType.asItem()) {
+            if (world.getBlockEntity(pos) instanceof ShelfShopEntity shopEntity) {
                 if (VariantResources.SHELF.containsKey(item)) {
                     ShelfShopBlock newShelf = VariantResources.SHELF.get(item);
 
@@ -178,30 +173,31 @@ public class ShelfShopBlock extends AbstractShopBlock{
     }
 
 
-
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.SHELF_SHOP_ENTITY.get() == type) {
+        if (ModBlockEntities.SHELF_SHOP_ENTITY.get() == type) {
             return level.isClientSide
-                    ? (lvl, pos, st, be) -> ((ShelfShopEntity)be).renderTick()
-                    : (lvl, pos, st, be) -> ((ShelfShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((ShelfShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((ShelfShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;
     }
 
-   @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos){return CULLING_SHAPE;}
+    @Override
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+        return CULLING_SHAPE;
+    }
 
     @Override
     protected VoxelShape getGenericShape(BlockState state) {
-        int select = switch (state.getValue(FACING)){
+        int select = switch (state.getValue(FACING)) {
             case NORTH -> 0;
             case WEST -> 1;
             case SOUTH -> 2;
             default -> 3;
         };
-        return switch(state.getValue(SHELVES_ENABLED)) {
+        return switch (state.getValue(SHELVES_ENABLED)) {
             case TOP -> SHAPES_TOP[select];
             case BOTTOM -> SHAPES_BOTTOM[select];
             default -> SHAPES_DOUBLE[select];
@@ -211,7 +207,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
     @Override
     public boolean canBeReplaced(BlockState state, @NotNull BlockPlaceContext context) {
-        if(state.getValue(SHELVES_ENABLED) == SlabType.DOUBLE) return false;
+        if (state.getValue(SHELVES_ENABLED) == SlabType.DOUBLE) return false;
         return context.getItemInHand().is(state.getBlock().asItem());
     }
 

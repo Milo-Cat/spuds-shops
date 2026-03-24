@@ -13,15 +13,15 @@ public record ScreenSettingsGroup(
         ScreenSettings SETTINGS,
         ResourceLocation BUTTON_BACKGROUND,
 
-        int tab1ButtonX,  int tab1ButtonY,
-        int tab2ButtonX,  int tab2ButtonY,
-        int tab3ButtonX,  int tab3ButtonY,
+        int tab1ButtonX, int tab1ButtonY,
+        int tab2ButtonX, int tab2ButtonY,
+        int tab3ButtonX, int tab3ButtonY,
 
         //settings button positions
-        int creativeButtonX,  int creativeButtonY,
-        int shopStyleButtonX,  int shopStyleButtonY,
-        int ignoreNBTButtonX,  int ignoreNBTButtonY,
-        int toggleEffectsButtonX,  int toggleEffectsButtonY,
+        int creativeButtonX, int creativeButtonY,
+        int shopStyleButtonX, int shopStyleButtonY,
+        int ignoreNBTButtonX, int ignoreNBTButtonY,
+        int toggleEffectsButtonX, int toggleEffectsButtonY,
 
         int SETTINGS_TEXT_COLOUR
 ) {
@@ -49,50 +49,12 @@ public record ScreenSettingsGroup(
             201,221
     );*/
 
-    private static ResourceLocation id(String texture){
-        return SpudaciousShops.id("textures/gui/"+texture+".png");
+    private static ResourceLocation id(String texture) {
+        return SpudaciousShops.id("textures/gui/" + texture + ".png");
     }
 
-
-    public record ScreenSettings(
-            ResourceLocation textureID,
-            int backgroundWidth, int backgroundHeight,
-            int playerInvX, int playerInvY,
-            int shopInvX, int shopInvY,
-            int tradeInvX, int tradeInvY) {
-
-        public static ScreenSettings createBasicCUSTOMER(ResourceLocation textureID){
-            return new ScreenSettings(textureID,
-                    176, 165,
-                    8,84,
-                    0,0,
-                    80,11);
-        }
-        public static ScreenSettings createBasicCUSTOMER_MULTI(ResourceLocation textureID){
-            return new ScreenSettings(textureID,
-                    176, 165,
-                    8,84,
-                    0,0,
-                    80,11);
-        }
-        public static ScreenSettings createBasicSELLER(ResourceLocation textureID){
-            return new ScreenSettings(textureID,
-                    228, 254,
-                    33,172,
-                    60,10,
-                    23,11);
-        }
-        public static ScreenSettings createBasicSETTINGS(ResourceLocation textureID){
-            return new ScreenSettings(textureID,
-                    228, 254,
-                    33,172,
-                    60,10,
-                    23,11);
-        }
-    }
-
-    public static ScreenSettingsGroup createBasicWood(VariantResources.wood_variant VARIANT){
-        return createBasic(VARIANT.trade, VARIANT.trade_multi, VARIANT.storage,VARIANT.settings,VARIANT.settings_button, VARIANT.settings_text_colour);
+    public static ScreenSettingsGroup createBasicWood(VariantResources.wood_variant VARIANT) {
+        return createBasic(VARIANT.trade, VARIANT.trade_multi, VARIANT.storage, VARIANT.settings, VARIANT.settings_button, VARIANT.settings_text_colour);
     }
 
     public static ScreenSettingsGroup createBasic(
@@ -101,7 +63,7 @@ public record ScreenSettingsGroup(
             ResourceLocation SELLER,
             ResourceLocation SETTINGS,
             ResourceLocation BUTTON_BACKGROUND,
-            int colour){
+            int colour) {
         return new ScreenSettingsGroup(
                 ScreenSettings.createBasicCUSTOMER(CUSTOMER),
                 ScreenSettings.createBasicCUSTOMER_MULTI(CUSTOMER_MULTI),
@@ -109,16 +71,56 @@ public record ScreenSettingsGroup(
                 ScreenSettings.createBasicSETTINGS(SETTINGS),
                 BUTTON_BACKGROUND,
 
-                203,174,
-                203,199,
-                203,225,
+                203, 174,
+                203, 199,
+                203, 225,
 
 
-                31,42,
-                79,42,
-                127,42,
-                175,42,
+                31, 42,
+                79, 42,
+                127, 42,
+                175, 42,
 
                 colour);
+    }
+
+    public record ScreenSettings(
+            ResourceLocation textureID,
+            int backgroundWidth, int backgroundHeight,
+            int playerInvX, int playerInvY,
+            int shopInvX, int shopInvY,
+            int tradeInvX, int tradeInvY) {
+
+        public static ScreenSettings createBasicCUSTOMER(ResourceLocation textureID) {
+            return new ScreenSettings(textureID,
+                    176, 165,
+                    8, 84,
+                    0, 0,
+                    80, 11);
+        }
+
+        public static ScreenSettings createBasicCUSTOMER_MULTI(ResourceLocation textureID) {
+            return new ScreenSettings(textureID,
+                    176, 165,
+                    8, 84,
+                    0, 0,
+                    80, 11);
+        }
+
+        public static ScreenSettings createBasicSELLER(ResourceLocation textureID) {
+            return new ScreenSettings(textureID,
+                    228, 254,
+                    33, 172,
+                    60, 10,
+                    23, 11);
+        }
+
+        public static ScreenSettings createBasicSETTINGS(ResourceLocation textureID) {
+            return new ScreenSettings(textureID,
+                    228, 254,
+                    33, 172,
+                    60, 10,
+                    23, 11);
+        }
     }
 }

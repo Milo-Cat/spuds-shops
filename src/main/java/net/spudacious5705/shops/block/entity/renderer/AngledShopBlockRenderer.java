@@ -36,15 +36,15 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
         Font font = this.context.getFont();
 
         poseStack.pushPose();
-        poseStack.translate(0.5f,0f,0.5f);
+        poseStack.translate(0.5f, 0f, 0.5f);
         poseStack.mulPose(Axis.YP.rotationDegrees(
-                        switch (shop.getCachedFacingDirection()) {
-                            case EAST -> 270f;
-                            case SOUTH -> 180f;
-                            case WEST -> 90f;
-                            default -> 0f;
-                        }));
-        poseStack.translate(-0.5f,0f,-0.5f);
+                switch (shop.getCachedFacingDirection()) {
+                    case EAST -> 270f;
+                    case SOUTH -> 180f;
+                    case WEST -> 90f;
+                    default -> 0f;
+                }));
+        poseStack.translate(-0.5f, 0f, -0.5f);
 
         this.model.renderToBuffer(
                 poseStack,
@@ -56,7 +56,7 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
 
         poseStack.popPose();
 
-        if(data == null){
+        if (data == null) {
             return;
         }
         data.frameAccumulator();
@@ -93,36 +93,35 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
             poseStack.pushPose();
 
 
-
-            if(data.direction() == Direction.NORTH){
+            if (data.direction() == Direction.NORTH) {
                 poseStack.translate(0.57f, 0.514375f, 0.0525f);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
                 poseStack.mulPose(Axis.YP.rotationDegrees(0.0f));
             }
-            if(data.direction() == Direction.EAST){
+            if (data.direction() == Direction.EAST) {
                 poseStack.translate(0.9475f, 0.514375f, 0.57f);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
                 poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
 
             }
-            if(data.direction() == Direction.SOUTH){
+            if (data.direction() == Direction.SOUTH) {
                 poseStack.translate(0.43f, 0.514375f, 0.9475f);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
                 poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
-            if(data.direction() == Direction.WEST){
+            if (data.direction() == Direction.WEST) {
                 poseStack.translate(0.0525f, 0.514375f, .43f);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
                 poseStack.mulPose(Axis.YP.rotationDegrees(270.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
 
-            float tSc = data.useSmallTextPrice()?0.014f:0.018f;
+            float tSc = data.useSmallTextPrice() ? 0.014f : 0.018f;
 
-            poseStack.scale(tSc,tSc,tSc);
+            poseStack.scale(tSc, tSc, tSc);
 
             font.drawInBatch(
                     data.text(),
@@ -147,14 +146,14 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
 
             poseStack.translate(0.2f, 0f, 0.25f);
             poseStack.mulPose(Axis.YP.rotationDegrees(
-                            switch (data.direction()) {
-                                case EAST -> 270f;
-                                case SOUTH -> 180f;
-                                case WEST -> 90f;
-                                default -> 0f;
-                            }));
+                    switch (data.direction()) {
+                        case EAST -> 270f;
+                        case SOUTH -> 180f;
+                        case WEST -> 90f;
+                        default -> 0f;
+                    }));
             poseStack.translate(-0.2f, 0f, -0.25f);
-            
+
 
             poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
             poseStack.mulPose(Axis.XP.rotationDegrees(-67.5f));
@@ -179,23 +178,23 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
 
             //render currency type
             poseStack.pushPose();
-            if(data.direction() == Direction.NORTH){
+            if (data.direction() == Direction.NORTH) {
                 poseStack.translate(0.385f, 0.535f, 0.0525f);
                 poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
-            if(data.direction() == Direction.EAST){
-                poseStack.translate(0.9475f, 0.535f,0.385f );
+            if (data.direction() == Direction.EAST) {
+                poseStack.translate(0.9475f, 0.535f, 0.385f);
                 poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
 
             }
-            if(data.direction() == Direction.SOUTH){
+            if (data.direction() == Direction.SOUTH) {
                 poseStack.translate(0.615f, 0.535f, 0.9475);
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
-            if(data.direction() == Direction.WEST){
-                poseStack.translate(0.0525f, 0.535f,0.615f );
+            if (data.direction() == Direction.WEST) {
+                poseStack.translate(0.0525f, 0.535f, 0.615f);
                 poseStack.mulPose(Axis.YP.rotationDegrees(270.0f));
                 poseStack.mulPose(Axis.XP.rotationDegrees(-22.5f));
             }
@@ -210,7 +209,7 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                     this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0));
             poseStack.popPose();
 
-            ShopRenderUtils.renderShopWarns(tickDelta,poseStack,bufferSource,light,overlay,data,context,0.375f);
+            ShopRenderUtils.renderShopWarns(tickDelta, poseStack, bufferSource, light, overlay, data, context, 0.375f);
 
 
         }

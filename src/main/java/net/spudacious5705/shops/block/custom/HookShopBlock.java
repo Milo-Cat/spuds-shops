@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class HookShopBlock extends AbstractShopBlock{
+public class HookShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape SHAPE = createCuboidShape(5, -1.0, 5, 11.0, 16.0, 11.0);
 
@@ -33,16 +33,16 @@ public class HookShopBlock extends AbstractShopBlock{
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new HookShopEntity(pos,state);
+        return new HookShopEntity(pos, state);
     }
 
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(ModBlockEntities.HOOK_SHOP_ENTITY.get() == type) {
+        if (ModBlockEntities.HOOK_SHOP_ENTITY.get() == type) {
             return level.isClientSide
-                    ? (lvl, pos, st, be) -> ((HookShopEntity)be).renderTick()
-                    : (lvl, pos, st, be) -> ((HookShopEntity)be).serverTick((ServerLevel) lvl, pos,  st);
+                    ? (lvl, pos, st, be) -> ((HookShopEntity) be).renderTick()
+                    : (lvl, pos, st, be) -> ((HookShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
         }
         return null;
@@ -54,13 +54,12 @@ public class HookShopBlock extends AbstractShopBlock{
 
         BlockPos attachedPos = ctx.getClickedPos().relative(Direction.UP);
         BlockState attachedState = world.getBlockState(attachedPos);
-        if(!attachedState.isFaceSturdy(world, attachedPos, Direction.DOWN))return null;
+        if (!attachedState.isFaceSturdy(world, attachedPos, Direction.DOWN)) return null;
 
         return this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
                 .setValue(BREAKABLE, false);
     }
-
 
 
     @Override

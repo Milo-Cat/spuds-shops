@@ -21,10 +21,14 @@ import java.util.Optional;
 public abstract class AShopScreenHandler extends AbstractContainerMenu {
 
     public final AbstractShopEntity.InventoryDelegate shopInventory;
-    protected final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
     public final Inventory playerInventory;
+    protected final AbstractShopEntity.settings_Delegate SETTINGS_DELEGATE;
     protected final ScreenSettingsGroup SCREEN_SETTINGS;
-
+    protected final List<TogglableSlot> playerInvSlots = new ArrayList<>();
+    protected final List<TogglableSlot> tabTradeMonoSlots = new ArrayList<>();
+    protected final List<TogglableSlot> tabTradeSelectSlots = new ArrayList<>();
+    protected int[] lockedDownSlots = new int[2];
+    protected int monoVendorSlotIndex;
 
     protected AShopScreenHandler(@Nullable MenuType<?> pMenuType, int pContainerId, AbstractShopEntity.InventoryDelegate shopInventory, AbstractShopEntity.settings_Delegate settingsDelegate, Inventory playerInventory, ScreenSettingsGroup screenSettings) {
         super(pMenuType, pContainerId);
@@ -33,7 +37,6 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
         this.playerInventory = playerInventory;
         SCREEN_SETTINGS = screenSettings;
     }
-
 
     protected AShopScreenHandler(@Nullable MenuType<?> pMenuType, int pContainerId, Inventory playerInventory, boolean openTop, AbstractShopEntity shop) {
         super(pMenuType, pContainerId);
@@ -62,10 +65,10 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
 
     }
 
-    protected void attemptTrade(int index, Player player){
+    protected void attemptTrade(int index, Player player) {
 
-        if(shopInventory.canTrade(player)){
-            if(SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle)){//standard trade
+        if (shopInventory.canTrade(player)) {
+            if (SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle)) {//standard trade
                 this.shopInventory.tradeWithSelection(playerInventory, index);
             } else {//selectable trade
                 this.shopInventory.trade(playerInventory);
@@ -73,8 +76,77 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
         }
     }
 
+    @Override
+    public void clicked(int pSlotId, int pButton, @NotNull ClickType pClickType, @NotNull Player pPlayer) {
+        for (int i : lockedDownSlots) if (i == pSlotId) return;
+        super.clicked(pSlotId, pButton, pClickType, pPlayer);
+    }
+
+    protected void updateTradeSlots(boolean enable) {
+        if (enable) {
+            if (SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle)) {
+                tabTradeSelectSlots.forEach(TogglableSlot::enable);
+                tabTradeMonoSlots.forEach(TogglableSlot::disable);
+            } else {
+                tabTradeSelectSlots.forEach(TogglableSlot::disable);
+                tabTradeMonoSlots.forEach(TogglableSlot::enable);
+            }
+        } else {
+            tabTradeSelectSlots.forEach(TogglableSlot::disable);
+            tabTradeMonoSlots.forEach(TogglableSlot::disable);
+        }
+    }
+
+    protected void addPlayerInventory(Inventory playerInventory, int offsetX, int offsetY) {
+        for (int i = 0; i < 3; ++i) {
+            for (int l = 0; l < 9; ++l) {
+                new player_slot(playerInventory, l + i * 9 + 9, offsetX + l * 18, offsetY + i * 18);
+            }
+        }
+        offsetY += 58;
+        for (int i = 0; i < 9; ++i) {
+            new player_slot(playerInventory, i, offsetX + i * 18, offsetY);
+        }
+    }
+
+    protected ItemStack executeQuickMove(int invSlot, int startIndex, int endIndex) {
+        ItemStack newStack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(invSlot);
+        if (!slot.hasItem()) {
+            return newStack;
+        }
+        ItemStack originalStack = slot.getItem();
+        newStack = originalStack.copy();
+
+        if (!this.moveItemStackTo(originalStack, startIndex, endIndex, false)) {
+            return ItemStack.EMPTY;
+        }
+
+        if (originalStack.isEmpty()) {
+            slot.set(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+
+        return newStack;
+    }
+
+    abstract public ResourceLocation getBackgroundTexture();
+
+    @Override
+    public boolean stillValid(@NotNull Player player) {
+        return this.shopInventory.stillValid(player);
+    }
+
+    @Override
+    public void removed(@NotNull Player player) {
+        super.removed(player);
+        playerInventory.stopOpen(player); // Notify close
+    }
+
     protected static class TogglableSlot extends Slot {
         private boolean toggled = true;
+
         public TogglableSlot(Container inventory, int slot, int x, int y) {
             super(inventory, slot, x, y);
         }
@@ -84,12 +156,12 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
             return toggled;
         }
 
-        public void enable(){
-            toggled=true;
+        public void enable() {
+            toggled = true;
         }
 
-        public void disable(){
-            toggled=false;
+        public void disable() {
+            toggled = false;
         }
 
 
@@ -104,14 +176,14 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
 
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
+            if (this.hasItem()) attemptTrade(this.getSlotIndex(), pPlayer);
             return Optional.empty();
         }
 
         @NotNull
         @Override
         public ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
+            if (this.hasItem()) attemptTrade(this.getSlotIndex(), pPlayer);
             return ItemStack.EMPTY;
         }
 
@@ -182,15 +254,13 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
         /**
          * DO NOT OVERRIDE
          * this method is for syncing and not accessible by the player
-         public void set(ItemStack pStack)
+         * public void set(ItemStack pStack)
          **/
 
         @Override
         public void setByPlayer(@NotNull ItemStack pStack) {
         }
     }
-
-    protected final List<TogglableSlot> playerInvSlots = new ArrayList<>();
 
     protected class player_slot extends TogglableSlot {
         /**
@@ -203,75 +273,5 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
             addSlot(this);
         }
 
-    }
-    protected int[] lockedDownSlots = new int[2];
-
-    @Override
-    public void clicked(int pSlotId, int pButton, @NotNull ClickType pClickType, @NotNull Player pPlayer) {
-        for (int i : lockedDownSlots) if (i == pSlotId) return;
-        super.clicked(pSlotId, pButton, pClickType, pPlayer);
-    }
-
-    protected int monoVendorSlotIndex;
-
-    protected final List<TogglableSlot> tabTradeMonoSlots = new ArrayList<>();
-    protected final List<TogglableSlot> tabTradeSelectSlots = new ArrayList<>();
-
-    protected void updateTradeSlots(boolean enable){
-        if(enable){
-            if(SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle)){
-                tabTradeSelectSlots.forEach(TogglableSlot::enable);
-                tabTradeMonoSlots.forEach(TogglableSlot::disable);
-            } else {
-                tabTradeSelectSlots.forEach(TogglableSlot::disable);
-                tabTradeMonoSlots.forEach(TogglableSlot::enable);
-            }
-        } else {
-            tabTradeSelectSlots.forEach(TogglableSlot::disable);
-            tabTradeMonoSlots.forEach(TogglableSlot::disable);
-        }
-    }
-
-    protected void addPlayerInventory(Inventory playerInventory, int offsetX, int offsetY) {
-        for (int i = 0; i < 3; ++i) {
-            for (int l = 0; l < 9; ++l) {
-                new player_slot(playerInventory, l + i * 9 + 9, offsetX + l * 18, offsetY + i * 18);
-            }
-        }
-        offsetY += 58;
-        for (int i = 0; i < 9; ++i) {
-            new player_slot(playerInventory, i, offsetX + i * 18, offsetY);
-        }
-    }
-    protected ItemStack executeQuickMove(int invSlot, int startIndex, int endIndex){
-        ItemStack newStack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(invSlot);
-        if (!slot.hasItem()) {return newStack;}
-        ItemStack originalStack = slot.getItem();
-        newStack = originalStack.copy();
-
-        if (!this.moveItemStackTo(originalStack, startIndex, endIndex, false)) {
-            return ItemStack.EMPTY;
-        }
-
-        if (originalStack.isEmpty()) {
-            slot.set(ItemStack.EMPTY);
-        } else {
-            slot.setChanged();
-        }
-
-        return newStack;
-    }
-
-    abstract public ResourceLocation getBackgroundTexture();
-
-    @Override
-    public boolean stillValid(@NotNull Player player) {
-        return this.shopInventory.stillValid(player);
-    }
-    @Override
-    public void removed(@NotNull Player player) {
-        super.removed(player);
-        playerInventory.stopOpen(player); // Notify close
     }
 }

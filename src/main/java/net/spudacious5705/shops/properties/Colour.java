@@ -31,17 +31,17 @@ public enum Colour {
         id = i;
     }
 
+    @Nullable
+    public static Colour fromId(int checkID) {
+        return Arrays.stream(values()).filter(colour -> colour.id == checkID).findFirst().orElse(null);
+    }
+
     public int getId() {
         return id;
     }
 
     public String asString() {
         return name;
-    }
-
-    @Nullable
-    public static Colour fromId(int checkID){
-        return Arrays.stream(values()).filter(colour -> colour.id == checkID).findFirst().orElse(null);
     }
 
     public boolean matchesString(String test) {
