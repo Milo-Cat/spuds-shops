@@ -29,9 +29,9 @@ public class SpudaciousShops{
 	public static final String MOD_ID = "spudaciousshops";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public SpudaciousShops(FMLJavaModLoadingContext context) {
+	public SpudaciousShops() {
 
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         ModItems.registerModItems(modEventBus);
 		ModBlocks.registerModBlocks(modEventBus);

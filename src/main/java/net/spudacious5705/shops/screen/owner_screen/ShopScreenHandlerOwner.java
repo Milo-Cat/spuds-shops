@@ -27,14 +27,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static net.spudacious5705.shops.SpudaciousShops.getResource;
 import static net.spudacious5705.shops.block.entity.ShopInventory.PAYMENT_SLOT;
 import static net.spudacious5705.shops.block.entity.ShopInventory.VENDING_SLOT;
 import static net.spudacious5705.shops.permission.PermissionManager.player_ID_Records_Delegate.checkAction;
-import static net.spudacious5705.shops.screen.ScreenResources.WARNING_TEXTURE;
 
 public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //region variables
+    public static final ResourceLocation WARNING_TEXTURE = getResource("textures/gui/warning_screen.png");
 
     private static final int profit_itemStacks_start = 54;
     private static final int EXPECTED_CONTAINER_SIZE = 78;
