@@ -48,14 +48,14 @@ public class ModScreenHandlers {
 
 
     public static void registerScreenHandlers(IEventBus modEventBus) {//called by modMain
-        ScreenResources.init();
+
         SpudaciousShops.LOGGER.info("Registering screen handlers for " + SpudaciousShops.MOD_ID);
         MENUS.register(modEventBus);
     }
 
     @OnlyIn(Dist.CLIENT)
     public static void registerScreens(){
-
+        ScreenResources.init();
         MenuScreens.register(SHOP_SCREEN_HANDLER_OWNER.get(), ShopScreenOwner::new);
         MenuScreens.register(SHOP_SCREEN_HANDLER_CUSTOMER.get(), ShopScreenCustomer::new);
 
