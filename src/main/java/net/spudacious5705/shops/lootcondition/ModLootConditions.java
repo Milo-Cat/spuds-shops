@@ -9,9 +9,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegisterEvent;
 import net.spudacious5705.shops.SpudaciousShops;
 
+import static net.spudacious5705.shops.SpudaciousShops.id;
+
 @Mod.EventBusSubscriber(modid = SpudaciousShops.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModLootConditions {
-    public static final ResourceLocation RESOURCE_LOCATION = new ResourceLocation(SpudaciousShops.MOD_ID, "matches_colour");
+    public static final ResourceLocation RESOURCE_LOCATION = id("matches_colour");
 
     public static final LootItemConditionType MATCHES_ENUM = new LootItemConditionType(new MatchingCushionColourCondition.ConditionSerializer());
 

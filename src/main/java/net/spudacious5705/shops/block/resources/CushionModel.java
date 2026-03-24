@@ -18,9 +18,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import static net.spudacious5705.shops.SpudaciousShops.id;
+
 public class CushionModel extends Model {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            new ResourceLocation("spudaciousshops", "cushion_model"), "main");
+            id( "cushion_model"), "main");
 
 
 	private final ModelPart main;
