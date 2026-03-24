@@ -185,6 +185,7 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
             if(!player.isCreative()){
                 return PermissionLevel.CUSTOMER;
             }
+            return MANAGER;
         }
 
         if(identificationRecords.isEmpty()) {
