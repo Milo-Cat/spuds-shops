@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -32,6 +31,7 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -124,9 +124,9 @@ public class AngledShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(
-            @NotNull BlockState state, @NotNull HitResult target,
-            LevelReader level, @NotNull BlockPos pos, @NotNull Player player
+    public @NonNull ItemStack getCloneItemStack(
+            LevelReader level, @NonNull BlockPos pos,
+            @NonNull BlockState state, boolean includeData, @NonNull Player player
     ) {
         Colour colour = Colour.RED;
         if (level.getBlockEntity(pos) instanceof AngledShopEntity shopEntity) {
@@ -165,8 +165,7 @@ public class AngledShopBlock extends AbstractShopBlock {
 
     @Override
     public @NotNull VoxelShape getOcclusionShape(
-            @NotNull BlockState state, @NotNull BlockGetter level,
-            @NotNull BlockPos pos
+            @NotNull BlockState state
     ) {
         return CULLING_SHAPE;
     }
@@ -240,7 +239,7 @@ public class AngledShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.ANGLED_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((AngledShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((AngledShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 

@@ -2,7 +2,7 @@ package net.spudacious5705.shops.lootcondition;
 
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -13,7 +13,7 @@ import static net.spudacious5705.shops.SpudaciousShops.id;
 
 @EventBusSubscriber(modid = MOD_ID)
 public class ModLootConditions {
-    public static final ResourceLocation RESOURCE_LOCATION = id("matches_colour");
+    public static final Identifier RESOURCE_LOCATION = id("matches_colour");
 
     public static final LootItemConditionType MATCHES_ENUM = new LootItemConditionType(MatchingCushionColourCondition.CODEC);
 

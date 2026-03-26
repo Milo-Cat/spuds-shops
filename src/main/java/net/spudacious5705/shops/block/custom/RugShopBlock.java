@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -31,6 +34,7 @@ import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
@@ -125,7 +129,7 @@ public class RugShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((RugShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((RugShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
@@ -171,7 +175,13 @@ public class RugShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pos, @NotNull BlockPos neighborPos) {
+    protected BlockState updateShape(
+            @NonNull BlockState state, @NonNull LevelReader level,
+            @NonNull ScheduledTickAccess scheduledTickAccess,
+            @NonNull BlockPos pos, Direction direction,
+            @NonNull BlockPos neighborPos, @NonNull BlockState neighborState,
+            @NonNull RandomSource random
+    ) {
 
         BooleanProperty CONNECTION = switch (direction) {
             case NORTH -> CONNECTED_NORTH;

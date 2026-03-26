@@ -41,7 +41,7 @@ public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandle
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, 0f, 0f, imageWidth, imageHeight);
     }
 
     @Override

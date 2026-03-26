@@ -2,7 +2,6 @@ package net.spudacious5705.shops.block.entity;
 
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -28,12 +27,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.spudacious5705.shops.block.custom.AbstractShopBlock;
-import net.spudacious5705.shops.block.entity.renderer.ShopRenderUtils;
-import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.permission.IBlockPermissions;
 import net.spudacious5705.shops.permission.PermissionLevel;
@@ -51,6 +50,7 @@ import java.util.UUID;
 
 import static net.spudacious5705.shops.block.custom.AbstractShopBlock.BREAKABLE;
 import static net.spudacious5705.shops.block.entity.ShopInventory.*;
+import static net.spudacious5705.shops.config.ConfigHandler.getDefaultToggleSetting;
 
 public abstract class AbstractShopEntity extends BlockEntity implements IBlockPermissions<AbstractShopEntity> {
 
@@ -83,7 +83,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         this.shopInventory = ShopInventory.create(toggleSettings);
         this.particleOffset = particleOffset;
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             createRendererData();
             isClient = true;
         } else {
@@ -193,45 +193,40 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
-        super.loadAdditional(tag, holder);
-        ContainerHelper.loadAllItems(tag, shopInventory, holder);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        permissionManager.load(tag);
+        ContainerHelper.loadAllItems(input, shopInventory);
 
-        if (tag.contains("decay_timer")) {
-            this.decayTimer = tag.getInt("decay_timer");
-        }
+        permissionManager.load(input);
+
+        this.decayTimer = input.getIntOr("decay_timer", -1);
+
 
         for (ToggleButtonID id : ToggleButtonID.values()) {
             String nbtName = "toggle_" + id.getSerialised();
-            if (tag.contains(nbtName)) {
-                toggleSettings.put(id, tag.getBoolean(nbtName));
-            } else {
-                toggleSettings.put(id, ConfigHandler.getDefaultToggleSetting(id));
-            }
+            toggleSettings.put(id, input.getBooleanOr(nbtName, getDefaultToggleSetting(id)));
         }
 
         checkShouldRenderParticles();
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
-        ContainerHelper.saveAllItems(tag, shopInventory, holder);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        ContainerHelper.saveAllItems(output, shopInventory);
 
-        permissionManager.save(tag);
+        permissionManager.save(output);
 
-        tag.putInt("decay_timer", this.decayTimer);
+        output.putInt("decay_timer", this.decayTimer);
 
         for (ToggleButtonID id : ToggleButtonID.values()) {
-            Boolean v = toggleSettings.get(id);
-            if (v != null) {
-                tag.putBoolean("toggle_" + id.getSerialised(), v);
-            }
+            Boolean v = toggleSettings.getOrDefault(id, getDefaultToggleSetting(id));
+            output.putBoolean("toggle_" + id.getSerialised(), v);
+
         }
 
         checkShouldRenderParticles();
-        super.saveAdditional(tag, holder);
+        super.saveAdditional(output);
     }
 
     @Override
@@ -677,7 +672,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         public boolean getState(@NotNull ToggleButtonID ID) {
-            return toggleSettings.getOrDefault(ID, ConfigHandler.getDefaultToggleSetting(ID));
+            return toggleSettings.getOrDefault(ID, getDefaultToggleSetting(ID));
         }
 
         public boolean attemptSetState(@NotNull ToggleButtonID ID, @NotNull Boolean state) {
@@ -714,22 +709,22 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         public double targetRotation = 0;
         public double frameRotation = 0;
         public String stockQuantity;
+        public float quantityTextWidth;
         public boolean stockWarning = false;
         public boolean paymentWarning = false;
-        protected Direction direction = Direction.NORTH;
-        protected int rotation;
-        protected float width;
-        protected boolean smallTextPrice;
-        protected boolean smallTextProduct;
-        protected boolean shopFunctional = false;
-        protected ItemStack paymentItem;
-        protected ItemStack displayItem;
-        protected String text;
-        protected int frameAccumulation = 380;
-        protected boolean stockDisplayType = false;
-        protected boolean currencyDisplayType = true;
-        protected boolean shouldUpdate = true;
-        protected float qWidth;
+        public Direction direction = Direction.NORTH;
+        public int rotation;
+        public boolean smallTextPrice;
+        public boolean smallTextProduct;
+        public boolean shopFunctional = false;
+        public ItemStack paymentItem;
+        public ItemStack displayItem;
+        public String priceQuantity;
+        public float priceTextWidth;
+        public int frameAccumulation = 380;
+        public boolean stockDisplayType = false;
+        public boolean currencyDisplayType = true;
+        public boolean shouldUpdate = true;
 
         public RendererData(@NotNull ShopInventory inv) {
             this.inventory = inv;
@@ -751,7 +746,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 if (!bl) {
                     if (stockWarning || paymentWarning) {
                         //warnings have just been activated
-                        this.targetRotation = ShopRenderUtils.calcTargetRotation(this);
+                        this.targetRotation = 0;//ShopRenderUtils.calcTargetRotation(this);
                         this.lastRotation = this.targetRotation;
                     }
                 }
@@ -763,48 +758,50 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
                 //this.lightLevel = getLightLevel(shop.getWorld(), shop.getPos());
 
-                this.text = Integer.toString(paymentItem.getCount());
+                this.priceQuantity = Integer.toString(paymentItem.getCount());
 
                 this.direction = getCachedFacingDirection();
 
                 getRotation();
 
                 if (paymentItem.getCount() >= 100) {
-                    this.width = -10.5f;
+                    this.priceTextWidth = -10.5f;
                     this.smallTextPrice = true;
                 } else {
                     this.smallTextPrice = false;
                     if (paymentItem.getCount() >= 10) {
-                        this.width = -7.0f;
+                        this.priceTextWidth = -7.0f;
                     } else {
-                        this.width = -2.5f;
+                        this.priceTextWidth = -2.5f;
                     }
                 }
 
                 if (displayItem.getCount() >= 100) {
-                    this.qWidth = -10.5f;
+                    this.quantityTextWidth = -10.5f;
                     this.smallTextProduct = true;
                 } else {
                     this.smallTextProduct = false;
                     if (displayItem.getCount() >= 10) {
-                        this.qWidth = -7.0f;
+                        this.quantityTextWidth = -7.0f;
                     } else {
-                        this.qWidth = -2.5f;
+                        this.quantityTextWidth = -2.5f;
                     }
                 }
 
                 Minecraft mc = Minecraft.getInstance();
 
                 if (displayItem.getItem() instanceof BlockItem) {
-                    BakedModel model = mc.getItemRenderer().getModel(displayItem, null, null, 0);
-                    stockDisplayType = model.isGui3d();
+                    //BakedModel model = mc.getItemRenderer().getModel(displayItem, null, null, 0);
+                    //stockDisplayType = model.isGui3d();
+                    stockDisplayType = true;
                 } else {
                     stockDisplayType = false;
                 }
 
                 if (paymentItem.getItem() instanceof BlockItem) {
-                    BakedModel model = mc.getItemRenderer().getModel(paymentItem, null, null, 0);
-                    currencyDisplayType = model.isGui3d();
+                    //BakedModel model = mc.getItemRenderer().getModel(paymentItem, null, null, 0);
+                    //currencyDisplayType = model.isGui3d();
+                    currencyDisplayType = true;
                 } else {
                     currencyDisplayType = false;
                 }
@@ -879,11 +876,11 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
         public String text() {
 
-            return this.text;
+            return this.priceQuantity;
         }
 
         public float width() {
-            return this.width;
+            return this.priceTextWidth;
         }
 
         public boolean useSmallTextPrice() {
@@ -895,7 +892,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         public float qWidth() {
-            return this.qWidth;
+            return this.quantityTextWidth;
         }
 
         public ItemStack paymentItem() {

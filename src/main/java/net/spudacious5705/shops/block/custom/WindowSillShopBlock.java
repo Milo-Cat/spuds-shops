@@ -68,7 +68,7 @@ public class WindowSillShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.WINDOW_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((WindowSillShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((WindowSillShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 

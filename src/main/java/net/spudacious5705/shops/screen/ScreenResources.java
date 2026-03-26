@@ -3,19 +3,26 @@ package net.spudacious5705.shops.screen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static net.spudacious5705.shops.SpudaciousShops.id;
 
+@OnlyIn(Dist.CLIENT)
 public class ScreenResources {
 
     public static final int DEFAULT_TEXT_COLOUR = 11141290;
-    public static final ResourceLocation WARNING_TEXTURE = id("textures/gui/warning_screen.png");
+    public static final Identifier WARNING_TEXTURE = id("textures/gui/warning_screen.png");
     public static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
     public static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
     public static final MutableComponent SUPERVISOR = Component.translatable("gui.spudaciousshops.supervisor");
@@ -46,7 +53,7 @@ public class ScreenResources {
     public static final MutableComponent REGISTER = Component.translatable("gui.spudaciousshops.register");
     public static final MutableComponent PAYMENT = Component.translatable("gui.spudaciousshops.payment");
     public static final MutableComponent PRODUCT = Component.translatable("gui.spudaciousshops.product");
-    public static final ResourceLocation NOTIFICATION_ICON = id("textures/gui/notification.png");
+    public static final Identifier NOTIFICATION_ICON = id("textures/gui/notification.png");
     public static final List<Component> PRODUCT_NBT_UNCHECKED_WARN = List.of(
             Component.translatable("gui.spudaciousshops.nbt_unchecked_warn_header"),
             Component.translatable("gui.spudaciousshops.nbt_unchecked_warn_line1"),
@@ -60,6 +67,10 @@ public class ScreenResources {
     public static ToolTipText[] SETTINGS_HOVER_INFO_TEXTS = initSettingsHoverInfoTexts();
 
     public static void init() {
+    }
+
+    public static ClientTooltipComponent toFunnyClientTooltip(Component sensible) {
+        return ClientTooltipComponent.create(sensible.getVisualOrderText());
     }
 
     static ToolTipText[] initSettingsHoverInfoTexts() {
@@ -78,7 +89,7 @@ public class ScreenResources {
 
 
         texts[0] = new ToolTipText(OWNER, textX, textY,
-                List.of(
+                Stream.of(
                         permissions_title,
                         CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
                         CAN.copy().append(TAKE_ITEMS).append(COLON).append(YES),
@@ -88,7 +99,7 @@ public class ScreenResources {
                 ));
         textY += increment;
         texts[1] = new ToolTipText(MANAGER, textX, textY,
-                List.of(
+                Stream.of(
                         permissions_title,
                         CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
                         CAN.copy().append(TAKE_ITEMS).append(COLON).append(YES),
@@ -98,7 +109,7 @@ public class ScreenResources {
                 ));
         textY += increment;
         texts[2] = new ToolTipText(SUPERVISOR, textX, textY,
-                List.of(
+                Stream.of(
                         permissions_title,
                         CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
                         CAN.copy().append(TAKE_ITEMS).append(COLON).append(YES),
@@ -108,7 +119,7 @@ public class ScreenResources {
                 ));
         textY += increment;
         texts[3] = new ToolTipText(CLERK, textX, textY,
-                List.of(
+                Stream.of(
                         permissions_title,
                         CAN.copy().append(IMPORT_ITEMS).append(COLON).append(YES),
                         CANT.copy().append(TAKE_ITEMS).append(COLON).append(NO),
@@ -156,10 +167,10 @@ public class ScreenResources {
         private final int Y;
         private final int Xmax;
         private final int Ymax;
-        private final List<Component> TOOLTIP;
+        private final List<ClientTooltipComponent> TOOLTIP;
 
 
-        private ToolTipText(MutableComponent text, int x, int y, List<Component> tooltip) {
+        private ToolTipText(MutableComponent text, int x, int y, Stream<MutableComponent> tooltip) {
             TEXT = text;
             X = x;
             Y = y;
@@ -178,7 +189,7 @@ public class ScreenResources {
 
             Xmax = tXmax;
             Ymax = tYmax;
-            TOOLTIP = tooltip;
+            TOOLTIP = tooltip.map(ScreenResources::toFunnyClientTooltip).toList();
         }
 
         public void render(GuiGraphics context, Font textRenderer, int mouseX, int mouseY, int screenX, int screenY) {
@@ -192,7 +203,13 @@ public class ScreenResources {
             int max = textRenderer.width(TEXT) + X;
             if (mX >= X && mX <= max) {
                 if (mY >= Y && mY <= Ymax) {
-                    context.renderTooltip(textRenderer, TOOLTIP, java.util.Optional.empty(), mouseX, mouseY);
+                    context.renderTooltip(
+                            textRenderer,
+                            TOOLTIP,
+                            mouseX,
+                            mouseY,
+                            DefaultTooltipPositioner.INSTANCE,
+                            null);
                 }
             }
         }

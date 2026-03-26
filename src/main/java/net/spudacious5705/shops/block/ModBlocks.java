@@ -40,7 +40,7 @@ public class ModBlocks {
     public static final List<DeferredBlock<ShelfShopBlock>> ALL_SHELF_SHOPS = new ArrayList<>(11);
     public static final List<DeferredBlock<WindowSillShopBlock>> ALL_WINDOW_SHOPS = new ArrayList<>(2);
     public static final List<DeferredBlock<RugShopBlock>> ALL_RUG_SHOPS = new ArrayList<>(11);
-    private static final BlockBehaviour.Properties settingsChain = shopSettings(Blocks.CHAIN);
+    private static final BlockBehaviour.Properties settingsChain = shopSettings(Blocks.IRON_CHAIN);
     public static final DeferredBlock<HookShopBlock> SHOP_BLOCK_HOOK = registerBasic("hook_shop", () -> new HookShopBlock(settingsChain));
     private static final BlockBehaviour.Properties settingsWood = shopSettings(Blocks.OAK_PLANKS);
     //region ANGLED
@@ -51,6 +51,7 @@ public class ModBlocks {
     private static BlockBehaviour.Properties shopSettings(Block example) {
         return BlockBehaviour.Properties.ofFullCopy(example)
                 .noOcclusion()
+                .forceSolidOn()
                 .strength(2f, Float.MAX_VALUE);
     }
     //endregion

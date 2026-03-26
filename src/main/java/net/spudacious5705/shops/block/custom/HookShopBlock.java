@@ -40,7 +40,7 @@ public class HookShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.HOOK_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((HookShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((HookShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 

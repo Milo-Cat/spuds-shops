@@ -81,7 +81,7 @@ public class SackShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {//todo change to sack entity
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((RugShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((RugShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
@@ -118,7 +118,7 @@ public class SackShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state) {
         return BASE_SHAPE;
     }
 
