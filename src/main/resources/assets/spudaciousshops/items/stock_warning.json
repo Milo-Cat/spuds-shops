@@ -1,0 +1,6 @@
+{
+  "model": "item/generated",
+  "textures": {
+    "layer0": "spudaciousshops:item/stock_warning"
+  }
+}
