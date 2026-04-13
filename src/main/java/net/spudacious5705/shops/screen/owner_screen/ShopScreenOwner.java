@@ -146,7 +146,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
-    MutableComponent TEST_TEXT = Component.literal("test-text");
     //region rendering
     @Override
     protected void renderLabels(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
