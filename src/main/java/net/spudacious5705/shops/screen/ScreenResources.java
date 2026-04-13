@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -21,7 +20,7 @@ import static net.spudacious5705.shops.SpudaciousShops.id;
 @OnlyIn(Dist.CLIENT)
 public class ScreenResources {
 
-    public static final int DEFAULT_TEXT_COLOUR = 11141290;
+    public static final int DEFAULT_TEXT_COLOUR = -5635926;
     public static final Identifier WARNING_TEXTURE = id("textures/gui/warning_screen.png");
     public static final MutableComponent OWNER = Component.translatable("gui.spudaciousshops.owner");
     public static final MutableComponent MANAGER = Component.translatable("gui.spudaciousshops.manager");
@@ -192,12 +191,7 @@ public class ScreenResources {
             TOOLTIP = tooltip.map(ScreenResources::toFunnyClientTooltip).toList();
         }
 
-        public void render(GuiGraphics context, Font textRenderer, int mouseX, int mouseY, int screenX, int screenY) {
-            render(context, textRenderer, mouseX, mouseY, screenX, screenY, DEFAULT_TEXT_COLOUR);
-        }
-
-        public void render(GuiGraphics context, Font textRenderer, int mouseX, int mouseY, int screenX, int screenY, int colour) {
-            context.drawString(textRenderer, TEXT, X + screenX, Y + screenY, colour, false);
+        public void renderTooltip(GuiGraphics context, Font textRenderer, int mouseX, int mouseY, int screenX, int screenY) {
             int mX = mouseX - screenX;
             int mY = mouseY - screenY;
             int max = textRenderer.width(TEXT) + X;
@@ -212,6 +206,15 @@ public class ScreenResources {
                             null);
                 }
             }
+        }
+
+        public void renderText(GuiGraphics context, Font textRenderer) {
+            renderText(context, textRenderer,  DEFAULT_TEXT_COLOUR);
+        }
+        MutableComponent TEST_TEXT = Component.literal("test-text");
+        public void renderText(GuiGraphics context, Font textRenderer, int colour) {
+            context.drawString(textRenderer, TEXT, X, Y, colour, false);
+
         }
     }
 

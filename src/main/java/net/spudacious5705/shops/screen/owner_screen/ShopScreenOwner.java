@@ -146,22 +146,29 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     }
 
+    MutableComponent TEST_TEXT = Component.literal("test-text");
     //region rendering
     @Override
     protected void renderLabels(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+
+        if (menu.getActiveTab() != SETTINGS_TAB) return;
+
+        for (ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS) {
+            ttt.renderText(guiGraphics, font);
+        }
         // Do nothing — this prevents the title and inventory label from rendering
     }
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        guiGraphics.blit(menu.getBackgroundTexture(), leftPos, topPos, 0, 0, 0f, 0f, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, menu.getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 
     @Override
     public void render(@NotNull GuiGraphics context, int mouseX, int mouseY, float partialTick) {
         renderBackground(context, mouseX, mouseY, partialTick);
         super.render(context, mouseX, mouseY, partialTick);
-        Font font = Minecraft.getInstance().font;
+        Font font = this.font;
 
 
         switch (menu.getActiveTab()) {
@@ -191,7 +198,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
 
                 for (ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS) {
-                    ttt.render(context, font, mouseX, mouseY, leftPos, topPos);
+                    ttt.renderTooltip(context, font, mouseX, mouseY, leftPos, topPos);
                 }
 
                 renderScreenGenerics(context, mouseX, mouseY, partialTick);
@@ -284,7 +291,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         public boolean attemptClick(double X, double Y, int button) {
-            if (isHovered(X, Y)) {
+            if (isHovered(X, Y) && button == 0) {
                 onClick(X, Y, button);
                 return true;
             }
@@ -292,9 +299,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
         }
 
         public void onClick(double X, double Y, int button) {
-            if (button == 0) {
-                onClick(X, Y, button);
-            }
         }
 
         public boolean isHovered(double X, double Y) {
@@ -372,7 +376,8 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             context.blit(RenderPipelines.GUI_TEXTURED,ICON_TEXTURE, x+6, y+9, 0,0,16, 16, 16, 16);
         }
 
-        public void onClick(double mouseX, double mouseY) {
+        @Override
+        public void onClick(double mouseX, double mouseY, int button) {
             menu.updateTabSelectionClientside(relatedState);
         }
 
