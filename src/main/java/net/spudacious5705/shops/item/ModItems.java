@@ -1,6 +1,7 @@
 package net.spudacious5705.shops.item;
 
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -16,14 +17,16 @@ public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
 
-    public static final DeferredItem<Item> STOCK_WARNING = register(() -> new Item(new Item.Properties()), "stock_warning");
+    public static final DeferredItem<Item> STOCK_WARNING = registerBasic("stock_warning");
 
-    public static final DeferredItem<Item> PAYMENT_WARNING = register(() -> new Item(new Item.Properties()), "payment_warning");
+    public static final DeferredItem<Item> PAYMENT_WARNING = registerBasic("payment_warning");
 
-    public static final DeferredItem<ContractScroll> CONTRACT_SCROLL = register(() -> new ContractScroll(new Item.Properties()), "contract_scroll");
+    public static final DeferredItem<Item> CONTRACT_SCROLL = ITEMS.registerItem("contract_scroll",
+            ContractScroll::new,
+            () -> new Item.Properties().stacksTo(1));
 
-    private static <I extends Item> DeferredItem<I> register(Supplier<I> item, String name) {
-        return ITEMS.register(name, (item));
+    private static <I extends Item> DeferredItem<Item> registerBasic(String name) {
+        return ITEMS.registerItem(name, Item::new, Item.Properties::new);
     }
 
     public static void registerModItems(IEventBus modEventBus) {
