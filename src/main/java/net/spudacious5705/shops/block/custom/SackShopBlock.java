@@ -48,7 +48,7 @@ public class SackShopBlock extends AbstractShopBlock {
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
     public SackShopBlock() {
-        super(settingsCarpet);
+        super(settingsCarpet.get());
 
     }
 
