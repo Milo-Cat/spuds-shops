@@ -129,7 +129,7 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
             matrices.pushPose();
             matrices.translate(-0.02f, -0.3124f, 0.16f);
             matrices.mulPose(Axis.ZP.rotationDegrees(180f));
-            matrices.mulPose(Axis.XP.rotationDegrees(180f));
+            matrices.mulPose(Axis.XP.rotationDegrees(-90f));
             float textSize = data.useSmallTextPrice() ? 0.015f : 0.02f;
             matrices.scale(textSize, textSize, -textSize);
             font.drawInBatch(
