@@ -36,6 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * Wall shelf shop block.
+ *
+ * Supports top, bottom, and double shelf variants, as well as wall attachment logic.
+ */
 public class ShelfShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(2, 0, 2, 14.0, 14.0, 14.0);

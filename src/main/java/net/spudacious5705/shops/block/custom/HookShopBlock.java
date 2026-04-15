@@ -23,6 +23,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
+/**
+ * Wall-mounted hook shop block.
+ *
+ * Requires a sturdy block above for placement and uses a narrow hitbox.
+ */
 public class HookShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape SHAPE = createCuboidShape(5, -1.0, 5, 11.0, 16.0, 11.0);
@@ -52,6 +57,7 @@ public class HookShopBlock extends AbstractShopBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Level world = ctx.getLevel();
 
+        // Only allow placement when the block above can support this hanging block.
         BlockPos attachedPos = ctx.getClickedPos().relative(Direction.UP);
         BlockState attachedState = world.getBlockState(attachedPos);
         if (!attachedState.isFaceSturdy(world, attachedPos, Direction.DOWN)) return null;

@@ -28,8 +28,8 @@ public class SpudaciousShops {
     public static final String MOD_ID = "spudaciousshops";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer) {
-
+    public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer) 
+    {
         ModItems.registerModItems(modEventBus);
         ModBlocks.registerModBlocks(modEventBus);
 
@@ -45,9 +45,7 @@ public class SpudaciousShops {
         ModItemGroups.register(modEventBus);
 
         //DebugShopsStatesCommand.register(); //for DEBUG purposes only
-
     }
-
 
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);

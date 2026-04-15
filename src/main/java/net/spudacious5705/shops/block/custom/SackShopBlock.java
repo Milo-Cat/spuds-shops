@@ -31,6 +31,11 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 
+/**
+ * Sack-style shop block with open/closed states.
+ *
+ * This block stores an open flag and updates collision bounds accordingly.
+ */
 public class SackShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape BASE_SHAPE = createCuboidShape(0, 0, 0, 16, 14, 16);

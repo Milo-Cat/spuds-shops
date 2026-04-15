@@ -41,6 +41,12 @@ import java.util.function.Function;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 
+/**
+ * Ground rug shop block.
+ *
+ * Tracks connected neighbours to form a multi-block rug surface,
+ * and supports retexturing by carpet or dye items.
+ */
 public class RugShopBlock extends AbstractShopBlock {
 
     public static final BooleanProperty CONNECTED_NORTH = BooleanProperty.create("north");
@@ -143,6 +149,7 @@ public class RugShopBlock extends AbstractShopBlock {
 
         BlockPos pos = ctx.getClickedPos();
 
+        // Rug shop blocks require a solid supporting block underneath.
         BlockPos attachedPos = pos.relative(Direction.DOWN);
         BlockState attachedState = world.getBlockState(attachedPos);
         if (!attachedState.isFaceSturdy(world, attachedPos, Direction.UP)) return null;

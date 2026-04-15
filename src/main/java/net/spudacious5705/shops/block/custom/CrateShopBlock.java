@@ -19,6 +19,11 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Simple crate-style shop block.
+ *
+ * Supports directional shapes and a crate-specific collision profile.
+ */
 public class CrateShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);

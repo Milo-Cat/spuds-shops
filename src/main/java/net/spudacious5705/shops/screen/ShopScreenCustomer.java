@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.screen;
 
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -10,7 +9,6 @@ import net.spudacious5705.shops.screen.owner_screen.ShopScreenOwner;
 import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.screen.ScreenResources.PRODUCT_NBT_UNCHECKED_WARN;
-
 
 public class ShopScreenCustomer extends AbstractContainerScreen<ShopScreenHandlerCustomer> {
 

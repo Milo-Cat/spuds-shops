@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.screen;
 
-
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -55,7 +54,6 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
         if (inventoryDelegate != null && inventoryDelegate.getContainerSize() != 78) {
             throw new IllegalArgumentException("Inventory size must be 78");
         }
-
 
         this.shopInventory = inventoryDelegate;
 
@@ -163,8 +161,6 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
         public void disable() {
             toggled = false;
         }
-
-
     }
 
     protected class shop_vendor_slot extends TogglableSlot {
@@ -272,6 +268,5 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
             playerInvSlots.add(this);
             addSlot(this);
         }
-
     }
 }

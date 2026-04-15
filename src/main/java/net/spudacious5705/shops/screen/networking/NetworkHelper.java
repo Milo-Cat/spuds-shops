@@ -35,8 +35,5 @@ public class NetworkHelper {
                 ShopSelfDemotePkt.STREAM_CODEC,
                 ShopSelfDemotePkt::handle
         );
-
     }
-
-
 }

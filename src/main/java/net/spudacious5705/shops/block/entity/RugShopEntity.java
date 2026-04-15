@@ -10,9 +10,17 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.spudacious5705.shops.block.ModBlockEntities;
 
+/**
+ * Block entity for the rug shop variant.
+ *
+ * <p>Provides client-side render data and custom server tick behaviour for rug particle effects.</p>
+ */
 public class RugShopEntity extends AbstractShopEntity {
 
+    /** Used for internal timing and debug tracking, not persisted. */
     public long lastNanoTime;
+
+    /** Client-only render metadata for the rug shop display. */
     @OnlyIn(Dist.CLIENT)
     protected RugRenderData furtherData;
 

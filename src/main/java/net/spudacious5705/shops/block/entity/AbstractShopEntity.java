@@ -66,7 +66,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     final float particleOffset;
     private final boolean isClient;
     protected int decayTimer = -1;
-    protected int checkIntervalTimer = 200;//short initial check interval for server restarts
+    protected int checkIntervalTimer = 200; // Short initial interval used to verify shop state after server restart before switching to the normal 6000-tick check.
     protected int breakableTicks = -1;
 
     //endregion
@@ -114,7 +114,8 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
     //region NBT
 
-    //FIXME: these 2 methods are a bit of a hack. Need to create an extension of ScreenHandlers
+    // The dual-inventory shop types use a second inventory delegate for the alternate storage page.
+    // This is currently handled with a shortcut instead of a dedicated ScreenHandler extension.
     @Nullable
     public final InventoryDelegate getOtherInventoryDelegate(Player player) {
         ShopInventory inv = otherInventory();
@@ -314,12 +315,12 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         checkIntervalTimer--;
         if (checkIntervalTimer < 0) {
             checkIntervalTimer = 6000;
-            //intervaled functionality check in case of bug and for startup.
+            // Periodic integrity check that recovers shop state after startup or when state updates are missed.
             checkShouldRenderParticles();
             if (isShopFunctional()) {
                 if (decayTimer < 0) {
                     decayTimer = 0;
-                    //start decay timer if not already started
+                    // Start the decay countdown once the shop becomes non-functional.
                 }
             } else {
                 decayTimer = -1;
@@ -336,11 +337,12 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         if (breakableTicks < 0) {
-            // Shop has become breakable; start the countdown (140 ticks)
+            // Shop is now in the grace period before it becomes unbreakable again.
+            // This protects against immediate flip-flopping of the BREAKABLE state.
             breakableTicks = 140;
         } else {
             editBreakability(world, pos, shopState, false);
-            breakableTicks = -1; // Reset
+            breakableTicks = -1; // Reset the countdown state after the breakability toggle completes.
         }
     }
 
@@ -380,7 +382,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         return rendererData;
     }
 
-    //Only call from the CLIENT
+    // Client-side only: update renderer state from the local shop inventory data.
     @OnlyIn(Dist.CLIENT)
     public void forceUpdateRenderData() {
         rendererData.update();
@@ -467,7 +469,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
         public void trade(Inventory playerInv) {
             if (toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle, false))
-                return;//not using the correct style
+                return; // Standard trade mode is disabled when selectable trade is active.
 
             NonNullList<ItemStack> vendList;
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false);
@@ -496,14 +498,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
         public void tradeWithSelection(Inventory playerInv, int index) {
             if (!toggleSettings.getOrDefault(ToggleButtonID.SelectableTradeToggle, false))
-                return;//not using the correct style
+                return; // This method only applies when selectable trade is active.
 
             if (index > STOCK_END || index < 0) {
-                return;//not within bounds??
+                return; // Invalid selection index outside the shop stock range.
             }
             ItemStack product = inventory.get(index);
             if (product.isEmpty()) {
-                return;//No Item??
+                return; // No product exists at the selected stock index.
             }
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle, false);
 
@@ -543,7 +545,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         private void acceptPayment(NonNullList<ItemStack> payList) {
-            //place players payment into register
+            // Move collected payment items from the player into the shop's profit storage slots.
             ItemStack storageStack;
             int space;
             int ptr = 0;
@@ -584,7 +586,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 ItemStack stack = inventory.getStack(i);
                 if (stackQueryType.checkCanUse_(stack)) {
                     if (stack.getCount() >= quantityRequired) {
-                        addToList(list, stack.split(quantityRequired));//todo incase I want to remove can-trade, just reference the stack.
+                        addToList(list, stack.split(quantityRequired)); // Collect required quantity from this stack.
                         break;
                     }
                     quantityRequired -= stack.getCount();
@@ -738,7 +740,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
                 if (!bl) {
                     if (stockWarning || paymentWarning) {
-                        //warnings have just been activated
+                        // Warning has just become active; reset the icon rotation baseline for consistent alert animation.
                         this.targetRotation = 0;//ShopRenderUtils.calcTargetRotation(this);
                         this.lastRotation = this.targetRotation;
                     }
@@ -806,7 +808,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             }
         }
 
-        public void frameAccumulator() {//makes retrieving data periodic instead of on frame
+        public void frameAccumulator() {
+            // Reduce renderer workload by updating shop display data only once every 400 ticks
+            // rather than recalculating it on every render frame.
             if (this.frameAccumulation == 0) {
 
                 this.frameAccumulation += (int) (Math.random() * 40);//adds some randomness so shops aren't all updating at the same time

@@ -20,8 +20,14 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.block.entity.ShopInventory.ItemScatterer;
 
+/**
+ * Block entity for the shelf shop variant.
+ *
+ * <p>Maintains two inventories and separate render data for the top and bottom shelf displays.</p>
+ */
 public class ShelfShopEntity extends AbstractShopEntity {
 
+    /** Secondary inventory used for the top shelf row. */
     private final ShopInventory shopInventoryTop;
 
     @OnlyIn(Dist.CLIENT)

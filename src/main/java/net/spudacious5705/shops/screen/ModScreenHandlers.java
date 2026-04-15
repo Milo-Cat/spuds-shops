@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.screen;
 
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MenuType;
@@ -18,7 +17,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import static net.spudacious5705.shops.SpudaciousShops.id;
-
 
 public class ModScreenHandlers {
 

@@ -12,13 +12,17 @@ import net.spudacious5705.shops.properties.Colour;
 import org.jetbrains.annotations.NotNull;
 
 
+/**
+ * Block entity implementation for the angled shop block.
+ *
+ * <p>Stores cushion colour state and provides texture lookup for the angled shop model.</p>
+ */
 public class AngledShopEntity extends AbstractShopEntity {
 
+    /** NBT key used to persist the selected cushion colour. */
     private static final String COLOUR_NBT_TAG = "cushion_colour";
-    /**
-     * Do not read from directly in case of null value
-     * Use getCushionColour()
-     */
+
+    /** Stored cushion colour. Use {@link #getCushionColour()} to avoid null fallback. */
     private Colour cushionColour;
 
     public AngledShopEntity(BlockPos pos, BlockState state) {

@@ -39,6 +39,12 @@ import java.util.Map;
 import static net.spudacious5705.shops.block.resources.VariantResources.ANGLED;
 
 
+/**
+ * Angled shop block with a cushion surface and custom wood variant support.
+ *
+ * This block uses shape variants for each facing direction and supports
+ * recoloring and wood-type swapping on player interaction.
+ */
 public class AngledShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 17.5);
@@ -81,7 +87,13 @@ public class AngledShopBlock extends AbstractShopBlock {
             BASE_WEST
     );
     public final VariantResources.wood_variant VARIANT;
+
+    /**
+     * Maps cushion colours to the correct dropped shop item when the block is cloned.
+     */
     private final Map<Colour, ShopItem> dropMap = new HashMap<>();
+
+    /** The base wood item used for type swapping on interaction. */
     public Item WOOD_TYPE;
 
     public AngledShopBlock(BlockBehaviour.Properties settings, PostRegAssigner<Item> woodTypeAssigner, VariantResources.wood_variant variant) {
@@ -180,6 +192,12 @@ public class AngledShopBlock extends AbstractShopBlock {
         return newShopState.getBlock() instanceof AngledShopBlock;
     }
 
+    /**
+     * Handles item-based interaction for angled shop blocks.
+     *
+     * Supports dyeing the cushion, changing wool appearance, and swapping the
+     * wooden base type using registered variant items.
+     */
     protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         if (!stack.isEmpty()) {
             Item item = stack.getItem();

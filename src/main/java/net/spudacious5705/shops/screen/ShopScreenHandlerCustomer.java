@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.screen;
 
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,9 +11,7 @@ import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
 
-
 public class ShopScreenHandlerCustomer extends AShopScreenHandler {
-
 
     private static final int PAYMENT_SLOT = 76;
     private static final int VENDING_SLOT = 77;
@@ -29,7 +26,6 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         finishSetup();
 
     }
-
 
     public ShopScreenHandlerCustomer(int syncId, Inventory playerInventory, AbstractShopEntity shop, AbstractShopEntity.InventoryDelegate inventoryDelegate) {//serverInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), syncId, inventoryDelegate, shop.getSettingsReader(), playerInventory, null);
@@ -53,19 +49,17 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         return null;
     }
 
-    private void finishSetup() {
-
+    private void finishSetup() 
+    {
         playerInventory.startOpen(playerInventory.player);
-
 
         addPlayerInventory(playerInventory, 33, 174);
         playerInvEnd = slots.size() - 1;
         addCustomerInventory();
-
     }
 
-    private void addCustomerInventory() {
-
+    private void addCustomerInventory() 
+    {
         int offsetx = 21;
         int offsety = 35;
 
@@ -93,12 +87,13 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         monoVendorSlot.enable();
 
         updateTradeSlots(true);
-
     }
 
     @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int invSlot) {
-        if (!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int invSlot) 
+    {
+        if (!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex) 
+        {
             //do a bunch of trades
             int tradeCount = 0;
             while (tradeCount < 64 & shopInventory.canTrade(player)) {
@@ -108,23 +103,27 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
             return ItemStack.EMPTY;
 
         }
-        if (invSlot <= playerInvEnd) {
+        if (invSlot <= playerInvEnd) 
+        {
             //quickmove within player inv
-            if (invSlot < 9) {
+            if (invSlot < 9) 
+            {
                 //from hotbar
                 return executeQuickMove(invSlot, 9, playerInvEnd);
-            } else {
+            } else 
+            {
                 //from uhhh... not hotbar
                 return executeQuickMove(invSlot, 0, 8);
             }
         }
-
         return ItemStack.EMPTY;
     }
 
-    public Identifier getBackgroundTexture() {
+    public Identifier getBackgroundTexture() 
+    {
         boolean state = SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
-        if (state != lastState) {
+        if (state != lastState) 
+        {
             updateTradeSlots(true);
             lastState = state;
         }
@@ -133,7 +132,8 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
                 SCREEN_SETTINGS.CUSTOMER().textureID();
     }
 
-    public Boolean showNBToffNotif() {
+    public Boolean showNBToffNotif() 
+    {
         return SETTINGS_DELEGATE.getState(ToggleButtonID.IgnoreNBTToggle) && !SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
     }
 }

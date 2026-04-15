@@ -1,10 +1,8 @@
 package net.spudacious5705.shops.screen;
 
-
 import net.minecraft.resources.Identifier;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.resources.VariantResources;
-
 
 public record ScreenSettingsGroup(
         ScreenSettings CUSTOMER,

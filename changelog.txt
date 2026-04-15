@@ -1,3 +1,20 @@
+Spud's Shops Changelog
+1.10
+====
+ - 1.10.4  Updated to work with Minecraft 1.21.11
+           Bumped minecraft_version 1.21.1 -> 1.21.11
+           Bumped neo_version 21.1.220 -> 21.11.40-beta
+           Bumped net.neoforged.moddev plugin 2.0.140 -> 2.0.141
+           Commented out data run config in build.gradle
+           Fixed indentation in neoforge.mods.toml dependency block
+           Migrated all recipe JSONs from 'recipes/' to 'recipe/' folder for new data pack format
+           Added ~350 new item model definition JSONs under assets/spudaciousshops/items/ for the 1.21.4+ item model system
+           Rewrote all shop entity renderers (AngledShopBlockRenderer, CrateShopEntityRenderer, HookShopEntityRenderer, RugShopEntityRenderer, ShelfShopEntityRenderer, WindowSillShopEntityRenderer, ShopRenderUtils); previous implementations preserved under hold/
+           Refactored AbstractShopEntity, AbstractShopBlock, ContractScroll, PermissionManager, ScreenResources, ShopScreenOwner and related screen handlers for the 1.21.11 API
+           Expanded en_us.json lang file (~200 new entries)
+           Updated README.txt
+ - 1.10.3  Previous release on NeoForge 1.21.1
+
 1.20.1 Changelog
 47.4
 ====

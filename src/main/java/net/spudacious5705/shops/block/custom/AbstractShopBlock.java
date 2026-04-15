@@ -40,10 +40,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
+/**
+ * Base class for all shop block variants.
+ *
+ * Provides common block state handling, placement logic, break protection,
+ * interaction routing, and shape fallbacks for shop blocks.
+ */
 public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
+    /** Block facing state for horizontal shop orientation. */
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
+    /** Controls whether the block can be destroyed by players. */
     public static final BooleanProperty BREAKABLE = ModProperties.BREAKABLE;
     private static final VoxelShape TEST_SHAPE = Block.box(0, 0, 0, 16, 10, 16);
 
@@ -52,6 +60,9 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         registerDefaultStateTemplate();
     }
 
+    /**
+     * Helper wrapper for Block.box to keep shape creation calls consistent.
+     */
     public static VoxelShape createCuboidShape(
             double x1, double y1, double z1,
             double x2, double y2, double z2
@@ -59,6 +70,9 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         return Block.box(x1, y1, z1, x2, y2, z2);
     }
 
+    /**
+     * Routes player sign-in state to the shop entity so permission checks work.
+     */
     protected static PermissionLevel userSignIn(Level world, BlockPos pos, Player player) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof AbstractShopEntity shopEntity) {
@@ -113,6 +127,9 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         return BlockTags.MINEABLE_WITH_AXE;
     }
 
+    /**
+     * Marks the block as breakable when attacked, or prevents breaking for protected shops.
+     */
     @Override
     public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
         if (!(level.getBlockEntity(pos) instanceof AbstractShopEntity shop)) return;
@@ -165,6 +182,9 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
+    /**
+     * Opens the shop UI when the player uses the block with an empty hand.
+     */
     @Override
     protected @NotNull InteractionResult useWithoutItem(
             @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos,
