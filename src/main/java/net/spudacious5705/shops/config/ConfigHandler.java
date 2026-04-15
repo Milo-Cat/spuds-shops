@@ -28,7 +28,7 @@ public class ConfigHandler {
             multiplier = config.getOrElse(StackMultiplierID, multiplier);
         }
         stackSizeMultiplier = multiplier;*/
-        stackSizeMultiplier = 1;//todo check why these larger stacks cause desync issues.
+        stackSizeMultiplier = 1;
 
         toggleSettingsStates = getDefaultToggleSettingStates();
 

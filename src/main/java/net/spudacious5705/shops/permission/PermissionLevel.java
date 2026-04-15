@@ -2,9 +2,6 @@ package net.spudacious5705.shops.permission;
 
 import org.intellij.lang.annotations.MagicConstant;
 
-/// Why is this here?
-/// todo move this to its own package along with the delegates class in AbstractShopEntity
-///
 public enum PermissionLevel {
     SERVER_ADMIN(true, false, false, false, false, false, -1),
     OWNER(true, true, true, true, true, true, 4),

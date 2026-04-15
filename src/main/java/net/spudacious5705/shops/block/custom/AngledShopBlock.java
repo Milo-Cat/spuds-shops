@@ -241,7 +241,7 @@ public class AngledShopBlock extends AbstractShopBlock {
                             droppedItem.setDeltaMovement(0, 0.1, 0);
                             world.addFreshEntity(droppedItem);
                         }
-                        world.playSound(null, pos, SoundEvents.WOOD_STEP, SoundSource.BLOCKS);//TODO add this to fabric
+                        world.playSound(null, pos, SoundEvents.WOOD_STEP, SoundSource.BLOCKS);
                         world.setBlockAndUpdate(pos, copyValues(block.defaultBlockState(), state, FACING));
                         shopEntity.forceUpdateClient();
                         return true;

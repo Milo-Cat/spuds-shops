@@ -119,7 +119,7 @@ public class RugShopBlock extends AbstractShopBlock {
                     if (!player.isCreative()) {
                         stack.shrink(1);
                     }
-                    world.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS);//TODO rework this section on fabric to match
+                    world.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS);
 
                     world.setBlockAndUpdate(pos, copyValues(newRug.defaultBlockState(), state, CONNECTED_NORTH, CONNECTED_EAST, CONNECTED_SOUTH, CONNECTED_WEST));
                     shopEntity.forceUpdateClient();
