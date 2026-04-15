@@ -2,13 +2,16 @@ package net.spudacious5705.shops.block.entity;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.ItemStackWithSlot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -31,7 +34,7 @@ public class ShelfShopEntity extends AbstractShopEntity {
     public ShelfShopEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.SHELF_SHOP_ENTITY.get(), pos, state, -0.3f);
         this.shopInventoryTop = ShopInventory.create(toggleSettings);
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
             createRendererDataForShelf();
         }
     }
@@ -89,27 +92,30 @@ public class ShelfShopEntity extends AbstractShopEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
+    protected void saveAdditional(@NotNull ValueOutput output) {
 
-        CompoundTag donorTag = new CompoundTag();
-        ContainerHelper.saveAllItems(donorTag, shopInventoryTop, holder);
 
-        ListTag inventoryTwo = donorTag.getList("Items", Tag.TAG_COMPOUND);
+        ValueOutput.TypedOutputList<ItemStackWithSlot> typedoutputlist = output.list("ItemsTwo", ItemStackWithSlot.CODEC);
 
-        tag.put("ItemsTwo", inventoryTwo);
+        for (int i = 0; i < shopInventoryTop.size(); i++) {
+            ItemStack itemstack = shopInventoryTop.get(i);
+            if (!itemstack.isEmpty()) {
+                typedoutputlist.add(new ItemStackWithSlot(i, itemstack));
+            }
+        }
 
-        super.saveAdditional(tag, holder);
+        super.saveAdditional(output);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
-        super.loadAdditional(tag, holder);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        CompoundTag donorTag = new CompoundTag();
-        ListTag inventoryTwo = tag.getList("ItemsTwo", Tag.TAG_COMPOUND);
-        donorTag.put("Items", inventoryTwo);
-
-        ContainerHelper.loadAllItems(donorTag, shopInventoryTop, holder);
+        for (ItemStackWithSlot itemstackwithslot : input.listOrEmpty("ItemsTwo", ItemStackWithSlot.CODEC)) {
+            if (itemstackwithslot.isValidInContainer(shopInventoryTop.size())) {
+                shopInventoryTop.set(itemstackwithslot.slot(), itemstackwithslot.stack());
+            }
+        }
     }
 
     @OnlyIn(Dist.CLIENT)

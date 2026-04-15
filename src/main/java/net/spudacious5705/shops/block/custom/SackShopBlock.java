@@ -28,7 +28,7 @@ import net.spudacious5705.shops.block.entity.RugShopEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.spudacious5705.shops.block.ModBlocks.settingsCarpet;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 
 public class SackShopBlock extends AbstractShopBlock {
@@ -47,8 +47,8 @@ public class SackShopBlock extends AbstractShopBlock {
 
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
 
-    public SackShopBlock() {
-        super(settingsCarpet);
+    public SackShopBlock(BlockBehaviour.Properties properties) {
+        super(properties);
 
     }
 
@@ -81,7 +81,7 @@ public class SackShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.RUG_SHOP_ENTITY.get() == type) {//todo change to sack entity
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((RugShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((RugShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
@@ -118,7 +118,7 @@ public class SackShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state) {
         return BASE_SHAPE;
     }
 

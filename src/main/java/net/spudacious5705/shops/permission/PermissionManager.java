@@ -1,18 +1,26 @@
 package net.spudacious5705.shops.permission;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.item.custom.ContractScroll;
 import org.intellij.lang.annotations.MagicConstant;
@@ -23,6 +31,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
+import static net.minecraft.world.level.block.Block.UPDATE_NEIGHBORS;
 import static net.spudacious5705.shops.item.custom.ContractScroll.*;
 import static net.spudacious5705.shops.permission.PermissionLevel.CONTRACT_PERMS;
 import static net.spudacious5705.shops.permission.PermissionLevel.MANAGER;
@@ -63,48 +73,37 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
         return identificationRecords.size();
     }
 
-    public void load(@NotNull CompoundTag tag) {
+    static final Codec<CONTRACT> CONTRACT_CODEC = RecordCodecBuilder.create(
+            x -> x.group(
+                            ExtraCodecs.PLAYER_NAME.fieldOf(CONTRACT_NAME).orElse("UNKNOWN").forGetter(CONTRACT::name),
+                            UUIDUtil.CODEC.fieldOf(CONTRACT_UUID).forGetter(CONTRACT::uuid),
+                                ExtraCodecs.intRange(0,4).fieldOf(CONTRACT_LEVEL).forGetter(CONTRACT::lvl)
+                    )
+                    .apply(x, CONTRACT::new)
+    );
+    record CONTRACT(String name, UUID uuid, int lvl) {}
+
+    public void load(@NotNull ValueInput input) {
         identificationRecords.clear();
 
-        if (tag.contains(CONTRACTS, Tag.TAG_LIST)) {
-            ListTag contractList = tag.getList(CONTRACTS, Tag.TAG_COMPOUND);
-
-            for (int index = 0; index < contractList.size(); index++) {
-                CompoundTag contract = contractList.getCompound(index);
-
-                String name = contract.getString(CONTRACT_NAME);
-                UUID uuid = contract.getUUID(CONTRACT_UUID);
-                PermissionLevel perms = PermissionLevel.fromInt(contract.getInt(CONTRACT_LEVEL));
-
-                if (perms.asInt() > 0) {
-                    identificationRecords.add(new PlayerID(uuid, name, perms));
-                }
-            }
+        for(CONTRACT contract : input.listOrEmpty(CONTRACTS, CONTRACT_CODEC)){
+            identificationRecords.add(new PlayerID(contract.uuid, contract.name, PermissionLevel.fromInt(contract.lvl)));
         }
 
         copyRecordsToContracts();
-
-        if (tag.hasUUID("owner_id")) {
-            UUID ownerID = tag.getUUID("owner_id");
-            String name = tag.contains("owner_name") ? tag.getString("owner_name") : ownerID.toString();
-
-            identificationRecords.add(new PlayerID(ownerID, name, PermissionLevel.OWNER));
-        }
     }
 
-    public void save(CompoundTag tag) {
-        ListTag contractList = new ListTag();
+    public void save(@NotNull ValueOutput output) {
+        ValueOutput.TypedOutputList<CONTRACT> typedoutputlist = output.list(CONTRACTS, CONTRACT_CODEC);
 
         for (PlayerID id : identificationRecords) {
-            CompoundTag contractNBT = new CompoundTag();
-            contractNBT.putString(CONTRACT_NAME, id.name);
-            contractNBT.putUUID(CONTRACT_UUID, id.uuid);
-            contractNBT.putInt(CONTRACT_LEVEL, id.permissionLevel.asInt());
-            contractList.add(contractNBT);
-        }
-
-        if (!contractList.isEmpty()) {
-            tag.put(CONTRACTS, contractList);
+            typedoutputlist.add(
+                    new CONTRACT(
+                            id.name,
+                            id.uuid,
+                            id.permissionLevel.asInt()
+                    )
+            );
         }
     }
 
@@ -157,6 +156,11 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
     public PermissionLevel userSignIn(Player player) {
 
         if (isCreativeSettingOn.get()) {
+            // Owners retain full permissions even in creative-mode shops so they can change settings
+            PermissionLevel existingLevel = quickUserSignIn(player);
+            if (existingLevel == PermissionLevel.OWNER) {
+                return PermissionLevel.OWNER;
+            }
             if (!player.isCreative()) {
                 return PermissionLevel.CUSTOMER;
             }
@@ -216,10 +220,12 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
             CustomData data = contract.get(DataComponents.CUSTOM_DATA);
             if (data != null) {
                 CompoundTag tag = data.copyTag();
-                if (tag.hasUUID(NBTuuid)) {
+                var uuid = readUuid(tag);
+                var name = tag.getString(NBTname);
+                if (uuid.isPresent() && name.isPresent()) {
                     return new PlayerID(
-                            tag.getUUID(NBTuuid),
-                            tag.getString(NBTname),
+                            uuid.get(),
+                            name.get(),
                             permissionLevel
                     );
                 }
@@ -374,7 +380,7 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
         public void setChanged() {
             Level level = OwnerBlock.getLevel();
             if (level != null) {
-                level.sendBlockUpdated(OwnerBlock.getBlockPos(), OwnerBlock.getBlockState(), OwnerBlock.getBlockState(), 3);
+                level.sendBlockUpdated(OwnerBlock.getBlockPos(), OwnerBlock.getBlockState(), OwnerBlock.getBlockState(), UPDATE_NEIGHBORS | UPDATE_CLIENTS);
             }
             copyRecordsToContracts();
             OwnerBlock.setChanged();

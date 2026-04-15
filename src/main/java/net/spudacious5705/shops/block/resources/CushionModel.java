@@ -14,21 +14,21 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.Unit;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static net.spudacious5705.shops.SpudaciousShops.id;
 
-public class CushionModel extends Model {
+public class CushionModel extends Model<Unit> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             id("cushion_model"), "main");
 
 
-    private final ModelPart main;
-
     public CushionModel(ModelPart root) {
-        super(RenderType::entityCutoutNoCull);
-        this.main = root.getChild("main");
+        super(root.getChild("main"), RenderTypes::entityCutoutNoCull);
     }
 
     public static LayerDefinition getTexturedModelData() {
@@ -40,13 +40,12 @@ public class CushionModel extends Model {
         return LayerDefinition.create(modelData, 32, 32);
     }
 
+    public static void register(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(LAYER_LOCATION, CushionModel::getTexturedModelData);
+    }
+
 
     public void render(PoseStack matrices, VertexConsumer vertices, int light, int overlay) {
         renderToBuffer(matrices, vertices, light, overlay, 1);
-    }
-
-    @Override
-    public void renderToBuffer(@NotNull PoseStack matrices, @NotNull VertexConsumer vertices, int light, int overlay, int unknown) {
-        main.render(matrices, vertices, light, overlay);
     }
 }

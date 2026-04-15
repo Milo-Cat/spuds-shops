@@ -1,6 +1,6 @@
 package net.spudacious5705.shops.block.resources;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.spudacious5705.shops.SpudaciousShops;
@@ -57,15 +57,15 @@ public class VariantResources {
         JUNGLE("jungle", 11141290);
 
         public final String name;
-        public final ResourceLocation trade;
-        public final ResourceLocation trade_multi;
-        public final ResourceLocation settings;
-        public final ResourceLocation storage;
-        public final ResourceLocation settings_button;
+        public final Identifier trade;
+        public final Identifier trade_multi;
+        public final Identifier settings;
+        public final Identifier storage;
+        public final Identifier settings_button;
         public final int settings_text_colour;
 
         wood_variant(String texture, int text_colour) {
-            ResourceLocation[] ids = GUIid(texture);
+            Identifier[] ids = GUIid(texture);
             name = texture;
             trade = ids[0];
             trade_multi = ids[1];
@@ -75,9 +75,9 @@ public class VariantResources {
             settings_text_colour = text_colour;
         }
 
-        private static ResourceLocation[] GUIid(String texture) {
+        private static Identifier[] GUIid(String texture) {
 
-            return new ResourceLocation[]{
+            return new Identifier[]{
                     SpudaciousShops.id("textures/gui/wood_gui/trade_" + texture + ".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/trade_multi_" + texture + ".png"),
                     SpudaciousShops.id("textures/gui/wood_gui/settings_" + texture + ".png"),

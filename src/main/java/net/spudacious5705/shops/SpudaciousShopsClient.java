@@ -49,4 +49,9 @@ public class SpudaciousShopsClient {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         ModScreenHandlers.registerScreens(event);
     }
+
+    @SubscribeEvent
+    public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        CushionModel.register(event);
+    }
 }
