@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block.custom;
 
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -37,7 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static net.spudacious5705.shops.block.resources.VariantResources.ANGLED;
-
 
 /**
  * Angled shop block with a cushion surface and custom wood variant support.
@@ -277,6 +275,3 @@ public class AngledShopBlock extends AbstractShopBlock {
         return dropMap.get(Colour.RED);
     }
 }
-
-
-

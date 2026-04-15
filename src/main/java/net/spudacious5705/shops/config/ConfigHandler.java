@@ -15,7 +15,6 @@ public class ConfigHandler {
     private static final File CONFIG_PATH = new File("config/" + MOD_ID + ".toml");
     private static final EnumMap<ToggleButtonID, Boolean> toggleSettingsStates;
 
-
     static {
         config = FileConfig.of(CONFIG_PATH);
         config.load();

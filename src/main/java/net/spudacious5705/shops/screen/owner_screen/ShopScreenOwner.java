@@ -177,8 +177,6 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
             }
             case SETTINGS_TAB -> {
 
-                //toggleButtons.forEach();
-
                 if (menu.isPlayerCreative()) {
                     ToggleCreative.renderWidget(context, mouseX, mouseY, partialTick);
                 }

@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block;
 
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -23,7 +22,7 @@ public class ModBlockEntities {
         SpudaciousShops.LOGGER.info("Registering block entities for" + SpudaciousShops.MOD_ID);
         BLOCK_ENTITIES.register(modEventBus);
     }
-    
+
     public static final Supplier<BlockEntityType<AngledShopEntity>> ANGLED_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e",
                     () -> new BlockEntityType<>(AngledShopEntity::new,
@@ -37,7 +36,6 @@ public class ModBlockEntities {
                             ModBlocks.ALL_WINDOW_SHOPS.stream().map(Supplier::get).toArray(WindowSillShopBlock[]::new)
                     )
             );
-
 
     public static final Supplier<BlockEntityType<HookShopEntity>> HOOK_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e_hook",
@@ -60,14 +58,11 @@ public class ModBlockEntities {
                     )
             );
 
-
     public static final Supplier<BlockEntityType<ShelfShopEntity>> SHELF_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e_shelf",
                     () -> new BlockEntityType<>(ShelfShopEntity::new,
                             ModBlocks.ALL_SHELF_SHOPS.stream().map(Supplier::get).toArray(ShelfShopBlock[]::new)
                     )
             );
-
-
 
 }

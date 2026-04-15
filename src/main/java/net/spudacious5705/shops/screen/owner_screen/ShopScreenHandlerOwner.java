@@ -416,7 +416,6 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //settings buttons
     public boolean toggleButtonServersideUpdate(ToggleButtonID button, boolean state) {
-        //SpudaciousShops.LOGGER.debug("packet received: {} - {}", button.getSerialised(), state);
         if (SETTINGS_DELEGATE.attemptSetState(button, state)) {
             shopInventory.setChanged();
         }

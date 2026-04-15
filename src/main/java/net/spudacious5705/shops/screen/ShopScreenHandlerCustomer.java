@@ -30,10 +30,6 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
     public ShopScreenHandlerCustomer(int syncId, Inventory playerInventory, AbstractShopEntity shop, AbstractShopEntity.InventoryDelegate inventoryDelegate) {//serverInit
         super(ModScreenHandlers.SHOP_SCREEN_HANDLER_CUSTOMER.get(), syncId, inventoryDelegate, shop.getSettingsReader(), playerInventory, null);
 
-        /*shop.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler, 0, 80, 11));
-            this.addSlot(new SlotItemHandler(iItemHandler, 1, 80, 59));
-        });*/
         finishSetup();
     }
 
@@ -49,7 +45,7 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         return null;
     }
 
-    private void finishSetup() 
+    private void finishSetup()
     {
         playerInventory.startOpen(playerInventory.player);
 
@@ -58,7 +54,7 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         addCustomerInventory();
     }
 
-    private void addCustomerInventory() 
+    private void addCustomerInventory()
     {
         int offsetx = 21;
         int offsety = 35;
@@ -90,9 +86,9 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
     }
 
     @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int invSlot) 
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int invSlot)
     {
-        if (!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex) 
+        if (!SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) && invSlot == monoVendorSlotIndex)
         {
             //do a bunch of trades
             int tradeCount = 0;
@@ -103,14 +99,14 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
             return ItemStack.EMPTY;
 
         }
-        if (invSlot <= playerInvEnd) 
+        if (invSlot <= playerInvEnd)
         {
             //quickmove within player inv
-            if (invSlot < 9) 
+            if (invSlot < 9)
             {
                 //from hotbar
                 return executeQuickMove(invSlot, 9, playerInvEnd);
-            } else 
+            } else
             {
                 //from uhhh... not hotbar
                 return executeQuickMove(invSlot, 0, 8);
@@ -119,10 +115,10 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
         return ItemStack.EMPTY;
     }
 
-    public Identifier getBackgroundTexture() 
+    public Identifier getBackgroundTexture()
     {
         boolean state = SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
-        if (state != lastState) 
+        if (state != lastState)
         {
             updateTradeSlots(true);
             lastState = state;
@@ -132,7 +128,7 @@ public class ShopScreenHandlerCustomer extends AShopScreenHandler {
                 SCREEN_SETTINGS.CUSTOMER().textureID();
     }
 
-    public Boolean showNBToffNotif() 
+    public Boolean showNBToffNotif()
     {
         return SETTINGS_DELEGATE.getState(ToggleButtonID.IgnoreNBTToggle) && !SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle);
     }

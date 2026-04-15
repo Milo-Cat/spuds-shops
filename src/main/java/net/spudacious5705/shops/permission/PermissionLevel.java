@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.permission;
 
-
 import org.intellij.lang.annotations.MagicConstant;
 
 /// Why is this here?
@@ -57,7 +56,6 @@ public enum PermissionLevel {
         return PermissionLevel.CUSTOMER;
     }
 
-    // Optionally, add getter methods to access the field values
     public boolean canBreakBlock() {
         return breakBlock;
     }

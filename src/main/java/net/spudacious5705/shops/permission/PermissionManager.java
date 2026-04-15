@@ -313,7 +313,6 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
 
         private ItemStack fetchContract(int index, boolean remove) {
             if (checkIndex(index)) {
-                //return contracts.get(index);
                 PermissionLevel perm = permFromIndex(index);
 
                 PlayerID[] array = identificationRecords.stream()

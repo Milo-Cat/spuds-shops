@@ -149,14 +149,6 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                 renderState.breakProgress
         );
 
-        /*this.model.renderToBuffer(
-                poseStack,
-                bufferSource.getBuffer(RenderTypes.entitySolid(AngledShopEntity.getCushionTextureID())),
-                renderState.light,
-                overlay,
-                1
-        );*/
-
         poseStack.popPose();
 
         if (renderState.shopFunctional) {
@@ -308,9 +300,6 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                     OverlayTexture.NO_OVERLAY, 0);
 
             poseStack.popPose();
-
-            //ShopRenderUtils.renderShopWarns(renderState, poseStack, nodeCollector, cameraRenderState, context, 0.375f);
-
 
         }
     }

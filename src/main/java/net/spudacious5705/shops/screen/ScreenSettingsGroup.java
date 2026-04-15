@@ -23,30 +23,6 @@ public record ScreenSettingsGroup(
 
         int SETTINGS_TEXT_COLOUR
 ) {
-    /*BASIC(0,
-            new ScreenSettings(
-                    id("owner_customer_screen"),
-                    176, 165,
-                    8,84,
-                    0,0,
-                    80,11),
-            new ScreenSettings(
-                    id("shop_seller"),
-                    228, 254,
-                    33,172,
-                    60,10,
-                    23,11),
-            new ScreenSettings(
-                    id("shop_settings"),
-                    228, 254,
-                    33,172,
-                    60,10,
-                    23,11),
-            203,174,
-            201,195,
-            201,221
-    );*/
-
     private static Identifier id(String texture) {
         return SpudaciousShops.id("textures/gui/" + texture + ".png");
     }

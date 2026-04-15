@@ -196,7 +196,6 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
         if (!(be instanceof AbstractShopEntity shop)) return InteractionResult.FAIL;
 
-
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.openMenu(
                     shop.createScreenHandlerFactory(false),
@@ -206,7 +205,6 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
                     }
             );
         }
-
 
         return InteractionResult.SUCCESS;
     }
@@ -312,6 +310,3 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         return ScreenSettingsGroup.createBasicWood(VariantResources.wood_variant.OAK);
     }
 }
-
-
-

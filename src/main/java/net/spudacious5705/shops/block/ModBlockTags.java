@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block;
 
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;

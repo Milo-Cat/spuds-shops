@@ -12,7 +12,7 @@ public enum ToggleButtonID {
         this.serialised = s;
     }
 
-    public static ToggleButtonID fromString(String s) 
+    public static ToggleButtonID fromString(String s)
     {
         for (ToggleButtonID id : ToggleButtonID.values()) {
             if (id.getSerialised().equalsIgnoreCase(s)) {
@@ -22,7 +22,7 @@ public enum ToggleButtonID {
         throw new IllegalArgumentException("Unknown ToggleButtonID: " + s);
     }
 
-    public String getSerialised() 
+    public String getSerialised()
     {
         return serialised;
     }

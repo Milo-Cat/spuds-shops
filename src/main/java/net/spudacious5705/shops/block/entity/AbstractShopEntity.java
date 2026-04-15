@@ -457,14 +457,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         public @NotNull ItemStack getItem(int slot) {
             if (slot > this.getContainerSize() || slot < 0) return ItemStack.EMPTY;
 
-            /*if(slot>PROFIT_END) {
-                return inventory.get(slot);
-            }
-
-            //if(permissions.canViewShopScreen())*/
             return inventory.get(slot);
-
-            //return ItemStack.EMPTY;
         }
 
         public void trade(Inventory playerInv) {
@@ -741,17 +734,14 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 if (!bl) {
                     if (stockWarning || paymentWarning) {
                         // Warning has just become active; reset the icon rotation baseline for consistent alert animation.
-                        this.targetRotation = 0;//ShopRenderUtils.calcTargetRotation(this);
+                        this.targetRotation = 0;
                         this.lastRotation = this.targetRotation;
                     }
                 }
 
-
                 this.displayItem = inventory.getDisplayStack();
 
                 this.stockQuantity = Integer.toString(displayItem.getCount());
-
-                //this.lightLevel = getLightLevel(shop.getWorld(), shop.getPos());
 
                 this.priceQuantity = Integer.toString(paymentItem.getCount());
 
@@ -786,21 +776,16 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 Minecraft mc = Minecraft.getInstance();
 
                 if (displayItem.getItem() instanceof BlockItem) {
-                    //BakedModel model = mc.getItemRenderer().getModel(displayItem, null, null, 0);
-                    //stockDisplayType = model.isGui3d();
                     stockDisplayType = true;
                 } else {
                     stockDisplayType = false;
                 }
 
                 if (paymentItem.getItem() instanceof BlockItem) {
-                    //BakedModel model = mc.getItemRenderer().getModel(paymentItem, null, null, 0);
-                    //currencyDisplayType = model.isGui3d();
                     currencyDisplayType = true;
                 } else {
                     currencyDisplayType = false;
                 }
-
 
             } else {
                 this.displayItem = ItemStack.EMPTY;

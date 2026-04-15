@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block;
 
-
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
