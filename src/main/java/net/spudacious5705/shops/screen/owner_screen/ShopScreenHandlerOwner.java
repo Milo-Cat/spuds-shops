@@ -4,7 +4,7 @@ package net.spudacious5705.shops.screen.owner_screen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.config.ConfigHandler;
@@ -101,11 +102,8 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     }
 
     public static void playWarnSound(@NotNull Player player) {
-        player.playNotifySound(
-                SoundEvents.NOTE_BLOCK_GUITAR.value(),
-                SoundSource.MASTER,
-                32.0F,
-                0.3F
+        player.playSound(
+                SoundEvents.NOTE_BLOCK_GUITAR.value()
         );
     }
 
@@ -136,7 +134,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         return SETTINGS_DELEGATE.isPlayerCreative();
     }
 
-    public ResourceLocation getBackgroundTexture() {
+    public Identifier getBackgroundTexture() {
         return switch (activeTab) {
             case SETTINGS_TAB -> SCREEN_SETTINGS.SETTINGS().textureID();
             case CUSTOMER_TAB -> SETTINGS_DELEGATE.getState(ToggleButtonID.SelectableTradeToggle) ?
@@ -157,9 +155,9 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     }
 
     private void openWarnScreen(@NotNull Player player) {//called when player removes their own contract
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             playWarnSound(player);
-            PacketDistributor.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
+            ClientPacketDistributor.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
         } else {
             activeTab = WARNING_TAB;
         }
@@ -296,6 +294,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
                         count = (slot.getItem().getCount() + 1) / 2;
                     }
                     slot.remove(count);
+                    shopInventory.setChanged();
                 }
             }
 
@@ -368,12 +367,13 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     @OnlyIn(Dist.CLIENT)
     public void updateTabSelectionClientside(int tab) {
         activeTab = tab;
-        PacketDistributor.sendToServer(new ShopTabSyncPkt(activeTab));
+        ClientPacketDistributor.sendToServer(new ShopTabSyncPkt(activeTab));
         updateTabSelection();
     }
 
     public void updateTabSelectionServerside(int tab) {
         activeTab = tab;
+        updateTabSelection();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -416,7 +416,6 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //settings buttons
     public boolean toggleButtonServersideUpdate(ToggleButtonID button, boolean state) {
-        //SpudaciousShops.LOGGER.debug("packet received: {} - {}", button.getSerialised(), state);
         if (SETTINGS_DELEGATE.attemptSetState(button, state)) {
             shopInventory.setChanged();
         }
@@ -425,15 +424,15 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     @OnlyIn(Dist.CLIENT)
     public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
-        SETTINGS_DELEGATE.attemptSetState(button, state);
+        // Apply the server-confirmed state directly — server already validated permissions
+        SETTINGS_DELEGATE.forceSetState(button, state);
     }
 
     @OnlyIn(Dist.CLIENT)
     public void handleToggleButtonInput(ToggleButtonID button) {
         boolean state = !SETTINGS_DELEGATE.getState(button);
-        if (SETTINGS_DELEGATE.attemptSetState(button, state)) {
-            PacketDistributor.sendToServer(new ToggleSyncPkt(button, state));
-        }
+        SETTINGS_DELEGATE.attemptSetState(button, state); // optimistic local update (may fail if perms not yet synced)
+        ClientPacketDistributor.sendToServer(new ToggleSyncPkt(button, state)); // server validates and responds
     }
 
     //endregion interactions

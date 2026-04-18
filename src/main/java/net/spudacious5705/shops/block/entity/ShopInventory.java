@@ -16,8 +16,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Supplier;
 
-//todo BUGFIX:
-//toggling NBT match disables warning icon
+/**
+ * Inventory container used by shop block entities.
+ *
+ * <p>Defines payment, vending, stock and profit slots along with helper methods for
+ * stock tracking, payment validation, and item scattering.</p>
+ */
 public class ShopInventory extends NonNullList<ItemStack> {
 
     public static final int PAYMENT_SLOT = 76;
@@ -36,8 +40,13 @@ public class ShopInventory extends NonNullList<ItemStack> {
         this.selectableTrade = selectableTrade;
     }
 
+    /**
+     * Creates a new shop inventory instance using the provided toggle settings.
+     *
+     * @param toggleSettings current toggle values for NBT matching and selectable trade
+     * @return a populated shop inventory with all slots initialised to empty
+     */
     public static ShopInventory create(EnumMap<ToggleButtonID, Boolean> toggleSettings) {
-
 
         List<ItemStack> stacks = new ArrayList<>(Collections.nCopies(INV_SIZE, ItemStack.EMPTY));
         return new ShopInventory(stacks,

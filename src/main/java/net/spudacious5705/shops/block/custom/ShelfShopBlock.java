@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -37,6 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 
+/**
+ * Wall shelf shop block.
+ *
+ * Supports top, bottom, and double shelf variants, as well as wall attachment logic.
+ */
 public class ShelfShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(2, 0, 2, 14.0, 14.0, 14.0);
@@ -107,7 +111,11 @@ public class ShelfShopBlock extends AbstractShopBlock {
 
         if (player != null) {
             Vec3 lookVec = player.getLookAngle();
-            Arrays.sort(horizontalDirections, Comparator.comparingDouble(dir -> -lookVec.dot(Vec3.atLowerCornerOf(dir.getNormal()))));
+            Arrays.sort(horizontalDirections,
+                    Comparator.comparingDouble(
+                            dir -> -lookVec.dot(Vec3.atLowerCornerOf(dir.getUnitVec3i()))
+                    )
+            );
         }
 
         for (Direction direction : horizontalDirections) {
@@ -176,7 +184,7 @@ public class ShelfShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.SHELF_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((ShelfShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((ShelfShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
@@ -185,7 +193,7 @@ public class ShelfShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state) {
         return CULLING_SHAPE;
     }
 
@@ -213,7 +221,7 @@ public class ShelfShopBlock extends AbstractShopBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         BlockEntity be = level.getBlockEntity(pos);
 

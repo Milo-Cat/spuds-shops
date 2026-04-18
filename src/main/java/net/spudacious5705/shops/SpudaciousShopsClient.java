@@ -1,6 +1,5 @@
 package net.spudacious5705.shops;
 
-
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,17 +19,15 @@ import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
 public class SpudaciousShopsClient {
 
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-
-
+    public static void onClientSetup(FMLClientSetupEvent event)
+    {
         CushionTextures.initialiseCushionTextures();
         CushionResources.initialise();
-
-
     }
 
     @SubscribeEvent
-    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
+    {
         event.registerBlockEntityRenderer(ModBlockEntities.ANGLED_SHOP_ENTITY.get(), AngledShopBlockRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.WINDOW_SHOP_ENTITY.get(), WindowSillShopEntityRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.HOOK_SHOP_ENTITY.get(), HookShopEntityRenderer::new);
@@ -39,14 +36,21 @@ public class SpudaciousShopsClient {
         event.registerBlockEntityRenderer(ModBlockEntities.SHELF_SHOP_ENTITY.get(), ShelfShopEntityRenderer::new);
     }
 
-
     @SubscribeEvent
-    public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+    public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
+    {
         event.registerLayerDefinition(CushionModel.LAYER_LOCATION, CushionModel::getTexturedModelData);
     }
 
     @SubscribeEvent // on the mod event bus only on the physical client
-    public static void registerScreens(RegisterMenuScreensEvent event) {
+    public static void registerScreens(RegisterMenuScreensEvent event)
+    {
         ModScreenHandlers.registerScreens(event);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event)
+    {
+        CushionModel.register(event);
     }
 }

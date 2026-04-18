@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "c": {
-      "item": "minecraft:chest"
-    },
-    "g": {
-      "item": "minecraft:gold_nugget"
-    },
-    "r": {
-      "item": "minecraft:white_carpet"
-    }
+    "c": "minecraft:chest",
+    "g": "minecraft:gold_nugget",
+    "r": "minecraft:white_carpet"
   },
   "pattern": [
     "   ",

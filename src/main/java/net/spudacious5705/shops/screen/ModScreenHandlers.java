@@ -1,8 +1,7 @@
 package net.spudacious5705.shops.screen;
 
-
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -19,7 +18,6 @@ import java.util.function.Supplier;
 
 import static net.spudacious5705.shops.SpudaciousShops.id;
 
-
 public class ModScreenHandlers {
 
     public static final DeferredRegister<MenuType<?>> MENUS =
@@ -35,7 +33,7 @@ public class ModScreenHandlers {
                     () -> IMenuTypeExtension.create(ShopScreenHandlerCustomer::create));
 
 
-    public static final Map<Character, ResourceLocation> CURRENCY_IMG_MAP = Map.of(
+    public static final Map<Character, Identifier> CURRENCY_IMG_MAP = Map.of(
             '£', id("textures/gui/currency_textures/gbp.png"),
             '€', id("textures/gui/currency_textures/eur.png"),
             'x', id("textures/gui/contract_slot.png")
@@ -43,13 +41,13 @@ public class ModScreenHandlers {
 
 
     public static void registerScreenHandlers(IEventBus modEventBus) {//called by modMain
-        ScreenResources.init();
         SpudaciousShops.LOGGER.info("Registering screen handlers for " + SpudaciousShops.MOD_ID);
         MENUS.register(modEventBus);
     }
 
     @OnlyIn(Dist.CLIENT)
     public static void registerScreens(RegisterMenuScreensEvent event) {
+        ScreenResources.init();
         event.register(SHOP_SCREEN_HANDLER_OWNER.get(), ShopScreenOwner::new);
         event.register(SHOP_SCREEN_HANDLER_CUSTOMER.get(), ShopScreenCustomer::new);
     }

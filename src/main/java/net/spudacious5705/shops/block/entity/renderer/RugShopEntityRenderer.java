@@ -3,16 +3,60 @@ package net.spudacious5705.shops.block.entity.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.phys.Vec3;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.RugShopEntity;
+import org.jspecify.annotations.NonNull;
+
+import javax.annotation.Nullable;
 
 import static net.minecraft.util.Mth.clamp;
 
+public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity, RugShopEntityRenderer.RenderState> {
 
-public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>, ShopRenderUtils {
+    public static class RenderState extends BlockEntityRenderState {
+        public int lightLevel;
+        public boolean shopFunctional = false;
+        public boolean stockDisplayType = false;
+        // Animated values captured from furtherData each frame
+        public float itemHeight;
+        public float itemRotationY;
+        public float itemRotationX;
+        public float itemRotationZ;
+        // Text
+        public FormattedCharSequence stockQuantity;
+        public float quantityTextWidth;
+        public FormattedCharSequence priceQuantity;
+        public float priceTextWidth;
+        public boolean smallTextPrice;
+        public boolean smallTextProduct;
+        // Currency display
+        public boolean currencyDisplayType = true;
+        // Warning icons
+        public boolean stockWarning;
+        public boolean paymentWarning;
+        public boolean renderIcons;
+        public float iconRotation;
+        final ItemStackRenderState displayItem = new ItemStackRenderState();
+        final ItemStackRenderState paymentItem = new ItemStackRenderState();
+        final ItemStackRenderState noStockIcon = new ItemStackRenderState();
+        final ItemStackRenderState regFullIcon = new ItemStackRenderState();
+    }
 
     private final BlockEntityRendererProvider.Context context;
 
@@ -20,246 +64,203 @@ public class RugShopEntityRenderer implements BlockEntityRenderer<RugShopEntity>
         this.context = ctx;
     }
 
+    @Override
+    public RenderState createRenderState() {
+        return new RenderState();
+    }
 
     @Override
-    public void render(RugShopEntity shop, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
-        ItemDisplayContext mode;
-        final RugShopEntity.RendererData data = shop.rendererData();
-        final RugShopEntity.RugRenderData furtherData = shop.furtherData();
-        Font font = this.context.getFont();
-        if (data == null) {
-            return;
-        }
-
-        long currentNanoTime = System.nanoTime();
-        float delta = (currentNanoTime - shop.lastNanoTime) * 0.00000004f;
-        shop.lastNanoTime = currentNanoTime;
-
+    public void extractRenderState(RugShopEntity blockEntity, RenderState renderState, float partialTick,
+                                   @NonNull Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        AbstractShopEntity.RendererData data = blockEntity.rendererData();
         data.frameAccumulator();
+        BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
+
+        renderState.shopFunctional = data.shopFunctional();
+        renderState.lightLevel = getLightLevel(blockEntity.getLevel(), blockEntity.getBlockPos());
 
         if (data.shopFunctional()) {
+            renderState.stockDisplayType = data.stockDisplayType();
+            renderState.currencyDisplayType = data.currencyDisplayType();
+            renderState.stockQuantity = context.font().split(FormattedText.of(data.stockQuantity), 999).getFirst();
+            renderState.priceQuantity = context.font().split(FormattedText.of(data.priceQuantity), 999).getFirst();
+            renderState.smallTextPrice = data.useSmallTextPrice();
+            renderState.smallTextProduct = data.useSmallTextProduct();
+            renderState.quantityTextWidth = data.qWidth();
+            renderState.priceTextWidth = data.width();
+            ItemDisplayContext displayCtx = data.stockDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
+            context.itemModelResolver().updateForTopItem(renderState.displayItem,
+                    data.displayItem(), displayCtx, blockEntity.getLevel(), null, 0);
+            ItemDisplayContext currencyCtx = data.currencyDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
+            context.itemModelResolver().updateForTopItem(renderState.paymentItem,
+                    data.paymentItem(), currencyCtx, blockEntity.getLevel(), null, 0);
 
-            //render item being sold
-            matrices.pushPose();
+            // Update animation state on the entity's furtherData, then snapshot into renderState
+            RugShopEntity.RugRenderData fd = blockEntity.furtherData();
+            long currentNanoTime = System.nanoTime();
+            float delta = (currentNanoTime - blockEntity.lastNanoTime) * 0.00000004f;
+            blockEntity.lastNanoTime = currentNanoTime;
 
-            matrices.translate(0.5f, 0.18f, 0.5f);
-            matrices.pushPose();
-
-            if (data.stockDisplayType()) {
-                matrices.scale(0.35f, 0.35f, 0.35f);
-                mode = ItemDisplayContext.NONE;
-            } else {
-                matrices.translate(0f, -0.16f, 0f);
-                matrices.scale(0.8f, 0.8f, 0.8f);
-                mode = ItemDisplayContext.GUI;
-            }
-            matrices.translate(0f, 0.5f, 0f);
-
-
-            float foo = furtherData.itemHeight;
-
+            float foo = fd.itemHeight;
             float rand = (float) (Math.random() * 0.02f);
             foo = (foo + delta * (0.02f + rand)) % 6.28318530718f;
+            fd.itemHeight = foo;
+            renderState.itemHeight = foo;
 
-
-            matrices.translate(0f, Math.sin(foo) * 0.15f, 0f);
-
-            furtherData.itemHeight = foo;
-
-            rand = (float) (Math.random() * 0.03);
-
-            foo = furtherData.itemRotationY;
-            if (furtherData.rotateDirectionY) {
+            rand = (float) (Math.random() * 0.03f);
+            foo = fd.itemRotationY;
+            if (fd.rotateDirectionY) {
                 foo = (foo + delta * (0.2f + rand)) % 360;
             } else {
                 foo = (foo - delta * (0.2f + rand)) % 360;
             }
-
-            matrices.mulPose(Axis.YP.rotationDegrees(foo));
-
-            furtherData.itemRotationY = foo;
+            fd.itemRotationY = foo;
+            renderState.itemRotationY = foo;
 
             rand = (float) (Math.random() * 0.05f);
-            foo = furtherData.itemRotationX;
-
-            if (furtherData.rotateDirectionX) {
+            foo = fd.itemRotationX;
+            if (fd.rotateDirectionX) {
                 foo = (foo + delta * (1.25f + rand)) % 360;
             } else {
                 foo = (foo - delta * (1.25f + rand)) % 360;
             }
+            fd.itemRotationX = foo;
+            renderState.itemRotationX = foo;
 
-            matrices.mulPose(Axis.XP.rotationDegrees(foo));
-
-            furtherData.itemRotationX = foo;
-
-            foo = furtherData.itemRotationSpeedZ;
+            foo = fd.itemRotationSpeedZ;
             foo = (float) clamp(foo + ((Math.random()) - 0.5f) * delta * 0.05f, -0.3f, 0.3f);
-            furtherData.itemRotationSpeedZ = foo;
+            fd.itemRotationSpeedZ = foo;
+            foo = (fd.itemRotationZ + foo) % 360f;
+            fd.itemRotationZ = foo;
+            renderState.itemRotationZ = foo;
 
-            foo = (furtherData.itemRotationZ + foo) % 360f;
-
-            matrices.mulPose(Axis.ZP.rotationDegrees(foo));
-
-            furtherData.itemRotationZ = foo;
-
-
-            matrices.scale(0.8f, 0.8f, 0.8f);
-
-            this.context.getItemRenderer().render(data.displayItem(), mode,
-                    false,
-                    matrices,
-                    vertexConsumers,
-                    light,
-                    overlay,
-                    this.context.getItemRenderer().getModel(data.displayItem(), null, null, 0)
-            );
-            matrices.popPose();
-
-            //render price (count of currency)
-            matrices.pushPose();
-            matrices.translate(-0.27f, -0.178f, -0.37f);
-            matrices.mulPose(Axis.YP.rotationDegrees(-135f));
-            matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            float textSize = data.useSmallTextPrice() ? 0.012f : 0.019f;
-            matrices.scale(textSize, textSize, textSize);
-
-            font.drawInBatch(
-                    data.text(),
-                    data.width(),
-                    -4f,
-                    0xffffff,
-                    false,
-                    matrices.last().pose(),
-                    vertexConsumers,
-                    Font.DisplayMode.NORMAL,
-                    0,
-                    light
-            );
-            matrices.popPose();
-
-            matrices.pushPose();
-            matrices.translate(0.27f, -0.178f, 0.37f);
-            matrices.mulPose(Axis.YP.rotationDegrees(45f));
-            matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            matrices.scale(textSize, textSize, textSize);
-
-            font.drawInBatch(
-                    data.text(),
-                    data.width(),
-                    -4f,
-                    0xffffff,
-                    false,
-                    matrices.last().pose(),
-                    vertexConsumers,
-                    Font.DisplayMode.NORMAL,
-                    0,
-                    light
-            );
-            matrices.popPose();
-
-
-            //render amount being sold
-
-
-            matrices.pushPose();
-            matrices.translate(0.37f, -0.178f, -0.37f);
-            matrices.mulPose(Axis.YP.rotationDegrees(135f));
-            matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            textSize = data.useSmallTextProduct() ? 0.012f : 0.019f;
-            matrices.scale(textSize, textSize, textSize);
-
-            font.drawInBatch(
-                    data.stockQuantity,
-                    data.qWidth(),
-                    -4f,
-                    0xffff00,
-                    false,
-                    matrices.last().pose(),
-                    vertexConsumers,
-                    Font.DisplayMode.NORMAL,
-                    0x000000,
-                    light
-            );
-            matrices.popPose();
-            matrices.pushPose();
-            matrices.translate(-0.37f, -0.178f, 0.37f);
-            matrices.mulPose(Axis.YP.rotationDegrees(-45f));
-            matrices.mulPose(Axis.XP.rotationDegrees(90f));
-            matrices.scale(textSize, textSize, textSize);
-
-            font.drawInBatch(
-                    data.stockQuantity,
-                    data.qWidth(),
-                    -4f,
-                    0xffff00,
-                    false,
-                    matrices.last().pose(),
-                    vertexConsumers,
-                    Font.DisplayMode.NORMAL,
-                    0x000000,
-                    light
-            );
-            matrices.popPose();
-
-            matrices.translate(-0.39f, -0.178f, -0.23f);
-
-            float scale;
-            boolean oppType;
-            if (data.currencyDisplayType()) {
-                //for block item
-                mode = ItemDisplayContext.NONE;
-                scale = 0.16f;
-                oppType = true;
-            } else {
-                //for normal item
-                mode = ItemDisplayContext.GUI;
-                oppType = false;
-                scale = 0.25f;
+            renderState.stockWarning = data.stockWarning;
+            renderState.paymentWarning = data.paymentWarning;
+            renderState.renderIcons = data.renderIcons();
+            if (renderState.renderIcons && (renderState.stockWarning || renderState.paymentWarning)) {
+                renderState.iconRotation = ShopRenderUtils.updateIconRotation(data, partialTick);
+                ShopRenderUtils.extractIconState(context, renderState.noStockIcon, renderState.regFullIcon);
             }
-            //render currency type
-            matrices.pushPose();
-            if (oppType) {
-                matrices.mulPose(Axis.YP.rotationDegrees(-45f));
-            } else {
-                matrices.mulPose(Axis.XP.rotationDegrees(90f));
-                matrices.mulPose(Axis.ZP.rotationDegrees(-45f));
-            }
-            matrices.scale(scale, scale, scale);
-
-            this.context.getItemRenderer().render(data.paymentItem(), mode,
-                    false,
-                    matrices,
-                    vertexConsumers,
-                    light,
-                    overlay,
-                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
-            );
-            matrices.popPose();
-
-            matrices.pushPose();
-            matrices.translate(0.39f, 0.3f, 0.23f);
-            matrices.mulPose(Axis.YP.rotationDegrees(180f));
-            matrices.translate(-0.39f, -0.3f, -0.23f);
-            if (oppType) {
-                matrices.mulPose(Axis.YP.rotationDegrees(-45f));
-            } else {
-                matrices.mulPose(Axis.XP.rotationDegrees(90f));
-                matrices.mulPose(Axis.ZP.rotationDegrees(-45f));
-            }
-            matrices.scale(scale, scale, scale);
-
-            this.context.getItemRenderer().render(data.paymentItem(), mode,
-                    false,
-                    matrices,
-                    vertexConsumers,
-                    light,
-                    overlay,
-                    this.context.getItemRenderer().getModel(data.paymentItem(), null, null, 0)
-            );
-            matrices.popPose();
-            matrices.popPose();
-
-            ShopRenderUtils.renderShopWarns(tickDelta, matrices, vertexConsumers, light, overlay, data, context, -0.5f);
         }
+    }
+
+    private int getLightLevel(@Nullable Level level, BlockPos pos) {
+        if (level == null) return LightTexture.pack(0, 0);
+        return LightTexture.pack(
+                level.getBrightness(LightLayer.BLOCK, pos),
+                level.getBrightness(LightLayer.SKY, pos)
+        );
+    }
+
+    @Override
+    public void submit(RenderState renderState, @NonNull PoseStack poseStack,
+                       @NonNull SubmitNodeCollector nodeCollector, @NonNull CameraRenderState cameraRenderState) {
+        if (!renderState.shopFunctional) return;
+
+        // Display item — floating and rotating above rug
+        poseStack.pushPose();
+        poseStack.translate(0.5f, 0.18f, 0.5f);
+        poseStack.pushPose();
+
+        if (renderState.stockDisplayType) {
+            poseStack.scale(0.35f, 0.35f, 0.35f);
+        } else {
+            poseStack.translate(0f, -0.16f, 0f);
+            poseStack.scale(0.8f, 0.8f, 0.8f);
+        }
+
+        poseStack.translate(0f, 0.5f, 0f);
+        poseStack.translate(0f, (float) Math.sin(renderState.itemHeight) * 0.15f, 0f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(renderState.itemRotationY));
+        poseStack.mulPose(Axis.XP.rotationDegrees(renderState.itemRotationX));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(renderState.itemRotationZ));
+        poseStack.scale(0.8f, 0.8f, 0.8f);
+
+        renderState.displayItem.submit(poseStack, nodeCollector, renderState.lightLevel, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
+
+        // Price text — on two corners of the rug
+        poseStack.pushPose();
+        poseStack.translate(-0.27f, -0.178f, -0.37f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-135f));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+        float textSize = renderState.smallTextPrice ? 0.012f : 0.019f;
+        poseStack.scale(textSize, textSize, textSize);
+        nodeCollector.submitText(poseStack, renderState.priceTextWidth, -4f, renderState.priceQuantity,
+                false, Font.DisplayMode.POLYGON_OFFSET, renderState.lightLevel, 0xFFffffff, 0, 0);
+        poseStack.popPose();
+
+        poseStack.pushPose();
+        poseStack.translate(0.27f, -0.178f, 0.37f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(45f));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+        poseStack.scale(textSize, textSize, textSize);
+        nodeCollector.submitText(poseStack, renderState.priceTextWidth, -4f, renderState.priceQuantity,
+                false, Font.DisplayMode.POLYGON_OFFSET, renderState.lightLevel, 0xFFffffff, 0, 0);
+        poseStack.popPose();
+
+        // Stock quantity text — on the other two corners
+        textSize = renderState.smallTextProduct ? 0.012f : 0.019f;
+
+        poseStack.pushPose();
+        poseStack.translate(0.37f, -0.178f, -0.37f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(135f));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+        poseStack.scale(textSize, textSize, textSize);
+        nodeCollector.submitText(poseStack, renderState.quantityTextWidth, -4f, renderState.stockQuantity,
+                false, Font.DisplayMode.POLYGON_OFFSET, renderState.lightLevel, 0xFFffff00, 0, 0);
+        poseStack.popPose();
+
+        poseStack.pushPose();
+        poseStack.translate(-0.37f, -0.178f, 0.37f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(-45f));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+        poseStack.scale(textSize, textSize, textSize);
+        nodeCollector.submitText(poseStack, renderState.quantityTextWidth, -4f, renderState.stockQuantity,
+                false, Font.DisplayMode.POLYGON_OFFSET, renderState.lightLevel, 0xFFffff00, 0, 0);
+        poseStack.popPose();
+
+        // Payment item — two opposite corners
+        float scale;
+        boolean oppType = renderState.currencyDisplayType;
+        if (oppType) {
+            scale = 0.16f;
+        } else {
+            scale = 0.25f;
+        }
+
+        poseStack.translate(-0.39f, -0.178f, -0.23f);
+
+        poseStack.pushPose();
+        if (oppType) {
+            poseStack.mulPose(Axis.YP.rotationDegrees(-45f));
+        } else {
+            poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-45f));
+        }
+        poseStack.scale(scale, scale, scale);
+        renderState.paymentItem.submit(poseStack, nodeCollector, renderState.lightLevel, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
+
+        poseStack.pushPose();
+        poseStack.translate(0.39f, 0.3f, 0.23f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180f));
+        poseStack.translate(-0.39f, -0.3f, -0.23f);
+        if (oppType) {
+            poseStack.mulPose(Axis.YP.rotationDegrees(-45f));
+        } else {
+            poseStack.mulPose(Axis.XP.rotationDegrees(90f));
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-45f));
+        }
+        poseStack.scale(scale, scale, scale);
+        renderState.paymentItem.submit(poseStack, nodeCollector, renderState.lightLevel, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
+
+        poseStack.popPose();
+
+        ShopRenderUtils.submitShopWarns(poseStack, nodeCollector, renderState.lightLevel,
+                renderState.stockWarning, renderState.paymentWarning, renderState.renderIcons,
+                renderState.iconRotation, -0.5f, 0.5f,
+                renderState.noStockIcon, renderState.regFullIcon);
     }
 }

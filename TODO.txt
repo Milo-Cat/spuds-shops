@@ -1,0 +1,29 @@
+Spudacious Shops — TODO list
+============================
+
+Extracted from source comments on 2026-04-15.
+
+1. permission/PermissionLevel.java
+   Move PermissionLevel to its own package, along with the delegates class
+   currently in AbstractShopEntity.
+
+2. screen/ShopScreenCustomer.java (renderLabels)
+   Consider implementing equivalent label-suppression behaviour in the Fabric
+   port.
+
+3. config/ConfigHandler.java
+   stackSizeMultiplier is hard-coded to 1. Investigate why larger stack sizes
+   cause desync issues before re-enabling the config-driven multiplier (the
+   original config load code is preserved in the block comment just above).
+
+4. block/custom/AngledShopBlock.java (~line 244)
+   The WOOD_STEP sound played when interacting with an angled shop needs to
+   be added to the Fabric port.
+
+5. block/custom/RugShopBlock.java (~line 122)
+   The DYE_USE sound / interaction section needs to be reworked on Fabric to
+   match the NeoForge behaviour.
+
+6. block/custom/SackShopBlock.java (getTicker)
+   The ticker currently checks against RUG_SHOP_ENTITY — change this to a
+   dedicated sack entity type once one exists.

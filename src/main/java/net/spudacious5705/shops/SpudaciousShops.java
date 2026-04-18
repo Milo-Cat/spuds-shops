@@ -1,7 +1,7 @@
 package net.spudacious5705.shops;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -21,15 +21,13 @@ import org.slf4j.Logger;
 
 import static net.spudacious5705.shops.block.ModBlocks.postRegistryTasks;
 
-//import net.spudacious5705.shops.command.DebugShopsStatesCommand;
-
 @Mod(SpudaciousShops.MOD_ID)
 public class SpudaciousShops {
     public static final String MOD_ID = "spudaciousshops";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer) {
-
+    public SpudaciousShops(IEventBus modEventBus, ModContainer modContainer)
+    {
         ModItems.registerModItems(modEventBus);
         ModBlocks.registerModBlocks(modEventBus);
 
@@ -43,18 +41,13 @@ public class SpudaciousShops {
         ModScreenHandlers.registerScreenHandlers(modEventBus);
 
         ModItemGroups.register(modEventBus);
-
-        //DebugShopsStatesCommand.register(); //for DEBUG purposes only
-
     }
 
-
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
         LOGGER.info("SETTING UP SPUD'S SHOPS...");
 
         ConfigHandler.initialise();
@@ -63,7 +56,6 @@ public class SpudaciousShops {
         PostRegAssigner.runAllAssigners();
         ShopIconModels.initialise();
         VariantResources.register();
-        //Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
 }

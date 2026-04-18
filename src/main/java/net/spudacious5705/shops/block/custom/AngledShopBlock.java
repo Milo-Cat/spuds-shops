@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block.custom;
 
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -32,13 +30,19 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static net.spudacious5705.shops.block.resources.VariantResources.ANGLED;
 
-
+/**
+ * Angled shop block with a cushion surface and custom wood variant support.
+ *
+ * This block uses shape variants for each facing direction and supports
+ * recoloring and wood-type swapping on player interaction.
+ */
 public class AngledShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 17.5);
@@ -81,7 +85,13 @@ public class AngledShopBlock extends AbstractShopBlock {
             BASE_WEST
     );
     public final VariantResources.wood_variant VARIANT;
+
+    /**
+     * Maps cushion colours to the correct dropped shop item when the block is cloned.
+     */
     private final Map<Colour, ShopItem> dropMap = new HashMap<>();
+
+    /** The base wood item used for type swapping on interaction. */
     public Item WOOD_TYPE;
 
     public AngledShopBlock(BlockBehaviour.Properties settings, PostRegAssigner<Item> woodTypeAssigner, VariantResources.wood_variant variant) {
@@ -124,9 +134,9 @@ public class AngledShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull ItemStack getCloneItemStack(
-            @NotNull BlockState state, @NotNull HitResult target,
-            LevelReader level, @NotNull BlockPos pos, @NotNull Player player
+    public @NonNull ItemStack getCloneItemStack(
+            LevelReader level, @NonNull BlockPos pos,
+            @NonNull BlockState state, boolean includeData, @NonNull Player player
     ) {
         Colour colour = Colour.RED;
         if (level.getBlockEntity(pos) instanceof AngledShopEntity shopEntity) {
@@ -165,8 +175,7 @@ public class AngledShopBlock extends AbstractShopBlock {
 
     @Override
     public @NotNull VoxelShape getOcclusionShape(
-            @NotNull BlockState state, @NotNull BlockGetter level,
-            @NotNull BlockPos pos
+            @NotNull BlockState state
     ) {
         return CULLING_SHAPE;
     }
@@ -181,6 +190,12 @@ public class AngledShopBlock extends AbstractShopBlock {
         return newShopState.getBlock() instanceof AngledShopBlock;
     }
 
+    /**
+     * Handles item-based interaction for angled shop blocks.
+     *
+     * Supports dyeing the cushion, changing wool appearance, and swapping the
+     * wooden base type using registered variant items.
+     */
     protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         if (!stack.isEmpty()) {
             Item item = stack.getItem();
@@ -226,7 +241,7 @@ public class AngledShopBlock extends AbstractShopBlock {
                             droppedItem.setDeltaMovement(0, 0.1, 0);
                             world.addFreshEntity(droppedItem);
                         }
-                        world.playSound(null, pos, SoundEvents.WOOD_STEP, SoundSource.BLOCKS);//TODO add this to fabric
+                        world.playSound(null, pos, SoundEvents.WOOD_STEP, SoundSource.BLOCKS);
                         world.setBlockAndUpdate(pos, copyValues(block.defaultBlockState(), state, FACING));
                         shopEntity.forceUpdateClient();
                         return true;
@@ -240,7 +255,7 @@ public class AngledShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.ANGLED_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((AngledShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((AngledShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
@@ -260,6 +275,3 @@ public class AngledShopBlock extends AbstractShopBlock {
         return dropMap.get(Colour.RED);
     }
 }
-
-
-

@@ -4,7 +4,6 @@ package net.spudacious5705.shops.screen.networking;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import static net.spudacious5705.shops.SpudaciousShops.MOD_ID;
@@ -20,19 +19,15 @@ public class NetworkHelper {
         reg.playBidirectional(
                 ShopTabSyncPkt.TYPE,
                 ShopTabSyncPkt.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        ShopTabSyncPkt::handleClientSide,
-                        ShopTabSyncPkt::handleServerSide
-                )
+                ShopTabSyncPkt::handleClientSide,
+                ShopTabSyncPkt::handleServerSide
         );
 
         reg.playBidirectional(
                 ToggleSyncPkt.TYPE,
                 ToggleSyncPkt.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(
-                        ToggleSyncPkt::handleClientSide,
-                        ToggleSyncPkt::handleServerSide
-                )
+                ToggleSyncPkt::handleClientSide,
+                ToggleSyncPkt::handleServerSide
         );
 
         reg.playToServer(
@@ -40,9 +35,5 @@ public class NetworkHelper {
                 ShopSelfDemotePkt.STREAM_CODEC,
                 ShopSelfDemotePkt::handle
         );
-
-
     }
-
-
 }

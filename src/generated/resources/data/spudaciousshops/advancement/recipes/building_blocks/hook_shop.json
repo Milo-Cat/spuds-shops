@@ -5,8 +5,8 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:chain"
+            "tags": [
+              "minecraft:chains"
             ]
           }
         ]

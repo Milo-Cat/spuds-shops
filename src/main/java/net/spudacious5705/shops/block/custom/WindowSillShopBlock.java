@@ -23,6 +23,11 @@ import net.spudacious5705.shops.util.PostRegAssigner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Window sill shop block.
+ *
+ * Uses a rotated shape for east/west facings and supports stone-type swapping.
+ */
 public class WindowSillShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape SHAPE = createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);
@@ -39,6 +44,9 @@ public class WindowSillShopBlock extends AbstractShopBlock {
         return new WindowSillShopEntity(pos, state);
     }
 
+    /**
+     * Handles stone-type swapping when the player applies a valid replacement item.
+     */
     @Override
     protected boolean onUseWithItem(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player) {
         Item item = stack.getItem();
@@ -68,7 +76,7 @@ public class WindowSillShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.WINDOW_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((WindowSillShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((WindowSillShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 

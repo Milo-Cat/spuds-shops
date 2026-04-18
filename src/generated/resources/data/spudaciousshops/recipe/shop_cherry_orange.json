@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "c": {
-      "item": "minecraft:chest"
-    },
-    "g": {
-      "item": "minecraft:glass"
-    },
-    "p": {
-      "item": "minecraft:cherry_planks"
-    },
-    "w": {
-      "item": "minecraft:orange_wool"
-    }
+    "c": "minecraft:chest",
+    "g": "minecraft:glass",
+    "p": "minecraft:cherry_planks",
+    "w": "minecraft:orange_wool"
   },
   "pattern": [
     " g ",

@@ -25,7 +25,7 @@ public record MatchingCushionColourCondition(String expectedColourName) implemen
 
     @Override
     public boolean test(LootContext lootContext) {
-        BlockEntity blockEntity = lootContext.getParam(LootContextParams.BLOCK_ENTITY);
+        BlockEntity blockEntity = lootContext.getParameter(LootContextParams.BLOCK_ENTITY);
         if (blockEntity instanceof AngledShopEntity shop) {
             return shop.getCushionColour().matchesString(expectedColourName);
         }

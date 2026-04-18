@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "c": {
-      "item": "minecraft:chest"
-    },
-    "h": {
-      "item": "minecraft:tripwire_hook"
-    },
-    "i": {
-      "item": "minecraft:chain"
-    }
+    "c": "minecraft:chest",
+    "h": "minecraft:tripwire_hook",
+    "i": "#minecraft:chains"
   },
   "pattern": [
     " i ",

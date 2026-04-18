@@ -1,17 +1,15 @@
 package net.spudacious5705.shops.screen;
 
-
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.resources.VariantResources;
-
 
 public record ScreenSettingsGroup(
         ScreenSettings CUSTOMER,
         ScreenSettings CUSTOMER_MULTI,
         ScreenSettings SELLER,
         ScreenSettings SETTINGS,
-        ResourceLocation BUTTON_BACKGROUND,
+        Identifier BUTTON_BACKGROUND,
 
         int tab1ButtonX, int tab1ButtonY,
         int tab2ButtonX, int tab2ButtonY,
@@ -25,31 +23,7 @@ public record ScreenSettingsGroup(
 
         int SETTINGS_TEXT_COLOUR
 ) {
-    /*BASIC(0,
-            new ScreenSettings(
-                    id("owner_customer_screen"),
-                    176, 165,
-                    8,84,
-                    0,0,
-                    80,11),
-            new ScreenSettings(
-                    id("shop_seller"),
-                    228, 254,
-                    33,172,
-                    60,10,
-                    23,11),
-            new ScreenSettings(
-                    id("shop_settings"),
-                    228, 254,
-                    33,172,
-                    60,10,
-                    23,11),
-            203,174,
-            201,195,
-            201,221
-    );*/
-
-    private static ResourceLocation id(String texture) {
+    private static Identifier id(String texture) {
         return SpudaciousShops.id("textures/gui/" + texture + ".png");
     }
 
@@ -58,11 +32,11 @@ public record ScreenSettingsGroup(
     }
 
     public static ScreenSettingsGroup createBasic(
-            ResourceLocation CUSTOMER,
-            ResourceLocation CUSTOMER_MULTI,
-            ResourceLocation SELLER,
-            ResourceLocation SETTINGS,
-            ResourceLocation BUTTON_BACKGROUND,
+            Identifier CUSTOMER,
+            Identifier CUSTOMER_MULTI,
+            Identifier SELLER,
+            Identifier SETTINGS,
+            Identifier BUTTON_BACKGROUND,
             int colour) {
         return new ScreenSettingsGroup(
                 ScreenSettings.createBasicCUSTOMER(CUSTOMER),
@@ -85,13 +59,13 @@ public record ScreenSettingsGroup(
     }
 
     public record ScreenSettings(
-            ResourceLocation textureID,
+            Identifier textureID,
             int backgroundWidth, int backgroundHeight,
             int playerInvX, int playerInvY,
             int shopInvX, int shopInvY,
             int tradeInvX, int tradeInvY) {
 
-        public static ScreenSettings createBasicCUSTOMER(ResourceLocation textureID) {
+        public static ScreenSettings createBasicCUSTOMER(Identifier textureID) {
             return new ScreenSettings(textureID,
                     176, 165,
                     8, 84,
@@ -99,7 +73,7 @@ public record ScreenSettingsGroup(
                     80, 11);
         }
 
-        public static ScreenSettings createBasicCUSTOMER_MULTI(ResourceLocation textureID) {
+        public static ScreenSettings createBasicCUSTOMER_MULTI(Identifier textureID) {
             return new ScreenSettings(textureID,
                     176, 165,
                     8, 84,
@@ -107,7 +81,7 @@ public record ScreenSettingsGroup(
                     80, 11);
         }
 
-        public static ScreenSettings createBasicSELLER(ResourceLocation textureID) {
+        public static ScreenSettings createBasicSELLER(Identifier textureID) {
             return new ScreenSettings(textureID,
                     228, 254,
                     33, 172,
@@ -115,7 +89,7 @@ public record ScreenSettingsGroup(
                     23, 11);
         }
 
-        public static ScreenSettings createBasicSETTINGS(ResourceLocation textureID) {
+        public static ScreenSettings createBasicSETTINGS(Identifier textureID) {
             return new ScreenSettings(textureID,
                     228, 254,
                     33, 172,

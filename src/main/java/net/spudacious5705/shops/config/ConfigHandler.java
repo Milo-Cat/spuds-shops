@@ -15,7 +15,6 @@ public class ConfigHandler {
     private static final File CONFIG_PATH = new File("config/" + MOD_ID + ".toml");
     private static final EnumMap<ToggleButtonID, Boolean> toggleSettingsStates;
 
-
     static {
         config = FileConfig.of(CONFIG_PATH);
         config.load();
@@ -29,7 +28,7 @@ public class ConfigHandler {
             multiplier = config.getOrElse(StackMultiplierID, multiplier);
         }
         stackSizeMultiplier = multiplier;*/
-        stackSizeMultiplier = 1;//todo check why these larger stacks cause desync issues.
+        stackSizeMultiplier = 1;
 
         toggleSettingsStates = getDefaultToggleSettingStates();
 

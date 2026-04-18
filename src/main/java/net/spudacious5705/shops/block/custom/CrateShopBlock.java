@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -20,6 +19,11 @@ import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Simple crate-style shop block.
+ *
+ * Supports directional shapes and a crate-specific collision profile.
+ */
 public class CrateShopBlock extends AbstractShopBlock {
 
     public static final VoxelShape CULLING_SHAPE = createCuboidShape(0, -1.0, -1.0, 16.0, 2.0, 17.0);
@@ -63,7 +67,7 @@ public class CrateShopBlock extends AbstractShopBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (ModBlockEntities.CRATE_SHOP_ENTITY.get() == type) {
-            return level.isClientSide
+            return level.isClientSide()
                     ? (lvl, pos, st, be) -> ((CrateShopEntity) be).renderTick()
                     : (lvl, pos, st, be) -> ((CrateShopEntity) be).serverTick((ServerLevel) lvl, pos, st);
 
@@ -83,7 +87,7 @@ public class CrateShopBlock extends AbstractShopBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+    public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState state) {
         return CULLING_SHAPE;
     }
 

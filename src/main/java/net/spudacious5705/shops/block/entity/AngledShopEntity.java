@@ -2,23 +2,27 @@ package net.spudacious5705.shops.block.entity;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.block.resources.CushionTextures;
 import net.spudacious5705.shops.properties.Colour;
 import org.jetbrains.annotations.NotNull;
 
 
+/**
+ * Block entity implementation for the angled shop block.
+ *
+ * <p>Stores cushion colour state and provides texture lookup for the angled shop model.</p>
+ */
 public class AngledShopEntity extends AbstractShopEntity {
 
+    /** NBT key used to persist the selected cushion colour. */
     private static final String COLOUR_NBT_TAG = "cushion_colour";
-    /**
-     * Do not read from directly in case of null value
-     * Use getCushionColour()
-     */
+
+    /** Stored cushion colour. Use {@link #getCushionColour()} to avoid null fallback. */
     private Colour cushionColour;
 
     public AngledShopEntity(BlockPos pos, BlockState state) {
@@ -26,19 +30,15 @@ public class AngledShopEntity extends AbstractShopEntity {
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
-        super.loadAdditional(tag, holder);
-        if (tag.contains(COLOUR_NBT_TAG)) {
-            this.cushionColour = Colour.fromId(tag.getInt(COLOUR_NBT_TAG));
-        } else {
-            this.cushionColour = Colour.RED;
-        }
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        this.cushionColour = Colour.fromId(input.getIntOr(COLOUR_NBT_TAG, 0));
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider holder) {
-        tag.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
-        super.saveAdditional(tag, holder);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        output.putInt(COLOUR_NBT_TAG, this.getCushionColour().getId());
+        super.saveAdditional(output);
     }
 
     public Colour getCushionColour() {
@@ -49,7 +49,7 @@ public class AngledShopEntity extends AbstractShopEntity {
         this.cushionColour = colour;
     }
 
-    public ResourceLocation getCushionTextureID() {
+    public Identifier getCushionTextureID() {
         return CushionTextures.TEXTURE_MAP.get(getCushionColour());
     }
 
