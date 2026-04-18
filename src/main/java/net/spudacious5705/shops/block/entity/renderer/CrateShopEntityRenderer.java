@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -104,14 +105,17 @@ public class CrateShopEntityRenderer implements BlockEntityRenderer<CrateShopEnt
         renderState.lightLevel = getLightLevel(blockEntity.getLevel(), blockEntity.getBlockPos());
 
         if (data.shopFunctional()) {
-            renderState.stockDisplayType = data.stockDisplayType();
+            boolean isFullBlock = blockEntity.getLevel() != null
+                    && data.displayItem().getItem() instanceof BlockItem bi
+                    && bi.getBlock().defaultBlockState().isCollisionShapeFullBlock(blockEntity.getLevel(), blockEntity.getBlockPos());
+            renderState.stockDisplayType = data.stockDisplayType() && isFullBlock;
             renderState.stockQuantity = context.font().split(FormattedText.of(data.stockQuantity), 999).getFirst();
             renderState.priceQuantity = context.font().split(FormattedText.of(data.priceQuantity), 999).getFirst();
             renderState.smallTextPrice = data.useSmallTextPrice();
             renderState.smallTextProduct = data.useSmallTextProduct();
             renderState.quantityTextWidth = data.qWidth();
             renderState.priceTextWidth = data.width();
-            ItemDisplayContext ctx = data.stockDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
+            ItemDisplayContext ctx = renderState.stockDisplayType ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
             context.itemModelResolver().updateForTopItem(renderState.displayItem,
                     data.displayItem(), ctx, blockEntity.getLevel(), null, 0);
             context.itemModelResolver().updateForTopItem(renderState.paymentItem,
@@ -158,13 +162,12 @@ public class CrateShopEntityRenderer implements BlockEntityRenderer<CrateShopEnt
         TranslationFactor[] translations;
 
         if (renderState.stockDisplayType) {
-            scaleX = 0.4f; scaleY = 0.31667f; scaleZ = 0.4f;
+            scaleX = 0.25f; scaleY = 0.25f; scaleZ = 0.25f;
             poseStack.translate(0f, -0.18f, -0.08f);
             poseStack.translate(0f, 0.3f, 0f);
             poseStack.mulPose(Axis.XP.rotationDegrees(40f));
             poseStack.translate(0f, -0.3f, 0f);
             rotXBonus = -40f;
-            poseStack.scale(0.75f, 0.75f, 0.75f);
             translations = DISPLAY_TRANSLATIONS_BLOCK;
         } else {
             scaleX = 0.5f; scaleY = 0.5f; scaleZ = 0.8f;

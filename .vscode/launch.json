@@ -1,0 +1,71 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Client",
+      "presentation": {
+        "group": "Mod Development - spuds-shops",
+        "order": 0
+      },
+      "projectName": "spuds-shops",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dspudaciousshops%%S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "GameTestServer",
+      "presentation": {
+        "group": "Mod Development - spuds-shops",
+        "order": 1
+      },
+      "projectName": "spuds-shops",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\build\\moddev\\gameTestServerRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\build\\moddev\\gameTestServerRunVmArgs.txt",
+        "-Dfml.modFolders\u003dspudaciousshops%%S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Server",
+      "presentation": {
+        "group": "Mod Development - spuds-shops",
+        "order": 2
+      },
+      "projectName": "spuds-shops",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\build\\moddev\\serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dspudaciousshops%%S:\\Desktop 2\\Minecraft\\repos\\Spuds-shops\\spuds-shops\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}

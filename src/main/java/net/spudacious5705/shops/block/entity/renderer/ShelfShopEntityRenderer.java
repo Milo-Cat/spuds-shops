@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -102,7 +103,10 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
         // Bottom shelf
         renderState.bottomFunctional = dataBottom.shopFunctional();
         if (dataBottom.shopFunctional()) {
-            renderState.bottomStockDisplayType = dataBottom.stockDisplayType();
+            boolean bottomIsBlock = blockEntity.getLevel() != null
+                    && dataBottom.displayItem().getItem() instanceof BlockItem bi
+                    && bi.getBlock().defaultBlockState().isCollisionShapeFullBlock(blockEntity.getLevel(), blockEntity.getBlockPos());
+            renderState.bottomStockDisplayType = dataBottom.stockDisplayType() && bottomIsBlock;
             renderState.bottomCurrencyDisplayType = dataBottom.currencyDisplayType();
             renderState.bottomItemLRotation = blockEntity.furtherDataBottom().itemLrotation;
             renderState.bottomItemRRotation = blockEntity.furtherDataBottom().itemRrotation;
@@ -112,7 +116,7 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
             renderState.bottomSmallTextProduct = dataBottom.useSmallTextProduct();
             renderState.bottomQuantityTextWidth = dataBottom.qWidth();
             renderState.bottomPriceTextWidth = dataBottom.width();
-            ItemDisplayContext displayCtx = dataBottom.stockDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
+            ItemDisplayContext displayCtx = renderState.bottomStockDisplayType ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
             context.itemModelResolver().updateForTopItem(renderState.bottomDisplayItem,
                     dataBottom.displayItem(), displayCtx, blockEntity.getLevel(), null, 0);
             ItemDisplayContext currencyCtx = dataBottom.currencyDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
@@ -131,7 +135,10 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
         // Top shelf
         renderState.topFunctional = dataTop.shopFunctional();
         if (dataTop.shopFunctional()) {
-            renderState.topStockDisplayType = dataTop.stockDisplayType();
+            boolean topIsBlock = blockEntity.getLevel() != null
+                    && dataTop.displayItem().getItem() instanceof BlockItem bi
+                    && bi.getBlock().defaultBlockState().isCollisionShapeFullBlock(blockEntity.getLevel(), blockEntity.getBlockPos());
+            renderState.topStockDisplayType = dataTop.stockDisplayType() && topIsBlock;
             renderState.topCurrencyDisplayType = dataTop.currencyDisplayType();
             renderState.topItemLRotation = blockEntity.furtherDataTop().itemLrotation;
             renderState.topItemRRotation = blockEntity.furtherDataTop().itemRrotation;
@@ -141,7 +148,7 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
             renderState.topSmallTextProduct = dataTop.useSmallTextProduct();
             renderState.topQuantityTextWidth = dataTop.qWidth();
             renderState.topPriceTextWidth = dataTop.width();
-            ItemDisplayContext displayCtx = dataTop.stockDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
+            ItemDisplayContext displayCtx = renderState.topStockDisplayType ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
             context.itemModelResolver().updateForTopItem(renderState.topDisplayItem,
                     dataTop.displayItem(), displayCtx, blockEntity.getLevel(), null, 0);
             ItemDisplayContext currencyCtx = dataTop.currencyDisplayType() ? ItemDisplayContext.NONE : ItemDisplayContext.GUI;
@@ -260,7 +267,7 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
         poseStack.popPose();
 
         if (stockDisplayType) {
-            // Price text
+            // Price text (shelf surface, centre, flat)
             poseStack.pushPose();
             poseStack.translate(-0.02f, -0.3124f, 0.16f);
             poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
@@ -271,7 +278,7 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     false, Font.DisplayMode.POLYGON_OFFSET, lightLevel, 0xFFffffff, 0, 0);
             poseStack.popPose();
 
-            // Stock quantity text
+            // Stock quantity text (back wall, centred)
             poseStack.pushPose();
             poseStack.translate(-0.02f, -0.17f, 0.43749f);
             poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
@@ -281,17 +288,14 @@ public class ShelfShopEntityRenderer implements BlockEntityRenderer<ShelfShopEnt
                     false, Font.DisplayMode.POLYGON_OFFSET, lightLevel, 0xFFffff00, 0, 0);
             poseStack.popPose();
 
-            // Payment item
+            // Payment item (shelf surface, flat and centred between display items)
             poseStack.pushPose();
-            poseStack.mulPose(Axis.YP.rotationDegrees(180f));
+            poseStack.translate(0f, -0.32f, 0.18f);
+            poseStack.mulPose(Axis.XP.rotationDegrees(90f));
             if (currencyDisplayType) {
-                poseStack.translate(0f, -0.265f, -0.35f);
-                poseStack.mulPose(Axis.XP.rotationDegrees(-30f));
                 poseStack.scale(0.16f, 0.16f, 0.16f);
             } else {
-                poseStack.translate(0f, -0.308f, -0.34f);
-                poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
-                poseStack.scale(0.35f, 0.35f, 0.35f);
+                poseStack.scale(0.22f, 0.22f, 0.22f);
             }
             paymentItem.submit(poseStack, nodeCollector, lightLevel, OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();
