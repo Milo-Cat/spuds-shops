@@ -24,6 +24,8 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.MaterialSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -55,6 +57,7 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
         protected boolean smallTextPrice;
         protected boolean smallTextProduct;
         protected boolean shopFunctional = false;
+        protected Identifier cushionTexture;
         final ItemStackRenderState paymentItem = new ItemStackRenderState();
         final ItemStackRenderState displayItem = new ItemStackRenderState();
         protected FormattedCharSequence priceQuantity;
@@ -89,9 +92,11 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
         AbstractShopEntity.RendererData data = blockEntity.rendererData();
 
         data.frameAccumulator();
+        data.direction = blockEntity.getCachedFacingDirection();
         BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPosition, breakProgress);
 
         renderState.direction = data.direction();
+        renderState.cushionTexture = blockEntity.getCushionTextureID();
         renderState.shopFunctional = data.shopFunctional();
         renderState.lightLevel = getLightLevel(blockEntity.getLevel(), blockEntity.getBlockPos());
         renderState.rotation = data.rotation();
@@ -144,7 +149,7 @@ public class AngledShopBlockRenderer implements BlockEntityRenderer<AngledShopEn
                 SHELL_TEXTURE.renderType(RenderTypes::entitySolid),
                 renderState.lightCoords,
                 OverlayTexture.NO_OVERLAY,
-                context.materials().get(SHELL_TEXTURE),
+                context.materials().get(new Material(TextureAtlas.LOCATION_BLOCKS, renderState.cushionTexture)),
                 -1,
                 renderState.breakProgress
         );

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep *)",
+      "Bash(xargs ls *)",
+      "Bash(find \"S:\\\\Desktop 2\\\\Minecraft\\\\repos\\\\Spuds-shops\\\\spuds-shops/src\" -type f -name \"*.java\" -exec grep -l \"colour.*property\\\\|COLOUR\\\\|Colour\" {} \\\\;)",
+      "Bash(find \"S:\\\\Desktop 2\\\\Minecraft\\\\repos\\\\Spuds-shops\\\\spuds-shops/src/main/java\" -type f -name \"*.java\" -exec grep -l \"class.*Block\\\\|class.*Cushion\" {} \\\\;)"
+    ]
+  }
+}
