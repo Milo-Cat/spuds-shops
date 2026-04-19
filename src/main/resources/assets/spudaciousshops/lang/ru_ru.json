@@ -1,0 +1,200 @@
+{
+  "itemGroup.spudaciousshops.shop_item_group": "Магазины Spud'а ",
+
+  "block.spudaciousshops.shop_acacia": "Акациевый киоск",
+  "item.spudaciousshops.shop_acacia": "Акациевый киоск",
+
+  "block.spudaciousshops.shop_bamboo": "Бамбуковый киоск",
+  "item.spudaciousshops.shop_bamboo": "Бамбуковый киоск",
+
+  "block.spudaciousshops.shop_birch": "Берёзовый киоск",
+  "item.spudaciousshops.shop_birch": "Берёзовый киоск",
+
+  "block.spudaciousshops.shop_cherry": "Вишнёвый киоск",
+  "item.spudaciousshops.shop_cherry": "Вишнёвый киоск",
+
+  "block.spudaciousshops.shop_crimson": "Багровый киоск",
+  "item.spudaciousshops.shop_crimson": "Багровый киоск",
+
+  "block.spudaciousshops.shop_dark_oak": "Тёмный дубовый киоск",
+  "item.spudaciousshops.shop_dark_oak": "Тёмный дубовый киоск",
+
+  "block.spudaciousshops.shop_mangrove": "Мангровый киоск",
+  "item.spudaciousshops.shop_mangrove": "Мангровый киоск",
+
+  "block.spudaciousshops.shop_oak": "Дубовый киоск",
+  "item.spudaciousshops.shop_oak": "Дубовый киоск",
+
+  "block.spudaciousshops.shop_spruce": "Еловый киоск",
+  "item.spudaciousshops.shop_spruce": "Еловый киоск",
+
+  "block.spudaciousshops.shop_warped": "Искажённый киоск",
+  "item.spudaciousshops.shop_warped": "Искажённый киоск",
+
+  "block.spudaciousshops.shop_jungle": "Тропический киоск",
+  "item.spudaciousshops.shop_jungle": "Тропический киоск",
+
+  "block.spudaciousshops.shop_window_andesite": "Andesite Windowsill Shop",
+  "item.spudaciousshops.shop_window_andesite": "Andesite Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_calcite": "Calcite Windowsill Shop",
+  "item.spudaciousshops.shop_window_calcite": "Calcite Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_deepslate": "Deepslate Windowsill Shop",
+  "item.spudaciousshops.shop_window_deepslate": "Deepslate Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_granite": "Granite Windowsill Shop",
+  "item.spudaciousshops.shop_window_granite": "Granite Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_stone": "Stone Windowsill Shop",
+  "item.spudaciousshops.shop_window_stone": "Stone Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_tuff": "Tuff Windowsill Shop",
+  "item.spudaciousshops.shop_window_tuff": "Tuff Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_dripstone": "Dripstone Windowsill Shop",
+  "item.spudaciousshops.shop_window_dripstone": "Dripstone Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_blackstone": "Blackstone Windowsill Shop",
+  "item.spudaciousshops.shop_window_blackstone": "Blackstone Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_amethyst": "Amethyst Windowsill Shop",
+  "item.spudaciousshops.shop_window_amethyst": "Amethyst Windowsill Shop",
+
+  "block.spudaciousshops.shop_window_end_stone": "End Stone Windowsill Shop",
+  "item.spudaciousshops.shop_window_end_stone": "End Stone Windowsill Shop",
+
+  "block.spudaciousshops.hook_shop": "Hook Shop",
+  "item.spudaciousshops.hook_shop": "Hook Shop",
+
+  "block.spudaciousshops.rug_shop_white": "Rug Shop White",
+  "item.spudaciousshops.rug_shop_white": "Rug Shop White",
+
+  "block.spudaciousshops.rug_shop_orange": "Rug Shop Orange",
+  "item.spudaciousshops.rug_shop_orange": "Rug Shop Orange",
+
+  "block.spudaciousshops.rug_shop_magenta": "Rug Shop Magenta",
+  "item.spudaciousshops.rug_shop_magenta": "Rug Shop Magenta",
+
+  "block.spudaciousshops.rug_shop_light_blue": "Rug Shop Light Blue",
+  "item.spudaciousshops.rug_shop_light_blue": "Rug Shop Light Blue",
+
+  "block.spudaciousshops.rug_shop_yellow": "Rug Shop Yellow",
+  "item.spudaciousshops.rug_shop_yellow": "Rug Shop Yellow",
+
+  "block.spudaciousshops.rug_shop_lime": "Rug Shop Lime",
+  "item.spudaciousshops.rug_shop_lime": "Rug Shop Lime",
+
+  "block.spudaciousshops.rug_shop_pink": "Rug Shop Pink",
+  "item.spudaciousshops.rug_shop_pink": "Rug Shop Pink",
+
+  "block.spudaciousshops.rug_shop_gray": "Rug Shop Gray",
+  "item.spudaciousshops.rug_shop_gray": "Rug Shop Gray",
+
+  "block.spudaciousshops.rug_shop_light_gray": "Rug Shop Light Gray",
+  "item.spudaciousshops.rug_shop_light_gray": "Rug Shop Light Gray",
+
+  "block.spudaciousshops.rug_shop_cyan": "Rug Shop Cyan",
+  "item.spudaciousshops.rug_shop_cyan": "Rug Shop Cyan",
+
+  "block.spudaciousshops.rug_shop_purple": "Rug Shop Purple",
+  "item.spudaciousshops.rug_shop_purple": "Rug Shop Purple",
+
+  "block.spudaciousshops.rug_shop_blue": "Rug Shop Blue",
+  "item.spudaciousshops.rug_shop_blue": "Rug Shop Blue",
+
+  "block.spudaciousshops.rug_shop_brown": "Rug Shop Brown",
+  "item.spudaciousshops.rug_shop_brown": "Rug Shop Brown",
+
+  "block.spudaciousshops.rug_shop_green": "Rug Shop Green",
+  "item.spudaciousshops.rug_shop_green": "Rug Shop Green",
+
+  "block.spudaciousshops.rug_shop": "Rug Shop Red",
+  "item.spudaciousshops.rug_shop": "Rug Shop Red",
+
+  "block.spudaciousshops.rug_shop_black": "Rug Shop Black",
+  "item.spudaciousshops.rug_shop_black": "Rug Shop Black",
+
+  "block.spudaciousshops.crate_shop": "Merchant's Crate",
+  "item.spudaciousshops.crate_shop": "Merchant's Crate",
+
+  "block.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
+  "item.spudaciousshops.shelf_shop_acacia": "Acacia Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_bamboo": "Bamboo Shelf Shop",
+  "item.spudaciousshops.shelf_shop_bamboo": "Bamboo Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_birch": "Birch Shelf Shop",
+  "item.spudaciousshops.shelf_shop_birch": "Birch Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_cherry": "Cherry Shelf Shop",
+  "item.spudaciousshops.shelf_shop_cherry": "Cherry Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_crimson": "Crimson Shelf Shop",
+  "item.spudaciousshops.shelf_shop_crimson": "Crimson Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_dark_oak": "Dark Oak Shelf Shop",
+  "item.spudaciousshops.shelf_shop_dark_oak": "Dark Oak Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_mangrove": "Mangrove Shelf Shop",
+  "item.spudaciousshops.shelf_shop_mangrove": "Mangrove Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_oak": "Oak Shelf Shop",
+  "item.spudaciousshops.shelf_shop_oak": "Oak Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_spruce": "Spruce Shelf Shop",
+  "item.spudaciousshops.shelf_shop_spruce": "Spruce Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_warped": "Warped Shelf Shop",
+  "item.spudaciousshops.shelf_shop_warped": "Warped Shelf Shop",
+
+  "block.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
+  "item.spudaciousshops.shelf_shop_jungle": "Jungle Shelf Shop",
+
+  "item.spudaciousshops.contract_scroll": "Contract Scroll",
+
+  "gui.spudaciousshops.currency_type": "£",
+
+  "gui.spudaciousshops.owner": "ВЛАДЕЛЕЦ",
+  "gui.spudaciousshops.manager": "МЕНЕДЖЕР",
+  "gui.spudaciousshops.supervisor": "СУПЕРВИЗОР",
+  "gui.spudaciousshops.clerk": "КЛЕРК",
+
+  "gui.spudaciousshops.delete_warn_title": "УДАЛИТЬ ВАШ КОНТРАКТ",
+  "gui.spudaciousshops.delete_warn_message_line1": "Вы собираетесь удалить ваш контракт",
+  "gui.spudaciousshops.delete_warn_message_line2": "и удалить все ваши права!",
+  "gui.spudaciousshops.cancel": "ОТМЕНА",
+  "gui.spudaciousshops.delete": "УДАЛИТЬ",
+
+  "gui.spudaciousshops.text_permissions": "Права доступа",
+  "gui.spudaciousshops.text_import_items": "Импортировать предметы",
+  "gui.spudaciousshops.text_take_items": "Взять предметы",
+  "gui.spudaciousshops.text_edit_perms": "Редактировать права доступа",
+  "gui.spudaciousshops.text_change_trade": "Изменить сделку киоска",
+  "gui.spudaciousshops.text_break_shop": "Разрушить киоск",
+  "gui.spudaciousshops.text_yes": "ДА",
+  "gui.spudaciousshops.text_no": "НЕТ",
+  "gui.spudaciousshops.text_all": "ВСЕ",
+  "gui.spudaciousshops.text_supervisor_and_lower": "Супервизор и ниже",
+  "gui.spudaciousshops.text_none": "НИКАКИЕ",
+
+  "gui.spudaciousshops.toggle_creative": "Переключить режим креативного магазина",
+  "gui.spudaciousshops.toggle_effects": "Переключить иконки и частицы",
+
+  "gui.spudaciousshops.toggle_ignore_nbt": "Переключить сопоставление NBT покупаемого предмета",
+  "gui.spudaciousshops.toggle_shop_style": "Переключить стиль сделки магазина",
+  "gui.spudaciousshops.payment_empty_tooltip": "Добавьте ваш платёжный предмет сюда!",
+  "gui.spudaciousshops.product_empty_tooltip": "Добавьте ваш продукт сюда!",
+
+  "gui.spudaciousshops.stock": "Запас",
+  "gui.spudaciousshops.register": "Касса",
+  "gui.spudaciousshops.payment": "Платеж",
+  "gui.spudaciousshops.product": "Продукт",
+
+  "gui.spudaciousshops.nbt_unchecked_warn_header": "§c NBT продукта не проверен!",
+  "gui.spudaciousshops.nbt_unchecked_warn_line1": "NBT покупаемого предмета может не совпадать",
+  "gui.spudaciousshops.nbt_unchecked_warn_line2": "с отображаемым значением.",
+  "gui.spudaciousshops.select_style_info_header": "§c Selectable shop style enabled!",
+  "gui.spudaciousshops.select_style_info_line1": "Item продукта будет использоваться только в качестве запасного варинта отображения товара",
+  "gui.spudaciousshops.select_style_info_line2": "Каждый стак товара можно будет купить по одинаковой цене."
+}
