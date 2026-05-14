@@ -2,10 +2,8 @@ package net.spudacious5705.shops.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.block.Block;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.data.client.*;
-import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.spudacious5705.shops.SpudaciousShops;
@@ -17,7 +15,6 @@ import net.spudacious5705.shops.block.custom.WindowSillShopBlock;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static net.minecraft.data.client.VariantSettings.Rotation.*;
 

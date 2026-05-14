@@ -4,18 +4,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
-
-import static net.minecraft.block.Block.dropStack;
 
 public class ShopScreenHandlerCustomer extends ScreenHandler {
     private final AbstractShopEntity.InventoryDelegate shopInventory;

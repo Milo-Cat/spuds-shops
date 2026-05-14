@@ -1,12 +1,7 @@
 package net.spudacious5705.shops.block.custom;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
-import net.fabricmc.fabric.api.block.v1.FabricBlock;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.fabricmc.fabric.api.tag.FabricTagKey;
-import net.fabricmc.fabric.impl.datagen.FabricTagBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -14,7 +9,6 @@ import net.minecraft.block.SideShapeType;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.data.server.tag.TagProvider;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -38,8 +32,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.spudacious5705.shops.block.VariantResources;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
-import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.RugShopEntity;
 import org.jetbrains.annotations.Nullable;
 

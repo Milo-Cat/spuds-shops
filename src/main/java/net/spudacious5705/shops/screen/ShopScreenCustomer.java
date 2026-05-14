@@ -7,7 +7,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.spudacious5705.shops.SpudaciousShops;
 
 public class ShopScreenCustomer extends HandledScreen<ShopScreenHandlerCustomer> {
 

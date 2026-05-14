@@ -1,14 +1,10 @@
 package net.spudacious5705.shops.screen;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 

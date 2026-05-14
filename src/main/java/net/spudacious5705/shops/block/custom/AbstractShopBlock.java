@@ -34,7 +34,6 @@ import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.properties.ModProperties;
 import net.spudacious5705.shops.properties.PermissionLevel;
-import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 import org.jetbrains.annotations.Nullable;

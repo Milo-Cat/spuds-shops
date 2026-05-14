@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block.custom;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.block.Block;
@@ -19,10 +18,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.spudacious5705.shops.block.VariantResources;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.CrateShopEntity;
-import net.spudacious5705.shops.block.entity.ModBlockEntities;
-import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import org.jetbrains.annotations.Nullable;
 

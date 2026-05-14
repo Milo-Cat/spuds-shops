@@ -9,7 +9,6 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
-import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.WindowSillShopEntity;
 
 public class WindowSillShopEntityRenderer implements BlockEntityRenderer<WindowSillShopEntity>, ShopRenderUtils {

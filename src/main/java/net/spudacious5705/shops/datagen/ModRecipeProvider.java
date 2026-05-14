@@ -19,7 +19,6 @@ import net.spudacious5705.shops.properties.Colour;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 import static net.spudacious5705.shops.block.ModBlocks.getAllShops;
 

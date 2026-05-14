@@ -140,7 +140,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
                     storageStack = inventory.get(i);
                     if (canMerge(storageStack, allowStack) || storageStack.isEmpty()) {
                         while (ptr < (payList.size()) && (storageStack.getCount() < storageStack.getMaxCount())) {
-                            space = getAvalableSpace(storageStack);
+                            space = getAvailableSpace(storageStack);
                             if (storageStack.isEmpty()) {
                                 storageStack = payList.get(ptr).copyAndEmpty();
                             } else {
@@ -220,7 +220,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             }
             int end = list.size()-1;
             ItemStack listEnd = list.get(end);
-            int space = getAvalableSpace(listEnd);
+            int space = getAvailableSpace(listEnd);
             list.set(end,
                     listEnd.copyWithCount(
                             listEnd.getCount()+
@@ -231,7 +231,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
             }
         }
 
-        private static int getAvalableSpace(ItemStack stack){
+        private static int getAvailableSpace(ItemStack stack){
             return Math.max(stack.getMaxCount()-stack.getCount(), 0);
         }
 
@@ -668,9 +668,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements Extended
         int indexModifier = 0;
         for(PermissionLevel lvl : CONTRACT_PERMS){
             PlayerID[] filtered = identificationRecords.stream().filter(record -> record.permissionLevel==lvl).toArray(PlayerID[]::new);
-            int itterations = filtered.length;
-            if(itterations>6) itterations = 6;
-            for(int i = 0; i < itterations; i++){
+            int iterations = filtered.length;
+            if(iterations >6) iterations = 6;
+            for(int i = 0; i < iterations; i++){
                 contracts.set(i+indexModifier, RecordToContract(filtered[i]));
             }
             indexModifier+=6;

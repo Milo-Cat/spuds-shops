@@ -1,6 +1,5 @@
 package net.spudacious5705.shops.block.custom;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -31,10 +30,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.spudacious5705.shops.block.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
-import net.spudacious5705.shops.block.entity.ModBlockEntities;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
 import net.spudacious5705.shops.properties.PermissionLevel;
-import net.spudacious5705.shops.screen.ModScreenHandlers;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screenNetworking.ShopScreenPayload;
 import org.jetbrains.annotations.Nullable;

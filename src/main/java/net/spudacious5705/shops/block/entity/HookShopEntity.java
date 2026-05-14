@@ -4,9 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.spudacious5705.shops.screen.ModScreenHandlers;
 import org.jetbrains.annotations.Nullable;
 
 public class HookShopEntity extends AbstractShopEntity{
