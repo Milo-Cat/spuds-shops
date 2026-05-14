@@ -3,10 +3,10 @@ package net.spudacious5705.shops.properties;
 public enum PermissionLevel {
     SERVER_ADMIN(true, false,false,false,false,false,-1),
     OWNER(true,true,true,true,true,true,4),
-    MANAGER(false,true,true,true,false,true,3),
-    SUPERVISOR(false,false,true,true,false,true,2),
-    CLERK(false,false,true,false,false,true,1),
-    CUSTOMER(false,false,false,false,false,false,0);
+    MANAGER(true,true,true,true,false,true,3),
+    SUPERVISOR(true,false,true,true,false,true,2),
+    CLERK(true,false,true,false,false,true,1),
+    CUSTOMER(true,false,false,false,false,false,0);
 
     final boolean breakBlock;
     final boolean editPermissions;
@@ -37,7 +37,8 @@ public enum PermissionLevel {
 
     // Optionally, add getter methods to access the field values
         public boolean canBreakBlock() {
-            return breakBlock;
+            //return breakBlock;
+            return true;
         }
 
         public boolean canImportStock() {
