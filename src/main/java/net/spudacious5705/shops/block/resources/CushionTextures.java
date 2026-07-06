@@ -2,8 +2,8 @@ package net.spudacious5705.shops.block.resources;
 
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.spudacious5705.shops.properties.Colour;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Map;
 import static net.spudacious5705.shops.SpudaciousShops.id;
 import static net.spudacious5705.shops.properties.Colour.*;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class CushionTextures {
     public static final Map<Colour, ResourceLocation> TEXTURE_MAP = new HashMap<>();
 

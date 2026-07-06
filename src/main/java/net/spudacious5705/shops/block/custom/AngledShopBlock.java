@@ -125,10 +125,9 @@ public class AngledShopBlock extends AbstractShopBlock {
         return new AngledShopEntity(pos, state);
     }
 
-    @Override
     public @NotNull ItemStack getCloneItemStack(
-            @NotNull BlockState state, @NotNull HitResult target,
-            LevelReader level, @NotNull BlockPos pos, @NotNull Player player
+            @NotNull BlockState state, @NotNull net.minecraft.world.phys.HitResult target,
+            @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull Player player
     ) {
        Colour colour = Colour.RED;
         if(level.getBlockEntity(pos) instanceof AngledShopEntity shopEntity) {

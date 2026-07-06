@@ -28,9 +28,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.loading.FMLEnvironment;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.spudacious5705.shops.block.custom.AbstractShopBlock;
 import net.spudacious5705.shops.block.entity.renderer.ShopRenderUtils;
 import net.spudacious5705.shops.config.ConfigHandler;
@@ -141,7 +141,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             boolean tradeCreative = toggleSettings.getOrDefault(ToggleButtonID.CreativeToggle,false);
             if(tradeCreative) {
                 vendList = NonNullList.create();
-                vendList.addFirst(inventory.getVendingStack().copy());
+                vendList.add(0, inventory.getVendingStack().copy());
             } else {
                 vendList = takeItems(inventory.getVendingStack().getCount(), inventory::canUseAsProduct,
                         inventory::get, 0, STOCK_END);
@@ -166,6 +166,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
             Player player = playerInv.player;
             ItemScatterer(player.level(),player.getOnPos(),vendList);
 
+            if (level != null && !level.isClientSide()) {
+                this.setChanged();
+            }
         }
 
         public void tradeWithSelection(Inventory playerInv, int index){
@@ -196,7 +199,9 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
                 ItemScatterer(player.level(),player.getOnPos(),product);
             }
 
-
+            if (level != null && !level.isClientSide()) {
+                this.setChanged();
+            }
         }
 
         public boolean canTrade(Player playerEntity) {
@@ -317,12 +322,28 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
         @Override
         public void setItem(int slot, @NotNull ItemStack stack) {
+            if (slot < 0 || slot >= getContainerSize()) {
+                return;
+            }
+
+            if (level != null && level.isClientSide()) {
+                inventory.set(slot, stack);
+                return;
+            }
+
+            boolean changed = false;
             if(slot>=PAYMENT_SLOT){
                 if(this.permissions.canEditTrades()){
                     inventory.set(slot, stack);
+                    changed = true;
                 }
             } else if(this.permissions.canImportStock()){
                 inventory.set(slot, stack);
+                changed = true;
+            }
+
+            if (changed) {
+                setChanged();
             }
         }
 
@@ -450,7 +471,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
     @Override
     public void setChanged() {
-        if(isClient) {
+        if(isClient && shopInventory.tradeFunctional()) {
             forceUpdateRenderData();
         }
         super.setChanged();
@@ -499,6 +520,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         }
 
         checkShouldRenderParticles();
+
+        if (isClient) {
+            forceUpdateRenderData();
+        }
     }
 
     @Override
@@ -534,7 +559,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
         this.shopInventory = ShopInventory.create(toggleSettings);
         this.particleOffset = particleOffset;
 
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.CLIENT) {
             createRendererData();
             isClient = true;
         } else {
@@ -563,6 +588,10 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
                 if (perms.canViewShopScreen()) {
 
+                    if (level != null && !level.isClientSide()) {
+                        forceUpdateClient();
+                    }
+
                     var permissionsDelegate = permissionManager.createDelegate(perms, player.getUUID());
 
                     return new ShopScreenHandlerOwner(syncId, playerInventory, AbstractShopEntity.this, inventoryDelegate, permissionsDelegate, set_del);
@@ -583,7 +612,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
     private final boolean isClient;
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     protected void createRendererData(){
         this.rendererData = new RendererData(shopInventory);
     }
@@ -700,18 +729,18 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
 
 
     //region RENDERING
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void renderTick() {
         this.rendererData.onTick();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     protected RendererData rendererData;
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public RendererData rendererData(){return  rendererData;}
     //Only call from the CLIENT
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void forceUpdateRenderData() {
         rendererData.update();
     }
@@ -723,7 +752,7 @@ public abstract class AbstractShopEntity extends BlockEntity implements IBlockPe
     }
 
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public class RendererData{
 
         protected final ShopInventory inventory;
