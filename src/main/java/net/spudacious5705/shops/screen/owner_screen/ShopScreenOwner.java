@@ -13,8 +13,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.spudacious5705.shops.screen.ScreenResources;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.spudacious5705.shops.screen.ScreenResourcesClient;
 import net.spudacious5705.shops.screen.ScreenSettingsGroup;
 import net.spudacious5705.shops.screen.ToggleButtonID;
 import net.spudacious5705.shops.screen.networking.ShopSelfDemotePkt;
@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import static net.spudacious5705.shops.SpudaciousShops.id;
 import static net.spudacious5705.shops.screen.ModScreenHandlers.CURRENCY_IMG_MAP;
 import static net.spudacious5705.shops.screen.ScreenResources.*;
+import static net.spudacious5705.shops.screen.ScreenResourcesClient.*;
 import static net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner.*;
 
 public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOwner> {
@@ -186,7 +187,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
 
 
-                for(ScreenResources.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS){
+                for (ScreenResourcesClient.ToolTipText ttt : SETTINGS_HOVER_INFO_TEXTS) {
                     ttt.render(context,font,mouseX,mouseY,leftPos,topPos);
                 }
 
@@ -220,7 +221,7 @@ public class ShopScreenOwner extends AbstractContainerScreen<ShopScreenHandlerOw
 
     //region interaction
     private void WarnPopupContinue(){
-        PacketDistributor.sendToServer(new ShopSelfDemotePkt());
+        ClientPlayNetworking.send(new ShopSelfDemotePkt());
         menu.close();
     }
 

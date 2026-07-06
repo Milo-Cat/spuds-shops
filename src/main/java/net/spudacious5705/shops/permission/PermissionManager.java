@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.item.ModItems;
 import net.spudacious5705.shops.item.custom.ContractScroll;
 import org.intellij.lang.annotations.MagicConstant;
@@ -189,7 +190,11 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
 
         if(identificationRecords.isEmpty()) {
             identificationRecords.add(new PlayerID(player.getUUID(), player.getName().getString(), PermissionLevel.OWNER));
-            OwnerBlock.setChanged();
+            Level level = OwnerBlock.getLevel();
+            if (level != null && !level.isClientSide()) {
+                OwnerBlock.setChanged();
+                ((AbstractShopEntity) OwnerBlock).forceUpdateClient();
+            }
             return PermissionLevel.OWNER;
         }
 
@@ -208,7 +213,11 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
                                     new PlayerID(record.uuid,record.name,PermissionLevel.OWNER) :
                                     record
             );
-            OwnerBlock.setChanged();
+            Level level = OwnerBlock.getLevel();
+            if (level != null && !level.isClientSide()) {
+                OwnerBlock.setChanged();
+                ((AbstractShopEntity) OwnerBlock).forceUpdateClient();
+            }
         }
 
         return quickUserSignIn(player);
@@ -329,7 +338,11 @@ public class PermissionManager<B extends BlockEntity> implements IBlockPermissio
                         if(OwnerBlock.getLevel() instanceof ServerLevel server){
                             server.players().stream().filter(
                                     player -> player.getUUID().compareTo(id.uuid) == 0
-                            ).findFirst().ifPresent(Player::closeContainer);
+                            ).findFirst().ifPresent(p -> {
+                                if (p instanceof net.minecraft.server.level.ServerPlayer) {
+                                    ((net.minecraft.server.level.ServerPlayer) p).closeContainer();
+                                }
+                            });
                         }
 
                         contracts.set(index, ItemStack.EMPTY);

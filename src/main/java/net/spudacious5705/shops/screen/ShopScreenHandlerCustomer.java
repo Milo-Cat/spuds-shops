@@ -3,7 +3,6 @@ package net.spudacious5705.shops.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,22 +11,16 @@ import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.screen.owner_screen.ShopScreenHandlerOwner;
 import org.jetbrains.annotations.NotNull;
 
-
-
-
 public class ShopScreenHandlerCustomer extends AShopScreenHandler {
-
 
     private  static final int PAYMENT_SLOT = 76;
     private  static final int VENDING_SLOT = 77;
     private static final int STOCK_END = 53;
     private static final int PROFIT_END = 75;
 
-
-
-    public static ShopScreenHandlerCustomer create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
-        BlockPos pos = buf.readBlockPos();
-        boolean openTop = buf.readBoolean();
+    public static ShopScreenHandlerCustomer create(int syncId, Inventory playerInv, ShopOpenData data) {
+        BlockPos pos = data.pos();
+        boolean openTop = data.openTop();
         Player player = playerInv.player;
         if(player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
             return new ShopScreenHandlerCustomer(syncId, playerInv, pos, openTop, shop);

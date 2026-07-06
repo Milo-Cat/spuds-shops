@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spudacious5705.shops.block.ModBlockEntities;
 import net.spudacious5705.shops.util.PostRegAssigner;
+import net.spudacious5705.shops.util.ShopMenuHelper;
 import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.block.entity.ShelfShopEntity;
@@ -226,11 +227,7 @@ public class ShelfShopBlock extends AbstractShopBlock{
 
         if (player instanceof ServerPlayer serverPlayer) {
             boolean openTop = hitResult.getLocation().y - pos.getY() > 0.5;
-            serverPlayer.openMenu(shop.createScreenHandlerFactory(openTop),
-                    buf -> {
-                        buf.writeBlockPos(pos);
-                        buf.writeBoolean(openTop);
-                    });
+            ShopMenuHelper.openShopMenu(serverPlayer, shop, pos, openTop);
         }
 
 

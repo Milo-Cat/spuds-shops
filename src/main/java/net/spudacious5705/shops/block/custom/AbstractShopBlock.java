@@ -33,6 +33,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
+import net.spudacious5705.shops.util.ShopMenuHelper;
 import net.spudacious5705.shops.block.resources.VariantResources;
 import net.spudacious5705.shops.permission.PermissionLevel;
 import net.spudacious5705.shops.properties.ModProperties;
@@ -180,13 +181,7 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
 
 
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
-                    shop.createScreenHandlerFactory(false),
-                    buf -> {
-                        buf.writeBlockPos(pos);//friendlyByteBuff formation here
-                        buf.writeBoolean(false);//ignore this false value. it's meant to be there
-                    }
-            );
+            ShopMenuHelper.openShopMenu(serverPlayer, shop, pos, false);
         }
 
 
@@ -232,16 +227,13 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
         super.onRemove(state, level, pos, newState, isMoving);
     }
 
-    @Override
     public @NotNull BlockState rotate(
-            BlockState state, @NotNull LevelAccessor level,
-            @NotNull BlockPos pos, Rotation direction
+            @NotNull BlockState state, @NotNull Rotation direction
     ) {
         return state.setValue(FACING, direction.rotate(state.getValue(FACING)));
     }
 
-    @Override
-    public @NotNull BlockState mirror(@NotNull BlockState pState, Mirror pMirror) {
+    public @NotNull BlockState mirror(@NotNull BlockState pState, @NotNull Mirror pMirror) {
         return rotate(pState, pMirror.getRotation(pState.getValue(FACING)));
     }
 
@@ -284,25 +276,25 @@ public abstract class AbstractShopBlock extends Block implements EntityBlock {
     );
 
     @Override
-    public boolean onDestroyedByPlayer(
-            @NotNull BlockState state, Level world, @NotNull BlockPos pos,
-            @NotNull Player player, boolean willHarvest, @NotNull FluidState fluid
+    public @NotNull BlockState playerWillDestroy(
+            @NotNull Level world, @NotNull BlockPos pos, @NotNull BlockState state,
+            @NotNull Player player
     ) {
         BlockEntity be = world.getBlockEntity(pos);
         if (be instanceof AbstractShopEntity shop) {
             if (shop.isUnbreakable(player)) {
-                if (world.isClientSide) {
+                if (world.isClientSide()) {
                     player.displayClientMessage(shop.cantBreakMessage(), true);
                 }
-                return false; // cancel destruction
+                return state;
             }
         }
 
         if (player.isCreative()) {
-            world.setBlock(pos, state.setValue(BREAKABLE, true), 3); // allow creative break
+            world.setBlock(pos, state.setValue(BREAKABLE, true), 3);
         }
 
-        return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return super.playerWillDestroy(world, pos, state, player);
     }
 
 

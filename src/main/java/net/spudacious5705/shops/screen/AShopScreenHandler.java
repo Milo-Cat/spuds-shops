@@ -104,14 +104,14 @@ public abstract class AShopScreenHandler extends AbstractContainerMenu {
 
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
+            if(this.hasItem())attemptTrade(this.index, pPlayer);
             return Optional.empty();
         }
 
         @NotNull
         @Override
         public ItemStack safeTake(int pCount, int pDecrement, @NotNull Player pPlayer) {
-            if(this.hasItem())attemptTrade(this.getSlotIndex(), pPlayer);
+            if(this.hasItem())attemptTrade(this.index, pPlayer);
             return ItemStack.EMPTY;
         }
 

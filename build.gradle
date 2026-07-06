@@ -21,14 +21,14 @@ repositories {
 
 }
 
-fabricApi {
-    configureDataGeneration()
-}
+// Generated blockstates/models/recipes (rug, shelf, window sill shops).
+// Use the inner "resources" folder only — not "src/main/generated", or assets land under resources/assets/ in the jar.
+sourceSets.main.resources { srcDir 'src/main/generated/resources' }
 
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.

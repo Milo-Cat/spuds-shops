@@ -1,9 +1,9 @@
 package net.spudacious5705.shops.screen.owner_screen;
 
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,9 +11,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.spudacious5705.shops.block.entity.AbstractShopEntity;
 import net.spudacious5705.shops.config.ConfigHandler;
 import net.spudacious5705.shops.item.ModItems;
@@ -86,7 +85,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         return this.SCREEN_SETTINGS;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public boolean getStateOfSetting(ToggleButtonID button) {
         return SETTINGS_DELEGATE.getState(button);
     }
@@ -94,7 +93,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     private void openWarnScreen(@NotNull Player player){//called when player removes their own contract
         if(player.level().isClientSide) {
             playWarnSound(player);
-            PacketDistributor.sendToServer(new ShopTabSyncPkt(WARNING_TAB));
+            ClientPlayNetworking.send(new ShopTabSyncPkt(WARNING_TAB));
         } else {
             activeTab = WARNING_TAB;
         }
@@ -113,9 +112,9 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
     //region menu open/setup/close
 
-    public static ShopScreenHandlerOwner create(int syncId, Inventory playerInv, FriendlyByteBuf buf) {
-        BlockPos pos = buf.readBlockPos();
-        boolean openTop = buf.readBoolean();
+    public static ShopScreenHandlerOwner create(int syncId, Inventory playerInv, ShopOpenData data) {
+        BlockPos pos = data.pos();
+        boolean openTop = data.openTop();
 
         Player player = playerInv.player;
         if(player.level().getBlockEntity(pos) instanceof AbstractShopEntity shop) {
@@ -227,7 +226,9 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     }
 
     public void close() {
-        playerInventory.player.closeContainer();
+        if (playerInventory.player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
+            serverPlayer.closeContainer();
+        }
     }
 
     private void addShopInventory(){
@@ -311,6 +312,10 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
                 slot.set(ItemStack.EMPTY);
             }
         }
+
+        if (!playerInventory.player.level().isClientSide()) {
+            shopInventory.setChanged();
+        }
     }
 
     @Override
@@ -360,10 +365,10 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
     }
 
     //tab/screen
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void updateTabSelectionClientside(int tab){
         activeTab = tab;
-        PacketDistributor.sendToServer(new ShopTabSyncPkt(activeTab));
+        ClientPlayNetworking.send(new ShopTabSyncPkt(activeTab));
         updateTabSelection();
     }
 
@@ -371,7 +376,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         activeTab = tab;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void updateTabSelectionResponse(int tab){
         activeTab = tab;
         updateTabSelection();
@@ -418,16 +423,16 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         return SETTINGS_DELEGATE.getState(button);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void updateToggleButtonFromPacket(ToggleButtonID button, boolean state) {
         SETTINGS_DELEGATE.attemptSetState(button,state);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void handleToggleButtonInput(ToggleButtonID button) {
         boolean state = !SETTINGS_DELEGATE.getState(button);
         if(SETTINGS_DELEGATE.attemptSetState(button,state)){
-            PacketDistributor.sendToServer(new ToggleSyncPkt(button,state));
+            ClientPlayNetworking.send(new ToggleSyncPkt(button,state));
         }
     }
 
@@ -453,7 +458,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
         @Override
         public boolean mayPlace(@NotNull ItemStack stack) {
-            if(checkAction(stack, this.getSlotIndex())){
+            if(checkAction(stack, this.index)){
                 return this.getItem().isEmpty();
             }
             return false;
@@ -468,7 +473,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         public @NotNull ItemStack safeInsert(ItemStack stack, int count) {
             if (!stack.isEmpty()&&stack.getItem() == ModItems.CONTRACT_SCROLL.get()) {
 
-                return ((PermissionManager.player_ID_Records_Delegate) container).insertContract(stack, this.getSlotIndex());
+                return ((PermissionManager.player_ID_Records_Delegate) container).insertContract(stack, this.index);
             }
             return stack;
         }
@@ -479,7 +484,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
                 openWarnScreen(pPlayer);
                 return ItemStack.EMPTY;
             }
-            return container.removeItem(this.getSlotIndex(), 1);
+            return container.removeItem(this.index, 1);
         }
 
         @Override
@@ -489,7 +494,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
 
                 return Optional.empty();
             }
-            return Optional.of(container.removeItem(this.getSlotIndex(), 1));
+            return Optional.of(container.removeItem(this.index, 1));
         }
 
         @Override
@@ -507,7 +512,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
             if(contract_delegate.belongsToInteractor(this.getItem())){
                 return true;
             }
-            return contract_delegate.canEditThat(this.getSlotIndex());
+            return contract_delegate.canEditThat(this.index);
         }
         //always stack size of 1 or 0
     }
@@ -534,7 +539,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         @NotNull
         @Override
         public ItemStack safeTake(int amount, int shouldDecrement, @NotNull Player pPlayer) {
-            this.container.removeItem(this.getSlotIndex(), amount);
+            this.container.removeItem(this.index, amount);
             this.setChanged();
             return ItemStack.EMPTY;
         }
@@ -558,7 +563,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         @Override
         public @NotNull Optional<ItemStack> tryRemove(int pCount, int pDecrement, @NotNull Player pPlayer) {
             if(perms.canEditTrades()){
-                this.container.removeItem(this.getSlotIndex(), pCount);
+                this.container.removeItem(this.index, pCount);
                 this.setChanged();
             }
             return Optional.empty();
@@ -567,7 +572,7 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
         @Override
         public @NotNull ItemStack remove(int pAmount) {
             if(perms.canEditTrades()){
-                this.container.removeItem(this.getSlotIndex(), pAmount);
+                this.container.removeItem(this.index, pAmount);
                 this.setChanged();
             }
             return ItemStack.EMPTY;
@@ -588,9 +593,9 @@ public class ShopScreenHandlerOwner extends AShopScreenHandler {
             if(stack.getItem() == oldStack.getItem()){
                 count += oldStack.getCount();
                 if(count>256)count=256;
-                this.container.setItem(this.getSlotIndex(),stack.copyWithCount(count));
+                this.container.setItem(this.index,stack.copyWithCount(count));
             }else {
-                this.container.setItem(this.getSlotIndex(), stack.copyWithCount(count));
+                this.container.setItem(this.index, stack.copyWithCount(count));
             }
             this.setChanged();
             return stack;

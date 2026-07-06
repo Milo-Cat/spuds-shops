@@ -7,10 +7,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.spudacious5705.shops.util.registry.DeferredBlock;
+import net.spudacious5705.shops.util.registry.DeferredItem;
+import net.spudacious5705.shops.util.registry.DeferredRegister;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.custom.*;
 import net.spudacious5705.shops.block.resources.VariantResources;
@@ -30,9 +29,9 @@ public class ModBlocks{
 
     public static final List<Runnable> postRegistryTasks = new ArrayList<>();
 
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MOD_ID);
+    public static final DeferredRegister.BlockRegister BLOCKS = DeferredRegister.createBlocks(MOD_ID);
 
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MOD_ID);
+    public static final DeferredRegister.ItemRegister ITEMS = DeferredRegister.createItems(MOD_ID);
 
     private static final BlockBehaviour.Properties settingsChain = shopSettings(Blocks.CHAIN);
 
@@ -233,7 +232,7 @@ public class ModBlocks{
 
     }
 
-    public static void registerModBlocks(IEventBus modEventBus) {
+    public static void registerModBlocks(Object modEventBus) {
         SpudaciousShops.LOGGER.info("Registering mod blocks for " + MOD_ID);
         registerOriginal();
         registerWindowSill();

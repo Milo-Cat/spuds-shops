@@ -1,24 +1,21 @@
 package net.spudacious5705.shops.block;
 
-
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.spudacious5705.shops.SpudaciousShops;
 import net.spudacious5705.shops.block.custom.AngledShopBlock;
 import net.spudacious5705.shops.block.custom.RugShopBlock;
 import net.spudacious5705.shops.block.custom.ShelfShopBlock;
 import net.spudacious5705.shops.block.custom.WindowSillShopBlock;
 import net.spudacious5705.shops.block.entity.*;
+import net.spudacious5705.shops.util.registry.DeferredHolder;
+import net.spudacious5705.shops.util.registry.DeferredRegister;
 
 import java.util.function.Supplier;
 
 public class ModBlockEntities {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
-            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, SpudaciousShops.MOD_ID);
-
+            DeferredRegister.createBlockEntities(SpudaciousShops.MOD_ID);
 
     public static final Supplier<BlockEntityType<AngledShopEntity>> ANGLED_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e",
@@ -33,7 +30,6 @@ public class ModBlockEntities {
                             ModBlocks.ALL_WINDOW_SHOPS.stream().map(Supplier::get).toArray(WindowSillShopBlock[]::new)
                     ).build(null)
             );
-
 
     public static final Supplier<BlockEntityType<HookShopEntity>> HOOK_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e_hook",
@@ -56,7 +52,6 @@ public class ModBlockEntities {
                     ).build(null)
             );
 
-
     public static final Supplier<BlockEntityType<ShelfShopEntity>> SHELF_SHOP_ENTITY =
             BLOCK_ENTITIES.register("shop_b_e_shelf",
                     () -> BlockEntityType.Builder.of(ShelfShopEntity::new,
@@ -64,10 +59,8 @@ public class ModBlockEntities {
                     ).build(null)
             );
 
-
-
-    public static void registerBlockEntities(IEventBus modEventBus) {
-        SpudaciousShops.LOGGER.info("Registering block entities for" + SpudaciousShops.MOD_ID);
-        BLOCK_ENTITIES.register(modEventBus);
+    public static void registerBlockEntities(Object modEventBus) {
+        SpudaciousShops.LOGGER.info("Registering block entities for " + SpudaciousShops.MOD_ID);
+        BLOCK_ENTITIES.register(null);
     }
 }

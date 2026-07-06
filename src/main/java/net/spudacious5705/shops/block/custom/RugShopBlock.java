@@ -162,13 +162,11 @@ public class RugShopBlock extends AbstractShopBlock{
     }
 
 
-    @Override
-    public @NotNull BlockState rotate(BlockState state, @NotNull LevelAccessor level, @NotNull BlockPos pos, Rotation direction) {
+    public @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation direction) {
         return state;
     }
 
-    @Override
-    public @NotNull BlockState mirror(@NotNull BlockState pState, Mirror pMirror) {
+    public @NotNull BlockState mirror(@NotNull BlockState pState, @NotNull Mirror pMirror) {
         return pState;
     }
 
